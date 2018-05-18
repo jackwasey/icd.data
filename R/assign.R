@@ -29,7 +29,7 @@
 #' @export
 #' @keywords internal
 assign_icd_data <- function(env = parent.frame()) {
-  data_names <- utils::data(package = "icd.data")$results[, "Item"]
+  data_names <- ls_icd_data()
   lapply(data_names,
          function(x) {
            assign(x, get(x), envir = env)
@@ -41,3 +41,14 @@ assign_icd_data <- function(env = parent.frame()) {
 #' @concept ICD-9 ICD-10 ICD
 #' @author Jack O. Wasey \email{jack@@jackwasey.com}
 "_PACKAGE"
+
+#' List the data in this package
+#' @examples
+#' \dontrun{
+#' ls_icd_data()
+#' }
+#' @keywords datasets
+#' @export
+ls_icd_data <- function()
+  utils::data(package = "icd.data")$results[, "Item"]
+
