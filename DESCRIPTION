@@ -1,16 +1,20 @@
 Package: icd.data
 Title: International Classifcation of Diseases (ICD) data
 Version: 0.0.0.9000
-Authors@R: person("Jack O. Wasey", role = c("aut", "cre", "cph"), email = "jack@jackwasey.com")
+Authors@R:
+    person("Jack O. Wasey", role = c("aut", "cre", "cph"), email = "jack@jackwasey.com")
 Description: Data from the United States Center for Medicare and Medicaid
     Services (CMS) is included in this package. There are ICD-9 and ICD-10
-    diagnostic and procedure codes.
+    diagnostic and procedure codes, and lists of the chapter and sub-chapter 
+    headings and the ranges of ICD codes they encompass.
 Depends: R (>= 3.0.0)
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz
 RoxygenNote: 6.0.1
+Imports:
+    utils
 Suggests:
     testthat,
     icd

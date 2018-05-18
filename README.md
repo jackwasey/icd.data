@@ -1,4 +1,3 @@
-
 <!-- rmarkdown::render("README.Rmd") -->
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/icd.data)](https://cran.r-project.org/package=icd.data) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/jackwasey/icd.data?branch=master&svg=true)](https://ci.appveyor.com/project/jackwasey/icd.data) [![Travis-CI Build Status](https://travis-ci.org/jackwasey/icd.data.svg?branch=master)](https://travis-ci.org/jackwasey/icd.data)
