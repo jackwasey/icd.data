@@ -1,17 +1,20 @@
 ---
-output: github_document
+#output: github_document
+title: icd Readme
+output:
+  md_document:
+    variant: markdown_github
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+author: Jack O. Wasey
 ---
-
+<!-- rmarkdown::render("README.Rmd") -->
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  fig.path = "README-"
-)
+  comment = "#>")
 ```
-
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/icd.data)](https://cran.r-project.org/package=icd.data)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/jackwasey/icd.data?branch=master&svg=true)](https://ci.appveyor.com/project/jackwasey/icd.data)
 [![Travis-CI Build Status](https://travis-ci.org/jackwasey/icd.data.svg?branch=master)](https://travis-ci.org/jackwasey/icd.data)
 

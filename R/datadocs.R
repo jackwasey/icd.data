@@ -44,7 +44,7 @@
 #' @source
 #' \url{http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html}
 #'
-#' @format list with chapter/sub-chapter or major names stored in list names,
+#' @details Format:  list with chapter/sub-chapter or major names stored in list names,
 #'   each with two element named character vector with start and end codes.
 #' @name icd9_chapters
 #' @aliases icd9_sub_chapters
@@ -62,7 +62,7 @@ NULL
 #' U00-U49 - Provisional assignment of new diseases of uncertain etiology or
 #' emergency use U82-U85 - Resistance to antimicrobial and anti-neoplastic drugs
 #' @source http://apps.who.int/classifications/icd10/browse/2016/en
-#' @format list with chapter names stored in list names, each with two element
+#' @details Format:  list with chapter names stored in list names, each with two element
 #'   named character vector with start and end codes.
 #' @name icd10_chapters
 NULL
@@ -76,7 +76,7 @@ NULL
 #' "Malignant neoplasms of lip, oral cavity and pharynx", not C00-C96 "Malignant
 #' neoplasms" which itself is a subset of the chapter C00-D49 "Neoplasms"
 #' @source http://apps.who.int/classifications/icd10/browse/2016/en
-#' @format list with sub-chapter or major names stored in list names, each with
+#' @details Format:  list with sub-chapter or major names stored in list names, each with
 #'   two element named character vector with start and end codes.
 #' @name icd10_sub_chapters
 NULL
@@ -87,7 +87,7 @@ NULL
 #' each hierarchy level containing each code.
 #' @docType data
 #' @keywords datasets
-#' @format data frame
+#' @details Format:  data frame
 #' @source
 #' \url{http://wonder.cdc.gov/wonder/sci_data/codes/icd9/type_txt/icd9cm.asp}
 #' @source Rich text descriptions here:
@@ -120,7 +120,7 @@ NULL
 #' @source \url{http://www.cdc.gov/nchs/icd/icd10cm.htm}
 #' @docType data
 #' @keywords datasets
-#' @format data frame, with columns for code, leaf status (0 or 1), short and
+#' @details Format:  data frame, with columns for code, leaf status (0 or 1), short and
 #'   long descriptions.
 NULL
 
@@ -128,7 +128,7 @@ NULL
 #'
 #' ICD-10-PCS is the annually-updated set of procedure codes designed by 3M for
 #' the US CMS. There is no directory of WHO ICD procedure codes.
-#' @format A named list of data frames. The elements of the list are named by
+#' @details Format:  A named list of data frames. The elements of the list are named by
 #'   the year, e.g., \code{"2018"}. Each data frame contains two character
 #'   columns, the first, named \code{code} is the procedure code; the second,
 #'   named \code{desc}, has the description.
@@ -168,7 +168,7 @@ NULL
 #' correct, with some \code{UTF-8} encoded strings.
 #' @docType data
 #' @keywords datasets
-#' @format list of data frames. Each list item is named by the version as a
+#' @details Format:  list of data frames. Each list item is named by the version as a
 #'   string, e.g. "32". The constituent data frames have columns \code{icd9},
 #'   \code{shortDesc}, and \code{longDesc}.
 #' @source
@@ -201,7 +201,7 @@ NULL
 #' errors in the data due to coding or processing"
 #' @source
 #' \url{http://www.healthvermont.gov/health-statistics-vital-records/health-care-systems-reporting/hospital-discharge-data}
-#' @format CSV original, minimally processed into R data frame.
+#' @details Format:  CSV original, minimally processed into R data frame.
 #' @keywords datasets
 #' @author Vermont Division of Health Care Administration
 #' @docType data

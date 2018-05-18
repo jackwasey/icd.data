@@ -4,7 +4,6 @@
 \name{icd9cm_hierarchy}
 \alias{icd9cm_hierarchy}
 \title{Latest ICD-9-CM diagnosis codes, in flat \code{data.frame} format}
-\format{data frame}
 \source{
 \url{http://wonder.cdc.gov/wonder/sci_data/codes/icd9/type_txt/icd9cm.asp}
 
@@ -25,5 +24,8 @@ Rich text descriptions here:
 \description{
 Short-form ICD-9 codes with short and long descriptions, and description of
 each hierarchy level containing each code.
+}
+\details{
+Format:  data frame
 }
 \keyword{datasets}
