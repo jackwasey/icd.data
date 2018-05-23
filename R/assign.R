@@ -20,12 +20,14 @@
 #' be needed by most users, who can simply refer to the data objects normally
 #' after calling \code{library(icd.data)}.
 #' @examples
+#' \dontrun{
 #' assign_icd_data()
 #'
 #' # but really all most users need to do is:
 #' library(icd.data)
 #' # then refer to the data in the package in the normal way:
 #' print(icd10_chapters)
+#' }
 #' @export
 #' @keywords internal
 assign_icd_data <- function(env = parent.frame()) {
@@ -51,4 +53,3 @@ assign_icd_data <- function(env = parent.frame()) {
 #' @export
 ls_icd_data <- function()
   utils::data(package = "icd.data")$results[, "Item"]
-
