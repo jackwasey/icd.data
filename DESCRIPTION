@@ -20,3 +20,4 @@ Imports:
 Suggests:
     testthat,
     icd
+Language: en-US

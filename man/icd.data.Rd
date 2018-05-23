@@ -6,7 +6,7 @@
 \alias{_PACKAGE}
 \alias{icd.data-package}
 \alias{icd.data-package}
-\title{icd.data: International Classifcation of Diseases (ICD) Data}
+\title{icd.data: International Classification of Diseases (ICD) Data}
 \description{
 Data from the United States Center for Medicare and Medicaid
 Services (CMS) is included in this package. There are ICD-9 and ICD-10

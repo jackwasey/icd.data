@@ -23,10 +23,14 @@
 #' \dontrun{
 #' assign_icd_data()
 #'
-#' # but really all most users need to do is:
+#' # but most users just need to:
 #' library(icd.data)
 #' # then refer to the data in the package in the normal way:
 #' print(icd10_chapters)
+#'
+#' # or even simpler:
+#' library(icd)
+#' # which will attach icd.data
 #' }
 #' @export
 #' @keywords internal
