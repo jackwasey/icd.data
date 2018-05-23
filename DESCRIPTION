@@ -1,5 +1,5 @@
 Package: icd.data
-Title: International Classifcation of Diseases (ICD) Data
+Title: International Classification of Diseases (ICD) Data
 Version: 1.0
 Authors@R:
     person("Jack O. Wasey", role = c("aut", "cre", "cph"), email = "jack@jackwasey.com")
