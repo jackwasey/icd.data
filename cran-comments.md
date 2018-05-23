@@ -1,5 +1,7 @@
 This is the initial CRAN release containing the larger data files from 'icd' which change very rarely. Will follow with an updated 'icd' package.
 
+Updated from initial submission with spelling correction in DESCRIPTION Title.
+
 ## Test environments
 * local OS X install, R 3.5.0
 * Ubuntu 12.04 (on travis-ci), R 3.5.0
