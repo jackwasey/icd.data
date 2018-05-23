@@ -1,6 +1,6 @@
 Package: icd.data
 Title: International Classification of Diseases (ICD) Data
-Version: 1.0
+Version: 1.0.1
 Authors@R:
     person("Jack O. Wasey", role = c("aut", "cre", "cph"), email = "jack@jackwasey.com")
 Description: Data from the United States Center for Medicare and Medicaid
