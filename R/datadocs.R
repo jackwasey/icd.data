@@ -211,10 +211,24 @@ NULL
 
 #' United States Transuranium & Uranium Registries
 #'
-#' an ICD-10 data set (not ICD-10-CM) with mortality from the United States
+#' This is an ICD-10 data set (not ICD-10-CM) with mortality from the United States
 #' Transuranium & Uranium Registries, published in the public domain.
 #' @name uranium_pathology
 #' @source \url{https://ustur.wsu.edu/about-us/}
+#' @docType data
+#' @keywords datasets
+NULL
+
+#' National Hospital Discharge Survey 2010 data
+#'
+#' This is public domain data from the US [Center for Disease
+#' Control](https://www.cdc.gov). This is deidentified patient data describing
+#' the information at the end of a hospital admission, including demographic
+#' information, admission diagnoses, comorbidities and procedure codes, death or
+#' disposition. There are no identifiers in the data, so an integer count was
+#' included in this data.
+#' @name nhds2010
+#' @source \url{https://www.cdc.gov/nchs/nhds/index.htm}
 #' @docType data
 #' @keywords datasets
 NULL

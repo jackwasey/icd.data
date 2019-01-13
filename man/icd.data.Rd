@@ -9,8 +9,11 @@
 \description{
 ICD-9 and ICD-10 definitions from the United States
     Center for Medicare and Medicaid Services (CMS) are included in this
-    package. There are diagnostic and procedure codes, and lists of the
-    chapter and sub-chapter headings and the ranges of ICD codes they
+    package. A function is provided to extract the WHO definition from
+    their public interface, but it may not currently be redistributed.
+    This function 'fetch_icd10_who' should be run once after installing
+    this package. There are diagnostic and procedure codes, and lists of
+    the chapter and sub-chapter headings and the ranges of ICD codes they
     encompass.  There are also two small and one large data samples
     representing real patients and spanning common structures of patient
     data. These data are used by the 'icd' package for finding

@@ -8,7 +8,7 @@
 \url{https://ustur.wsu.edu/about-us/}
 }
 \description{
-an ICD-10 data set (not ICD-10-CM) with mortality from the United States
+This is an ICD-10 data set (not ICD-10-CM) with mortality from the United States
 Transuranium & Uranium Registries, published in the public domain.
 }
 \keyword{datasets}

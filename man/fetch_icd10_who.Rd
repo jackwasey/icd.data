@@ -17,6 +17,8 @@ cannot query a single code with this interface.}
 \item{lang}{Currently it seems only 'en' works}
 
 \item{verbose}{logical}
+
+\item{...}{further arguments passed to self recursively, or \code{fetch_who_api}}
 }
 \description{
 The user may call this function to install the full WHO ICD-10 definition on

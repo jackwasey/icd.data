@@ -7,10 +7,10 @@
 #' @param save logical, if `TRUE` saves data in the `data/` directory in the
 #'   package source tree
 #' @examples
-#' colSums(icd::comorbid_charlson(nhds10))
+#' library(icd)
+#' colSums(comorbid_charlson(nhds2010))
 #' @keywords internal
-#' @md
-parse_nhds10 <- function(save = TRUE) {
+parse_nhds2010 <- function(save = TRUE) {
   widths <- c(2, 1, 1, 2, 1, 1, 1, 2, 1, 4, 1,
               1, 1, 1, 5, 2,
               # now ICD-9 diagnostic codes
@@ -47,12 +47,12 @@ parse_nhds10 <- function(save = TRUE) {
     X44 = readr::col_integer(), # levels = origin_levels 99 fix
     X45 = readr::col_character() # admitting diagnosis
   )
-  nhds10 <- readr::read_fwf(
-    system.file("extdata", "NHDS10.PU.txt", package = "codeneighbor"),
+  nhds2010 <- readr::read_fwf(
+    system.file("extdata", "nhds2010.PU.txt", package = "codeneighbor"),
     col_positions = readr::fwf_widths(widths),
     col_types = col_spec
   )
-  names(nhds10) <- c(
+  names(nhds2010) <- c(
     # skipping "year", #int
     "newborn", # logical
     "age_unit", # factor years, months, days
@@ -86,16 +86,16 @@ parse_nhds10 <- function(save = TRUE) {
     class(f) = "factor"
     f
   }
-  nhds10$newborn <- nhds10$newborn == 1L
-  nhds10$age_unit <- mkf(nhds10$age_unit, c(
+  nhds2010$newborn <- nhds2010$newborn == 1L
+  nhds2010$age_unit <- mkf(nhds2010$age_unit, c(
     "years" = 1,
                                             "months" = 2,
                                             "days" = 3))
-  nhds10$sex <- mkf(nhds10$sex, c(
+  nhds2010$sex <- mkf(nhds2010$sex, c(
     "male" = 1,
     "female" = 2
   ))
-  nhds10$race <- mkf(nhds10$race, c(
+  nhds2010$race <- mkf(nhds2010$race, c(
     "white" = 1,
     "black" = 2,
     "native_continental" = 3,
@@ -104,14 +104,14 @@ parse_nhds10 <- function(save = TRUE) {
     "other" = 6,
     "multiple" = 8,
     "not_stated" = 9))
-  nhds10$marital_status <- mkf(nhds10$marital_status, c(
+  nhds2010$marital_status <- mkf(nhds2010$marital_status, c(
     "married" = 1,
     "single" = 2,
     "widowed" = 3,
     "divorced" = 4,
     "separated" = 5,
     "not_stated" = 9))
-  nhds10$dc_status <- mkf(nhds10$dc_status, c(
+  nhds2010$dc_status <- mkf(nhds2010$dc_status, c(
     "home" = 1,
     "AMA" = 2,
     "short_term" = 3,
@@ -119,27 +119,27 @@ parse_nhds10 <- function(save = TRUE) {
     "alive_NOS" = 5,
     "dead" = 6,
     "not_stated" = 9))
-  nhds10$dc_same_day <- nhds10$dc_same_day == 0
-  nhds10$region <- mkf(nhds10$region, c(
+  nhds2010$dc_same_day <- nhds2010$dc_same_day == 0
+  nhds2010$region <- mkf(nhds2010$region, c(
     "northeast" = 1,
     "midwest" = 2,
     "south" = 3,
     "west" = 4
   ))
   # todo ordered factor
-  nhds10$n_beds <- mkf(nhds10$n_beds, c(
+  nhds2010$n_beds <- mkf(nhds2010$n_beds, c(
     "6-99" = 1,
     "100-199" = 2,
     "200-299" = 3,
     "300-499" = 4,
     "500+" = 5
   ))
-  nhds10$hospital_ownership <- mkf(nhds10$hospital_ownership, c(
+  nhds2010$hospital_ownership <- mkf(nhds2010$hospital_ownership, c(
     "proprietary" = 1,
     "government" = 2,
     "non_profit" = 3
   ))
-  nhds10$payor_primary <- mkf(nhds10$payor_primary, c(
+  nhds2010$payor_primary <- mkf(nhds2010$payor_primary, c(
     "worker compensation" = 1,
     "Medicare" = 2,
     "Medicaid" = 3,
@@ -151,7 +151,7 @@ parse_nhds10 <- function(save = TRUE) {
     "no charge" = 9,
     "other" = 10,
     "not stated" = 99))
-  nhds10$payor_secondary <- mkf(nhds10$payor_secondary, c(
+  nhds2010$payor_secondary <- mkf(nhds2010$payor_secondary, c(
     "worker compensation" = 1,
     "Medicare" = 2,
     "Medicaid" = 3,
@@ -163,7 +163,7 @@ parse_nhds10 <- function(save = TRUE) {
     "no charge" = 9,
     "other" = 10,
     "not stated" = 99))
-  nhds10$adm_type <- mkf(nhds10$adm_type, c(
+  nhds2010$adm_type <- mkf(nhds2010$adm_type, c(
     "emergency" = 1,
     "urgent" = 2,
     "elective" = 3,
@@ -171,7 +171,7 @@ parse_nhds10 <- function(save = TRUE) {
     "trauma" = 5,
     "not_stated" = 9
   ))
-  nhds10$adm_origin <- mkf(nhds10$adm_origin, c(
+  nhds2010$adm_origin <- mkf(nhds2010$adm_origin, c(
     "Non-health care POA" = 1,
     "Clinic" = 2,
     "Transfer from a hospital" = 3,
@@ -186,18 +186,18 @@ parse_nhds10 <- function(save = TRUE) {
     "Other" = 12,
     "Not available" = 99
   ))
-  nhds10 <- as.data.frame(nhds10)
+  nhds2010 <- as.data.frame(nhds2010)
   for (dx_col in c(15:37, 43))
-    nhds10[[dx_col]] <- sub(pattern = "-",
+    nhds2010[[dx_col]] <- sub(pattern = "-",
                             replacement = "",
-                            x = nhds10[[dx_col]])
-  nhds10 <- cbind(id = seq_len(nrow(nhds10)),
-                  nhds10,
+                            x = nhds2010[[dx_col]])
+  nhds2010 <- cbind(id = seq_len(nrow(nhds2010)),
+                  nhds2010,
                   stringsAsFactors = FALSE)
   # xz didn't compress as well as bzip2
   if (save)
-    save(nhds10,
-         file = file.path("data", "nhds10.RData"),
+    save(nhds2010,
+         file = file.path("data", "nhds2010.RData"),
          compress = "bzip2")
-  invisible(nhds10)
+  invisible(nhds2010)
 }
