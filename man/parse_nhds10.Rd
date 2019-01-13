@@ -16,7 +16,7 @@ package. The raw data is 22M, and the R data is 3.3M when compressed. The
 data can be downloaded from the referenced URL.
 }
 \examples{
-colSums(icd::comorbid(nhds10))
+colSums(icd::comorbid_charlson(nhds10))
 }
 \references{
 \url{https://www.cdc.gov/nchs/nhds/index.htm}

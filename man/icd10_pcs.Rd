@@ -15,9 +15,9 @@ the US CMS. There is no directory of WHO ICD procedure codes.
 }
 \details{
 Format:  A named list of data frames. The elements of the list are named by
-  the year, e.g., \code{"2018"}. Each data frame contains two character
-  columns, the first, named \code{code} is the procedure code; the second,
-  named \code{desc}, has the description.
+the year, e.g., \code{"2018"}. Each data frame contains two character
+columns, the first, named \code{code} is the procedure code; the second,
+named \code{desc}, has the description.
 }
 \seealso{
 \url{https://www.cms.gov/Medicare/Coding/ICD10/downloads/pcs_refman.pdf}

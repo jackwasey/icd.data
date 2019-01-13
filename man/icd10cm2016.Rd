@@ -19,6 +19,6 @@ There are annual revisions to this data. Currently, the 2016 edition is
 included.
 
 Format:  data frame, with columns for code, leaf status (0 or 1), short and
-  long descriptions.
+long descriptions.
 }
 \keyword{datasets}

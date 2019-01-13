@@ -206,6 +206,7 @@ NULL
 #' @author Vermont Division of Health Care Administration
 #' @docType data
 #' @name vermont_dx
+#' @noMd
 NULL
 
 #' United States Transuranium & Uranium Registries
