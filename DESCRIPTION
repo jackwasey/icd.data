@@ -19,11 +19,14 @@ Depends:
 Imports:
     utils
 Suggests:
+    httr,
     icd,
+    jsonlite,
     readr,
     testthat
 Encoding: UTF-8
 Language: en-US
 LazyData: true
 LazyDataCompression: xz
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
