@@ -25,6 +25,7 @@ Suggests:
     httr,
     icd,
     jsonlite,
+    memoise,
     readr,
     testthat
 Encoding: UTF-8
