@@ -2,4 +2,7 @@
 
 export(assign_icd_data)
 export(fetch_icd10_who)
+export(get_resource_path)
+export(icd10who2016)
 export(ls_icd_data)
+export(set_resource_path)

@@ -2,26 +2,18 @@
 % Please edit documentation in R/who.R
 \name{fetch_icd10_who}
 \alias{fetch_icd10_who}
-\title{Use public interface to fetch ICD-10 WHO version}
+\title{Fetch the WHO data from online source}
 \usage{
-fetch_icd10_who(concept_id = NULL, year = 2016, lang = "en",
-  verbose = TRUE, ...)
+fetch_icd10_who(do_save = TRUE)
 }
 \arguments{
-\item{concept_id}{This is the id for the code or code group, e.g. "XI"
-(Chapter 6), "T90-T98" (A sub-chapter), "E01" (A sub-sub-chapter). You
-cannot query a single code with this interface.}
-
-\item{year}{integer 4-digit year}
-
-\item{lang}{Currently it seems only 'en' works}
-
-\item{verbose}{logical}
-
-\item{...}{further arguments passed to self recursively, or \code{fetch_who_api}}
+\item{do_save}{Logical, defaults to \code{TRUE}}
 }
 \description{
-The user may call this function to install the full WHO ICD-10 definition on
-their machine, after which it will be available to \code{icd}. TODO: determine the
-best place to save this data.
+This will download the latest ICD-10 codes and descriptions from the WHO, and
+save the results in a directory given by \code{icd.data:::get_resource_path()}.
+This defaults to a subdirectory \code{.icd.data} of the home directory. This is
+necessary because it is not permitted to write data back to the installed
+package location (and this may not be allowed on a multi-user system,
+anyway).
 }

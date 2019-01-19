@@ -20,17 +20,17 @@ License: GPL-3
 Depends: 
     R (>= 3.0.0)
 Imports:
+    memoise,
     utils
 Suggests:
     httr,
     icd,
     jsonlite,
-    memoise,
     readr,
     testthat
 Encoding: UTF-8
 Language: en-US
 LazyData: true
-LazyDataCompression: xz
+LazyDataCompression: gzip
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1

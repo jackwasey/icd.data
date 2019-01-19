@@ -83,7 +83,7 @@ parse_nhds2010 <- function(save = TRUE) {
     stopifnot(is.integer(ints))
     f <- match(ints, map)
     attr(f, "levels") <- names(map)
-    class(f) = "factor"
+    class(f) <- "factor"
     f
   }
   nhds2010$newborn <- nhds2010$newborn == 1L

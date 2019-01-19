@@ -124,6 +124,18 @@ NULL
 #'   long descriptions.
 NULL
 
+#' WHO ICD-10 data
+#'
+#' This data must be downloaded on a per-user basis. A prompt is given when the
+#' data is first attempted to be accessed. Unlike other data, it is exported,
+#' because it is an active binding.
+#' @name icd10who2016
+#' @source \url{http://www.who.int}
+#' @docType data
+#' @keywords datasets
+#' @export
+NULL
+
 #' ICD-10-CM Procedure Codes
 #'
 #' ICD-10-PCS is the annually-updated set of procedure codes designed by 3M for
