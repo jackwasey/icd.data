@@ -4,10 +4,12 @@
 \alias{fetch_icd10_who}
 \title{Fetch the WHO data from online source}
 \usage{
-fetch_icd10_who(do_save = TRUE)
+fetch_icd10_who(do_save = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{do_save}{Logical, defaults to \code{TRUE}}
+
+\item{verbose}{Logical}
 }
 \description{
 This will download the latest ICD-10 codes and descriptions from the WHO, and

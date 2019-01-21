@@ -216,6 +216,7 @@ fetch_who_api_concept_children <- function(concept_id = NULL, ...) {
 #' package location (and this may not be allowed on a multi-user system,
 #' anyway).
 #' @param do_save Logical, defaults to `TRUE`
+#' @param verbose Logical
 #' @export
 fetch_icd10_who <- function(do_save = TRUE, verbose = FALSE) {
   message("This will take a few minutes. ",

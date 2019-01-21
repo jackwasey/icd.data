@@ -65,6 +65,8 @@ NULL
 #' @details Format:  list with chapter names stored in list names, each with two element
 #'   named character vector with start and end codes.
 #' @name icd10_chapters
+#' @docType data
+#' @keywords datasets
 NULL
 
 #' ICD-10 sub-chapters
@@ -106,6 +108,12 @@ NULL
 #' @name icd9cm_hierarchy
 NULL
 
+#' ICD-10-CM data sources
+#' @name icd10cm_sources
+#' @docType data
+#' @keywords datasets internal
+NULL
+
 #' ICD-10-CM
 #'
 #' The public domain modified ICD-10 classification as published in the public
@@ -122,6 +130,20 @@ NULL
 #' @keywords datasets
 #' @details Format:  data frame, with columns for code, leaf status (0 or 1), short and
 #'   long descriptions.
+#' @seealso \url{https://www.cms.gov/Medicare/Coding/ICD10/}
+#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2018-ICD-10-PCS-Tables-And-Index.zip}
+#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2018-ICD-10-PCS-Order-File.zip}
+#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2017-PCS-Code-Tables.zip}
+#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2017-PCS-Long-Abbrev-Titles.zip}
+#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2016-Code-Descriptions-in-Tabular-Order.zip}
+#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-code-descriptions.zip}
+#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-tables-index.zip}
+#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-Code_Tables-and-Index.zip}
+#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-PCS-long-and-abbreviated-titles.zip}
+#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-ICD10-Code-Descriptions.zip}
+#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-ICD10-Code-Tables-and-Index.zip}
+#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-Code-Tables-and-Index.zip}
+#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-PCS-long-and-abbreviated-titles.zip}
 NULL
 
 #' WHO ICD-10 data
