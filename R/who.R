@@ -56,7 +56,10 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
       stop("WHO data are not yet downloaded.")
     }
   } # end missing
+  if (interactive())
   stop("This binding should be read-only. Use fetch_icd10_who() to populate.")
+  else
+    fetch_icd10_who(do_save = TRUE)
 }
 
 # makeActiveBinding(sym = "icd10who2016d",
@@ -219,7 +222,7 @@ fetch_who_api_concept_children <- function(concept_id = NULL, ...) {
 #' @param verbose Logical
 #' @export
 fetch_icd10_who <- function(do_save = TRUE, verbose = FALSE) {
-  message("This will take a few minutes. ",
+  message("Downloading WHO ICD data. This will take a few minutes. ",
           "Data is cached, so if there is a download error, re-running the ",
           "command will pick up where it left off.")
   icd10who2016 <- .fetch_icd10_who(verbose = verbose)
