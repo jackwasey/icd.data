@@ -594,7 +594,7 @@ rtf_strip <- function(x, ...) {
   # punct not quite the same: [!"\#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~]
   x <- gsub("\\\\[-[:alnum:]]*[ !\"#$%&'()*+,-./:;<=>?@^_`{|}~]?", "", x, ...)
   x <- gsub(" *(\\}|\\{)", "", x, ...)
-  trim(x)
+  trimws(x)
   #nolint end
 }
 

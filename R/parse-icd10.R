@@ -25,10 +25,10 @@ icd10cm_get_all_defined <- function(save_data = FALSE, offline = TRUE) {
   # comes from "short_desc"
   icd10cm2016 <- data.frame(
     #id = substr(x, 1, 5),
-    code = trim(substr(x, 7, 13)),
-    billable = trim(substr(x, 14, 15)) == "1",
-    short_desc = trim(substr(x, 16, 76)),
-    long_desc = trim(substr(x, 77, stop = 1e5)),
+    code = trimws(substr(x, 7, 13)),
+    billable = trimws(substr(x, 14, 15)) == "1",
+    short_desc = trimws(substr(x, 16, 76)),
+    long_desc = trimws(substr(x, 77, stop = 1e5)),
     stringsAsFactors = FALSE
   )
   icd10cm2016[["code"]] <- as.short_diag(as.icd10cm(icd10cm2016[["code"]]))

@@ -67,19 +67,6 @@ strim <- function(x) {
     return(NA_character_)
 }
 
-#' Trim leading and trailing white space
-#'
-#' \code{NA} is accepted and returned, probably as \code{NA_character_}
-#' @param x character vector
-#' @return character vector
-#' @keywords internal manip
-#' @noRd
-trim <- function(x) {
-  nax <- is.na(x)
-  x[!nax] <- .Call("_icd_trimCpp", PACKAGE = "icd", as.character(x[!nax]))
-  x
-}
-
 #' Strip character(s) from character vector
 #'
 #' After benchmarking, \code{gsub} is probably quicker than

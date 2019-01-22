@@ -18,7 +18,7 @@ Description: ICD-9 and ICD-10 definitions from the United States
     comorbidities and working with ICD codes.
 License: GPL-3
 Depends: 
-    R (>= 3.0.0)
+    R (>= 3.4.0)
 Imports:
     memoise,
     utils

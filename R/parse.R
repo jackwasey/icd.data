@@ -186,7 +186,7 @@ icd9_parse_leaf_desc_ver <- function(version = icd9cm_latest_edition(),
                         FUN = function(x) paste(x[-1], collapse = " "),
                         FUN.VALUE = character(1))
   if (!is.na(longlines[1]))
-    long_descs <- trim(vapply(longlines,
+    long_descs <- trimws(vapply(longlines,
                               FUN = function(x) paste(x[-1], collapse = " "),
                               FUN.VALUE = character(1)))
   else long_descs <- NA_character_
@@ -362,9 +362,9 @@ icd9_get_chapters <- function(x, short_code = guess_short(x), verbose = FALSE) {
   all_majors <- vapply(x,
                        function(y) {
                          if (startsWith(y, "E")) {
-                           substr(trim(y), 1L, 4L)
+                           substr(trimws(y), 1L, 4L)
                          } else {
-                           substr(trim(y), 1L, 3L)
+                           substr(trimws(y), 1L, 3L)
                          }
                        },
                        FUN.VALUE = character(1))
