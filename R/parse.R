@@ -1,21 +1,12 @@
-# Copyright (C) 2014 - 2018  Jack O. Wasey
-#
-# This file is part of icd.
-#
-# icd is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# icd is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with icd. If not, see <http:#www.gnu.org/licenses/>.
-
 #nocov start
+
+utils::globalVariables(c("icd9_sub_chapters",
+                         "icd9_chapters",
+                         "icd9cm_latest_edition",
+                         "icd9cm_billable",
+                         "icd9cm_sources",
+                         "icd10cm_sources",
+                         "icd9_majors"))
 
 #' generate all package data
 #'
@@ -32,7 +23,6 @@ update_everything <- function() {
   # development tree, not as installed package
   generate_sysdata()
   load(file.path("R", "sysdata.rda"))
-  generate_spelling()
   # plain text billable codes
   message("Parsing plain text billable codes to create icd9cm_billable list of
                        data frames with descriptions of billable codes only.
@@ -42,29 +32,12 @@ update_everything <- function() {
   message("Parsing comorbidity mappings from SAS and text sources.
                        (Make sure lookup files are updated first.)
                        Depends on icd9cm_hierarchy being updated.")
-  # ICD 9
-  icd9_parse_ahrq_sas(save_data = TRUE, offline = FALSE)
-  icd9_parse_quan_deyo_sas(save_data = TRUE, offline = FALSE)
-  icd9_parse_cc(save_data = TRUE)
-  icd9_parse_ahrq_ccs(single = TRUE, save_data = TRUE, offline = FALSE)
-  icd9_parse_ahrq_ccs(single = FALSE, save_data = TRUE, offline = FALSE)
-  icd10_parse_ahrq_ccs(version = "2018.1", save_data = TRUE, offline = FALSE)
-  icd9_generate_map_quan_elix(save_data = TRUE)
-  icd9_generate_map_elix(save_data = TRUE)
-  # ICD 10
-  icd10_parse_ahrq_sas(save_data = TRUE, offline = FALSE)
-  icd10_parse_cc(save_data = TRUE)
-  icd10_parse_ahrq_pcs(save_data = TRUE)
-  icd10_generate_map_quan_elix(save_data = TRUE)
-  icd10_generate_map_quan_deyo(save_data = TRUE)
-  icd10_generate_map_elix(save_data = TRUE)
   icd10cm_get_all_defined(save_data = TRUE, offline = FALSE)
   icd10cm_extract_sub_chapters(save_data = TRUE, offline = FALSE)
   # reload the newly saved data before generating chapters.
   # The next step depends on icd9cm_billable
   icd9cm_generate_chapters_hierarchy(save_data = TRUE, offline = FALSE,
                                      verbose = FALSE)
-  generate_maps_pccc(save_data = TRUE)
 }
 
 # quick sanity checks - full tests of x in test-parse.R
@@ -187,8 +160,8 @@ icd9_parse_leaf_desc_ver <- function(version = icd9cm_latest_edition(),
                         FUN.VALUE = character(1))
   if (!is.na(longlines[1]))
     long_descs <- trimws(vapply(longlines,
-                              FUN = function(x) paste(x[-1], collapse = " "),
-                              FUN.VALUE = character(1)))
+                                FUN = function(x) paste(x[-1], collapse = " "),
+                                FUN.VALUE = character(1)))
   else long_descs <- NA_character_
   message("codes and descs separated")
   out <- data.frame(code = short_codes,
@@ -196,7 +169,7 @@ icd9_parse_leaf_desc_ver <- function(version = icd9cm_latest_edition(),
                     long_desc = long_descs,
                     stringsAsFactors = FALSE)
   message("now sort so that E is after V")
-  reorder <- icd9_order_short(out[["code"]])
+  reorder <- icd::order.icd9(out[["code"]])
   stopifnot(!anyNA(out[["code"]]))
   stopifnot(!anyNA(reorder))
   stopifnot(!any(grepl(out[["code"]], pattern = "[[:space:]]")))
@@ -244,7 +217,7 @@ parse_leaf_desc_icd9cm_v27 <- function(offline = TRUE) {
   close(f)
   names(icd9cm_billable27) <- c("code", "long_desc", "short_desc")
   icd9cm_billable27 <- icd9cm_billable27[c(1, 3, 2)] # reorder columns
-  reorder <- icd9_order_short(icd9cm_billable27[["code"]])
+  reorder <- icd::order.icd9(icd9cm_billable27[["code"]])
   invisible(icd9cm_billable27[reorder, ])
 }
 
@@ -268,7 +241,7 @@ icd9cm_generate_chapters_hierarchy <- function(save_data = FALSE,
   stopifnot(is.logical(verbose), length(verbose) == 1)
   stopifnot(is.logical(offline), length(offline) == 1)
   stopifnot(is.logical(perl), length(perl) == 1)
-  stopifnot(is.logical(useBytes), length(useBytes) == 1)
+  stopifnot(is.logical(use_bytes), length(use_bytes) == 1)
   icd9_rtf <- rtf_parse_year(year = "2011", perl = perl, useBytes = use_bytes,
                              save_data = FALSE, verbose = verbose,
                              offline = offline)
@@ -291,7 +264,7 @@ icd9cm_generate_chapters_hierarchy <- function(save_data = FALSE,
   # is no short description, e.g. for most Major codes, or intermediate codes,
   # just copy the long description over.
   bill32 <- icd9cm_billable[["32"]]
-  billable_codes <- get_billable.icd9(out[["code"]], short_code = TRUE)
+  billable_codes <- icd::get_billable(out[["code"]], short_code = TRUE)
   billable_rows <- which(out[["code"]] %in% billable_codes)
   title_rows <- which(out[["code"]] %nin% billable_codes)
   stopifnot(setdiff(c(billable_rows, title_rows),
@@ -310,7 +283,7 @@ icd9cm_generate_chapters_hierarchy <- function(save_data = FALSE,
   out[["short_desc"]] <- enc2utf8(out[["short_desc"]])
   out[["long_desc"]] <- enc2utf8(out[["long_desc"]])
   icd9cm_hierarchy_sanity(out)
-  billable <- is_billable.icd9cm(out$code)
+  billable <- icd::is_billable(out$code)
   icd9cm_hierarchy <- cbind(out[1], billable, out[-1])
   if (save_data)
     save_in_data_dir(icd9cm_hierarchy)
@@ -325,7 +298,10 @@ icd9cm_generate_chapters_hierarchy <- function(save_data = FALSE,
 fixSubchapterNa <- function(x, start, end) {
   # 740 CONGENITAL ANOMALIES is a chapter with no sub-chapters defined. For
   # consistency, assign the same name to sub-chapters
-  congenital <- x[["code"]] %in% (start %i9sa% end)
+  congenital <- x[["code"]] %in% icd::expand_range(start,
+                                                   end,
+                                                   short_code = TRUE,
+                                                   defined = FALSE)
   # assert all the same:
   stopifnot(all(x[congenital[1], "chapter"] == x[congenital[-1], "chapter"]))
   # insert a new level into the sub-chapter factor in the right place
@@ -351,7 +327,7 @@ fixSubchapterNa <- function(x, start, end) {
 #' @template verbose
 #' @keywords internal datagen
 #' @noRd
-icd9_get_chapters <- function(x, short_code = guess_short(x), verbose = FALSE) {
+icd9_get_chapters <- function(x, short_code, verbose = FALSE) {
   # set up comorbidity maps for chapters/sub/major group, then loop through each
   # ICD-9 code, loop through each comorbidity and lookup code in the map for
   # that field, then add the factor level for the match. There should be 100%
@@ -360,13 +336,7 @@ icd9_get_chapters <- function(x, short_code = guess_short(x), verbose = FALSE) {
   stopifnot(is.logical(short_code), length(short_code) == 1)
   x <- as_char_no_warn(x)
   all_majors <- vapply(x,
-                       function(y) {
-                         if (startsWith(y, "E")) {
-                           substr(trimws(y), 1L, 4L)
-                         } else {
-                           substr(trimws(y), 1L, 3L)
-                         }
-                       },
+                       get_icd9_major,
                        FUN.VALUE = character(1))
   majors <- unique(all_majors)
   lenm <- length(majors)
@@ -379,13 +349,13 @@ icd9_get_chapters <- function(x, short_code = guess_short(x), verbose = FALSE) {
   )
   chap_lookup <- lapply(icd9_chapters, function(y)
     vec_to_env_true(
-      icd:::expand_range_major(icd:::as.icd9cm(y[["start"]]),
-                               y[["end"]], defined = FALSE)
+      icd::expand_range_major(icd::as.icd9cm(y[["start"]]),
+                              y[["end"]], defined = FALSE)
     )
   )
   subchap_lookup <- lapply(icd9_sub_chapters, function(y)
     vec_to_env_true(
-      icd::expand_range_major(icd:::as.icd9cm(y[["start"]]),
+      icd::expand_range_major(icd::as.icd9cm(y[["start"]]),
                               y[["end"]],
                               defined = FALSE)
     )

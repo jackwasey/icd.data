@@ -1,20 +1,3 @@
-# Copyright (C) 2014 - 2018  Jack O. Wasey
-#
-# This file is part of icd.data.
-#
-# icd.data is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# icd.data is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with icd.data. If not, see <http:#www.gnu.org/licenses/>.
-
 #' ICD-9 chapters
 #'
 #' \code{icd9_chapters}, \code{icd9_chapters_sub} and \code{icd9_majors} contain
@@ -106,6 +89,12 @@ NULL
 #' @source
 #' \url{http://wonder.cdc.gov/wonder/sci_data/codes/icd9/type_txt/icd9abb.asp}
 #' @name icd9cm_hierarchy
+NULL
+
+#' ICD-9-CM data sources
+#' @name icd9cm_sources
+#' @docType data
+#' @keywords datasets internal
 NULL
 
 #' ICD-10-CM data sources
@@ -249,20 +238,6 @@ NULL
 #' Transuranium & Uranium Registries, published in the public domain.
 #' @name uranium_pathology
 #' @source \url{https://ustur.wsu.edu/about-us/}
-#' @docType data
-#' @keywords datasets
-NULL
-
-#' National Hospital Discharge Survey 2010 data
-#'
-#' This is public domain data from the US [Center for Disease
-#' Control](https://www.cdc.gov). This is deidentified patient data describing
-#' the information at the end of a hospital admission, including demographic
-#' information, admission diagnoses, comorbidities and procedure codes, death or
-#' disposition. There are no identifiers in the data, so an integer count was
-#' included in this data.
-#' @name nhds2010
-#' @source \url{https://www.cdc.gov/nchs/nhds/index.htm}
 #' @docType data
 #' @keywords datasets
 NULL

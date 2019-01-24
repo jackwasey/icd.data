@@ -1,3 +1,10 @@
+# these are taken from 'icd', which is where they are derived
+re_icd9_decimal_strict_bare <- "[[:digit:]]{3}(?:\\.(?:[[:digit:]]{1,2})?)?|V(?:0[1-9]|[1-9][[:digit:]])(?:\\.(?:[[:digit:]]{1,2})?)?|E[[:digit:]]{3}(?:\\.(?:[[:digit:]]{1})?)?" #nolint
+re_icd9_decimal_bare <- "[[:digit:]]{1,3}(?:\\.(?:[[:digit:]]{1,2})?)?|[Vv](?:0[1-9]|[1-9][[:digit:]]?)(?:\\.(?:[[:digit:]]{1,2})?)?|[Ee][[:digit:]]{1,3}(?:\\.(?:[[:digit:]]{1})?)?" #nolint
+re_icd9_major_strict_bare <- "(?:[[:digit:]]{3}|V(?:0[1-9]|[1-9][[:digit:]])|E[[:digit:]]{3})" #nolint
+re_icd9_major_bare <- "(?:[[:digit:]]{1,3}|[Vv](?:0[1-9]|[1-9][[:digit:]]?)|[Ee][[:digit:]]{1,3})" #nolint
+re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
+
 # try parsing the RTF, and therefore get subheadings, as well as billable codes.
 # ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Publications/ICD9-CM/2011/
 #
@@ -12,6 +19,7 @@
 #' @param year character vector of length one, e.g. "2011"
 #' @param offline single logical value
 #' @keywords internal datagen
+#' @noRd
 rtf_fetch_year <- function(year, offline = TRUE) {
   year <- as.character(year)
   stopifnot(is.logical(offline), length(offline) == 1)
@@ -36,6 +44,7 @@ rtf_fetch_year <- function(year, offline = TRUE) {
 #' @source \url{https://www.cdc.gov/nchs/icd/icd9cm.htm} Navigate to
 #' 'Dtab12.zip' in the 2011 data. and similar files run from 1996 to 2011.
 #' @keywords internal datagen
+#' @noRd
 rtf_parse_year <- function(year = "2011", ..., save_data = FALSE,
                            verbose = FALSE, offline = TRUE) {
   year <- as.character(year)
@@ -52,10 +61,10 @@ rtf_parse_year <- function(year = "2011", ..., save_data = FALSE,
   out <- rtf_parse_lines(rtf_lines, verbose = verbose,
                          ..., save_extras = save_data)
   out <- swap_names_vals(out)
-  out <- sort_icd.icd9(out, short_code = FALSE)
+  out <- icd::sort_icd(out, short_code = FALSE)
   invisible(
     data.frame(
-      code = icd9cm(decimal_to_short.icd9(unname(out))),
+      code = icd::as.icd9cm(icd::decimal_to_short(unname(out))),
       desc = names(out),
       stringsAsFactors = FALSE)
   )
@@ -90,6 +99,7 @@ rtf_pre_filter <- function(filtered, ...) {
 #'   the other way around, but the tests are now wired for this layout. 'Tidy'
 #'   data would favour having an unnamed two-column data frame.
 #' @keywords internal datagen
+#' @noRd
 rtf_parse_lines <- function(rtf_lines, verbose = FALSE,
                             save_extras = FALSE, ...) {
   stopifnot(is.character(rtf_lines))
@@ -143,6 +153,7 @@ rtf_parse_lines <- function(rtf_lines, verbose = FALSE,
 #' Ignore excluded codes, and fix some odd-balls so they don't get dropped
 #' "707.02Upper back", "066.40West Nile fever, unspecified", etc
 #' @keywords internal datagen
+#' @noRd
 rtf_filter_excludes <- function(filtered, ...) {
   # drop excludes: lines with bracketed codes (removes chapter headings)
   re_bracketed <- paste0("\\((", re_icd9_decimal_bare,
@@ -160,6 +171,7 @@ rtf_filter_excludes <- function(filtered, ...) {
 #' each item, i.e. where a code begins a line. Some codes have ten or so
 #' alternative descriptions, e.g. 410.0
 #' @keywords internal datagen
+#' @noRd
 rtf_main_filter <- function(filtered, ...) {
   filtered <- grep(paste0("^[[:space:]]*(", re_icd9_decimal_strict_bare, ") "),
                    filtered, value = TRUE, ...)
@@ -207,7 +219,7 @@ rtf_make_sub_chapters <- function(filtered, ..., save = FALSE) {
     "(", re_icd9_major_strict_bare, ")",
     "(-(", re_icd9_major_strict_bare, "))?",
     "\\)")
-  chapter_to_desc_range.icd9(
+  chapter_to_desc_range(
     grep(re_subchap_either, filtered,
          value = TRUE, ...)
   )
@@ -253,6 +265,7 @@ rtf_make_invalid_qual <- function(filtered, ...) {
 #' @return named character vector, names are the ICD codes, values are the
 #'   descriptions
 #' @keywords internal datagen
+#' @noRd
 rtf_generate_fourth_lookup <- function(filtered, fourth_rows, verbose = FALSE) {
   lookup_fourth <- c()
   for (f in fourth_rows) {
@@ -279,7 +292,7 @@ rtf_generate_fourth_lookup <- function(filtered, fourth_rows, verbose = FALSE) {
   }
   if (verbose) {
     message("lookup_fourth has length: ", length(lookup_fourth), ", head: ")
-    print(head(lookup_fourth))
+    print(lookup_fourth[1:5, ])
   }
   lookup_fourth
 }
@@ -298,7 +311,7 @@ rtf_lookup_fourth_alt_base <- function(out, lookup_fourth, verbose = FALSE) {
   for (f_num in seq_along(lookup_fourth)) {
     lf <- lookup_fourth[f_num]
     f <- names(lf)
-    parent_code <- get_major.icd9(f, short_code = FALSE)
+    parent_code <- get_icd9_major(f)
     if (parent_code %in% names(out)) {
       pair_fourth <- paste(out[parent_code], lf, sep = ", ")
       names(pair_fourth) <- f
@@ -307,7 +320,7 @@ rtf_lookup_fourth_alt_base <- function(out, lookup_fourth, verbose = FALSE) {
   }
   if (verbose) {
     message("fourth output lines: length = ", length(out_fourth), ", head: ")
-    print(head(out_fourth))
+    print(out_fourth[1:5, ])
   }
   out_fourth
 }
@@ -318,7 +331,7 @@ rtf_lookup_fourth_alt_env <- function(out, lookup_fourth, verbose = FALSE) {
   for (f_num in seq_along(lookup_fourth)) {
     lf <- lookup_fourth[f_num]
     f <- names(lf)
-    parent_code <- get_major.icd9(f, short_code = FALSE)
+    parent_code <- get_icd9_major(f)
     if (!is.null(out_env[[parent_code]])) {
       pair_fourth <- paste(out[parent_code], lf, sep = ", ")
       names(pair_fourth) <- f
@@ -327,7 +340,7 @@ rtf_lookup_fourth_alt_env <- function(out, lookup_fourth, verbose = FALSE) {
   }
   if (verbose) {
     message("fourth output lines: length = ", length(out_fourth), ", head: ")
-    print(head(out_fourth))
+    print(out_fourth[1:5])
   }
   rm(out_env)
   out_fourth
@@ -370,7 +383,9 @@ rtf_make_lookup_fifth <- function(filtered, re_fifth_range_other, ..., verbose =
   f1 <- filtered[seq(from = lines_V30V39 + 1, to = lines_V30V39 + 3)]
   f2 <- grep(f1, pattern = "^[[:digit:]][[:space:]].*", value = TRUE, ...)
   suffices_V30V39 <- str_pair_match(f2, "([[:digit:]])[[:space:]](.*)", ...)
-  range <- c("V30" %i9da% "V37", children.icd9("V39", short_code = FALSE, defined = FALSE))
+  range <- c(icd::expand_range("V30", "V37",
+                               short_code = FALSE, defined = FALSE),
+             icd::children("V39", short_code = FALSE, defined = FALSE))
   range <- grep(re_V30V39_fifth, range, value = TRUE, ...)
   names(range) <- range
   for (fifth in names(suffices_V30V39)) {
@@ -400,7 +415,7 @@ rtf_lookup_fifth_alt_base <- function(out, lookup_fifth, verbose = FALSE) {
   }
   if (verbose) {
     message("fifth output lines: length = ", length(out_fifth), ", head: ")
-    print(head(out_fifth))
+    print(out_fifth[1:5])
   }
   out_fifth
 }
@@ -448,6 +463,7 @@ rtf_fix_unicode <- function(filtered, ...) {
 #' clean up duplicates (about 350 in 2015 data), mostly one very brief
 #' description and a correct longer one; or, identical descriptions
 #' @keywords internal datagen
+#' @noRd
 rtf_fix_duplicates <- function(out, verbose) {
   dupes <- out[duplicated(names(out)) | duplicated(names(out), fromLast = TRUE)]
   dupes <- unique(names(dupes))
@@ -473,6 +489,7 @@ rtf_fix_duplicates <- function(out, verbose) {
 #' others don't use whole subset of fourth or fifth digit qualifiers) going to
 #' have to parse these, e.g. [0,1,3], as there are so many...
 #' @keywords internal datagen
+#' @noRd
 rtf_fix_quirks_2015 <- function(out) {
   out <- out[grep("65[12356789]\\.[[:digit:]][24]", names(out), invert = TRUE)]
 
@@ -498,6 +515,7 @@ rtf_fix_quirks_2015 <- function(out) {
 #'   digits, but we haven't parsed them yet.
 #' @template verbose
 #' @keywords internal datagen
+#' @noRd
 rtf_parse_fifth_digit_range <- function(row_str, verbose = FALSE) {
   stopifnot(is.character(row_str))
   stopifnot(is.logical(verbose), length(verbose) == 1)
@@ -519,14 +537,14 @@ rtf_parse_fifth_digit_range <- function(row_str, verbose = FALSE) {
       if (grepl("-", dotmnr)) {
         # range of minors
         pair <- unlist(strsplit(dotmnr, "-", fixed = TRUE))
-        first <- paste0(get_major.icd9(base_code, short_code = FALSE), pair[1])
-        last <- paste0(get_major.icd9(base_code, short_code = FALSE), pair[2])
+        first <- paste0(get_icd9_major(base_code), pair[1])
+        last <- paste0(get_icd9_major(base_code), pair[2])
         if (verbose)
           message("expanding specified minor range from ", first, " to ", last)
-        out <- c(out, first %i9da% last)
+        out <- c(out, icd::expand_range(first, last, short_code = FALSE, defined = FALSE))
       } else {
-        single <- paste0(get_major.icd9(base_code, short_code = FALSE), dotmnr)
-        out <- c(out, children.icd9(single, short_code = FALSE, defined = FALSE))
+        single <- paste0(get_icd9_major(base_code), dotmnr)
+        out <- c(out, icd::children(single, short_code = FALSE, defined = FALSE))
       }
     }
     vals <- vals[1] # still need to process the base code
@@ -546,7 +564,8 @@ rtf_parse_fifth_digit_range <- function(row_str, verbose = FALSE) {
       if (as.integer(pair_two) - as.integer(pair_one) > 10) {
         warning("probable formatting misinterpretation: huge range expansion")
       }
-      out <- c(out, pair[1] %i9da% pair[2])
+      out <- c(out, icd::expand_range(pair[1], pair[2],
+                                      short_code = FALSE, defined = FALSE))
     } else {
       # take care of single values
       if (!icd::is_valid(v, short_code = FALSE))
@@ -583,6 +602,7 @@ rtf_parse_qualifier_subset <- function(qual) {
 #' just for \\tab, replace with space, otherwise, drop RTF tags entirely
 #' @param x vector of character strings containing RTF
 #' @keywords internal datagen
+#' @noRd
 rtf_strip <- function(x, ...) {
   #nolint start
   x <- gsub("\\\\tab ", " ", x, ...)

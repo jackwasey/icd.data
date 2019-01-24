@@ -30,9 +30,9 @@ fetch_icd10cm_year <- function(year = "2018", dx = TRUE,
   stopifnot(is.logical(dx), length(dx) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
   stopifnot(is.logical(offline), length(offline) == 1)
-  stopifnot(year %in% names(icd::icd10_sources))
+  stopifnot(year %in% names(icd10cm_sources))
   if (verbose) message(ifelse(dx, "dx", "pcs"))
-  s <- icd::icd10_sources[[year]]
+  s <- icd10cm_sources[[year]]
   url <- paste0(s$base_url, s$dx_zip)
   file_name <- s$dx_flat
   if (!dx) {
@@ -98,4 +98,44 @@ save_in_data_dir <- function(var_name, suffix = "", data_path = "data",
   message("Now reload package to enable updated/new data: ", var_name)
   invisible(get(var_name, envir = envir))
 }
-#nocov end
+
+#' unzip a single file from URL
+#'
+#' take a single file from zip located at a given URL, unzip into temporary
+#' directory, and copy to the given \code{save_path}
+#' @param url URL of a zip file
+#' @param file_name file name of the resource within the zip file
+#' @param save_path file path to save the first file from the zip
+#' @keywords internal
+#' @noRd
+unzip_single <- function(url, file_name, save_path) {
+  stopifnot(is.character(url))
+  stopifnot(is.character(file_name))
+  stopifnot(is.character(save_path))
+  zipfile <- tempfile()
+  dl_code <- utils::download.file(url = url, destfile = zipfile,
+                                  quiet = TRUE, method = "libcurl", mode = "wb")
+  stopifnot(dl_code == 0)
+  zipdir <- tempfile() # i do want tempfile, so I get an empty new directory
+  dir.create(zipdir)
+  utils::unzip(zipfile, exdir = zipdir)  # files="" so extract all
+  files <- list.files(zipdir)
+  if (missing(file_name)) {
+    if (length(files) == 1) {
+      file_name <- files
+    } else {
+      stop("multiple files in zip, but no file name specified: ",
+           paste(files, collapse = ", "))
+    }
+  } else {
+    if (!file_name %in% files) {
+      message(files, file_name)
+      stop(paste(file_name, " not found in ", paste(files, collapse = ", ")))
+    }
+  }
+  ret <- file.copy(file.path(zipdir, file_name), save_path, overwrite = TRUE)
+  unlink(zipdir, recursive = TRUE)
+  ret
+}
+
+# nocov end

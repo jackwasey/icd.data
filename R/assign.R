@@ -26,12 +26,6 @@ assign_icd_data <- function(env = parent.frame()) {
          })
 }
 
-#' @name icd.data
-#' @aliases icd.data-package
-#' @concept ICD-9 ICD-10 ICD
-#' @author Jack O. Wasey \email{jack@@jackwasey.com}
-"_PACKAGE"
-
 #' List the data in this package
 #' @examples
 #' \dontrun{

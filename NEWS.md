@@ -1,9 +1,8 @@
 # icd.data 1.1
 
-* Added National Hospital Discharge Survery (NHDS) 2010 data
 * Added capability for each user to download the WHO ICD-10 data on first use.
-* Use gzip compression for data, although not as small, much faster to
-  decompress
+* Moved data creation code from 'icd' package to 'icd.data'
+* Expand Vermont data from 1,000 to about 50,000 rows
 
 # icd.data 1.0
 

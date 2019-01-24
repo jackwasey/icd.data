@@ -134,9 +134,9 @@ if (rtf_year_ok(test_year)) {
   nrtf <- names(rtf)
 
   test_that("all parsed codes are valid decimals", {
-    expect_true(all(is_valid.icd9(nrtf, short_code = FALSE)),
+    expect_true(all(icd::is_valid(nrtf, short_code = FALSE)),
                 info = paste("invalid codes are :",
-                             paste(get_invalid.icd9(nrtf),
+                             paste(icd::get_invalid(nrtf),
                                    collapse = ", ")))
   })
 
@@ -148,7 +148,6 @@ if (rtf_year_ok(test_year)) {
   })
 
   test_that("all defined codes from csv are in rtf extract", {
-    missing_from_rtf <- setdiff(short_to_decimal.icd9(icd9cm_hierarchy[["code"]]), nrtf)
     expect_equal(length(missing_from_rtf), 0,
                  info = paste("missing codes are:", paste(missing_from_rtf, collapse = ", ")))
   })
@@ -156,7 +155,7 @@ if (rtf_year_ok(test_year)) {
   test_that("majors extracted from web page are the same as those from RTF", {
     webmajors <- unlist(icd9_majors) # why is this even a list not a named vector?
     work <- swap_names_vals(rtf)
-    rtfmajors <- work[is_major.icd9(work)]
+    rtfmajors <- work[icd::is_major(work)]
 
     expect_identical(setdiff(rtfmajors, webmajors), character(0),
                      info = paste("these majors are from RTF but not retrieved from web: ",
@@ -172,12 +171,12 @@ if (rtf_year_ok(test_year)) {
     skip_flat_icd9_avail(test_ver)
 
     v32 <- icd9_parse_leaf_desc_ver(version = test_ver, save_data = FALSE, offline = TRUE)
-    leaves <- short_to_decimal.icd9(v32$code)
+    leaves <- icd::short_to_decimal(v32$code)
     expect_true(all(leaves %in% nrtf))
 
     rtf_leaves <- sort(
       swap_names_vals(
-        rtf[nrtf %in% short_to_decimal.icd9(v32$code)]))
+        rtf[nrtf %in% icd::short_to_decimal(v32$code)]))
     if (FALSE && interactive()) {
       assign("manual_compare_descs",
              data.frame("From TXT" = v32$long_desc,
@@ -235,7 +234,7 @@ if (rtf_year_ok(test_year)) {
       paste0("854.", 2:7),
       NULL)
     expect_true(all(bad_ones %nin% nrtf))
-    expect_true(all(children.icd9(bad_ones) %nin% nrtf))
+    expect_true(all(icd::children(bad_ones) %nin% nrtf))
     expect_true("012.4" %nin% nrtf)
     expect_true("012.40" %nin% nrtf)
     expect_true("012.46" %nin% nrtf)

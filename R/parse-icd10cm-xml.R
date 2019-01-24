@@ -37,7 +37,7 @@ icd10cm_extract_sub_chapters <- function(save_data = FALSE, offline = TRUE) {
     subchaps <- c_kids[subchap_indices]
     for (subchap in subchaps) {
       new_sub_chap_range <-
-        chapter_to_desc_range.icd10(
+        chapter_to_desc_range(
           xml2::xml_text(
             xml2::xml_children(
               subchap

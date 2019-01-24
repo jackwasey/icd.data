@@ -52,21 +52,6 @@ str_match_all <- function(string, pattern, ...) {
   regmatches(x = string, m = regexec(pattern = pattern, text = string, ...))
 }
 
-#' Trim leading and trailing white space from a single string
-#'
-#' \code{NA} is accepted (and returned as \code{NA_character_})
-#' @param x character vector of length one
-#' @return character vector of length one
-#' @keywords internal character
-#' @noRd
-strim <- function(x) {
-  assert_string(x, na.ok = TRUE)
-  if (!is.na(x[1]))
-    strimCpp(as.character(x))
-  else
-    return(NA_character_)
-}
-
 #' Strip character(s) from character vector
 #'
 #' After benchmarking, \code{gsub} is probably quicker than

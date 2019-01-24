@@ -51,7 +51,7 @@ download_to_data_raw <- function(
   data_raw_path = get_raw_data_dir()
 ) {
   stopifnot(is.character(url), length(url) == 1)
-  stopifnot(is.character(filename), length(filename) == 1)
+  stopifnot(is.character(file_name), length(file_name) == 1)
   stopifnot(is.logical(offline), length(offline) == 1)
   if (!dir.exists(data_raw_path)) data_raw_path <- tempdir()
   save_path <- file.path(data_raw_path, file_name)

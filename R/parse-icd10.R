@@ -1,5 +1,6 @@
 # nocov start
 
+utils::globalVariables(c("icd10cm2016", "icd10_chapters", "icd10_sub_chapters"))
 #' get all ICD-10-CM codes
 #'
 #' Gets all ICD-10-CM codes from an archive on the CDC web site at Initially,
@@ -31,11 +32,13 @@ icd10cm_get_all_defined <- function(save_data = FALSE, offline = TRUE) {
     long_desc = trimws(substr(x, 77, stop = 1e5)),
     stringsAsFactors = FALSE
   )
-  icd10cm2016[["code"]] <- as.short_diag(as.icd10cm(icd10cm2016[["code"]]))
+  icd10cm2016[["code"]] <-
+    icd::as.short_diag(
+      icd::as.icd10cm(icd10cm2016[["code"]]))
   icd10cm2016[["three_digit"]] <-
-    factor_nosort(get_major(icd10cm2016[["code"]]))
+    factor(get_icd10_major(icd10cm2016[["code"]]))
   # here we must re-factor so we don't have un-used levels in major
-  icd10cm2016[["major"]] <- factor_nosort(
+  icd10cm2016[["major"]] <- factor(
     merge(x = icd10cm2016["three_digit"],
           y = icd10cm2016[c("code", "short_desc")],
           by.x = "three_digit", by.y = "code",
@@ -58,8 +61,10 @@ icd10cm_get_all_defined <- function(save_data = FALSE, offline = TRUE) {
   invisible(icd10cm2016)
 }
 
-icd10_generate_subchap_lookup <- function(lk_majors, verbose = FALSE) {
-  lk_majors <- unique(icd10cm2016[["three_digit"]])
+icd10_generate_subchap_lookup <- function(
+  lk_majors = unique(icd10cm2016[["three_digit"]]),
+  verbose = FALSE
+) {
   sc_lookup <- data.frame(major = NULL, desc = NULL)
   for (scn in names(icd10_sub_chapters)) {
     sc <- icd10_sub_chapters[[scn]]
@@ -117,7 +122,7 @@ icd10_parse_ahrq_pcs <- function(save_data = TRUE) {
 }
 
 icd10_parse_cms_pcs_all <- function(save_data = TRUE) {
-  for (year in names(icd::icd10_sources)) {
+  for (year in names(icd10cm_sources)) {
     var_name <- paste0("icd10_pcs_", year)
     assign(var_name, icd10_parse_cms_pcs_year(year))
     save_in_data_dir(var_name)
@@ -125,7 +130,7 @@ icd10_parse_cms_pcs_all <- function(save_data = TRUE) {
 }
 
 icd10_parse_cms_pcs_year <- function(year = "2018") {
-  pcs_file <- icd::icd10_sources[[year]][["pcs_flat"]]
+  pcs_file <- icd10cm_sources[[year]][["pcs_flat"]]
   pcs_path <- file.path(get_raw_data_dir(), pcs_file)
   read.fwf(pcs_path, c(5, 8, 2, 62, 120), header = FALSE,
            col.names = c("count", "pcs", "billable", "short_desc", "long_desc"))
