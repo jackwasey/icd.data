@@ -2,14 +2,19 @@
 generate_sysdata <- function() {
   icd9cm_sources <- make_icd9cm_sources()
   icd10cm_sources <- make_icd10cm_sources()
-  # minimal data sources validation
   long_fns <- icd9cm_sources[["long_filename"]]
   short_fns <- icd9cm_sources[["long_filename"]]
   # make.names is stricter than necessary, but no function to sanitize a file
   # name in R, although R CMD check of course can do it...
-  message("non-portable long file names: ",
+  message("non-portable ICD-9-CM long file names: ",
           paste(long_fns[long_fns != make.names(long_fns)]))
-  message("non-portable short file names: ",
+  message("non-portable ICD-9-CMshort file names: ",
+          paste(short_fns[short_fns != make.names(short_fns)]))
+  long_fns <- icd10cm_sources[["long_filename"]]
+  short_fns <- icd10cm_sources[["long_filename"]]
+  message("non-portable ICD-10-CM long file names: ",
+          paste(long_fns[long_fns != make.names(long_fns)]))
+  message("non-portable ICD-10-CM short file names: ",
           paste(short_fns[short_fns != make.names(short_fns)]))
   sysdata_names <- c(deparse(quote(icd9cm_sources)),
                      deparse(quote(icd10cm_sources)))
@@ -22,13 +27,15 @@ generate_sysdata <- function() {
 }
 
 make_icd9cm_sources <- function() {
-  cms_base <- "http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/"
+  cms_base <-
+    "http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/"
   cdc_base <- "http://ftp.cdc.gov/pub/Health_Statistics/NCHS/Publications/"
   data.frame(
     version = as.character(c(32, 31, 30, 29, 28, 27, 26, 25, 24, 23)),
     f_year = c(as.character(seq(2014, 2005))),
-    start_date = c("2014-10-01", "2013-10-01", "2012-10-01", "2011-10-01", "2010-10-01",
-                   "2009-10-01", "2008-10-01", "2007-10-01", "2006-10-01", "2005-10-01"),
+    start_date = c("2014-10-01", "2013-10-01", "2012-10-01", "2011-10-01",
+                   "2010-10-01", "2009-10-01", "2008-10-01", "2007-10-01",
+                   "2006-10-01", "2005-10-01"),
     long_filename = c(
       "CMS32_DESC_LONG_DX.txt",
       "CMS31_DESC_LONG_DX.txt",

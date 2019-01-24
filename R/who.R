@@ -37,12 +37,12 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
   icd10who2016_path <- file.path(get_resource_path(), "icd10who2016.rds")
   var_name <- "icd10who2016"
   if (missing(x)) {
-    if (exists(var_name, envir = .icd.data.env))
-      return(get("icd10who2016", envir = .icd.data.env))
+    if (exists(var_name, envir = .icd_data_env))
+      return(get("icd10who2016", envir = .icd_data_env))
     else {
       if (file.exists(icd10who2016_path)) {
         icd10who2016 <- readRDS(icd10who2016_path)
-        assign("icd10who2016", icd10who2016, envir = .icd.data.env)
+        assign("icd10who2016", icd10who2016, envir = .icd_data_env)
         return(icd10who2016)
       }
       message("WHO ICD data must be downloaded by each user due to copyright ",

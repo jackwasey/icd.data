@@ -36,8 +36,8 @@ update_everything <- function() {
   icd10cm_extract_sub_chapters(save_data = TRUE, offline = FALSE)
   # reload the newly saved data before generating chapters.
   # The next step depends on icd9cm_billable
-  icd9cm_generate_chapters_hierarchy(save_data = TRUE, offline = FALSE,
-                                     verbose = FALSE)
+  icd9cm_gen_chap_hier(save_data = TRUE, offline = FALSE,
+                       verbose = FALSE)
 }
 
 # quick sanity checks - full tests of x in test-parse.R
@@ -78,15 +78,18 @@ parse_leaf_descriptions_all <- function(save_data = TRUE, offline = TRUE) {
   stopifnot(is.logical(save_data), length(save_data) == 1)
   stopifnot(is.logical(offline), length(offline) == 1)
   versions <- icd9cm_sources$version
-  message("Available versions of sources are: ", paste(versions, collapse = ", "))
+  message("Available versions of sources are: ",
+          paste(versions, collapse = ", "))
   icd9cm_billable <- list()
   for (v in versions) {
     message("working on version: ", v)
     icd9cm_billable[[v]] <- icd9_parse_leaf_desc_ver(version = v,
                                                      save_data = save_data,
                                                      offline = offline)
-    icd9cm_billable[[v]][["short_desc"]] <- enc2utf8(icd9cm_billable[[v]][["short_desc"]])
-    icd9cm_billable[[v]][["long_desc"]] <- enc2utf8(icd9cm_billable[[v]][["long_desc"]])
+    icd9cm_billable[[v]][["short_desc"]] <-
+      enc2utf8(icd9cm_billable[[v]][["short_desc"]])
+    icd9cm_billable[[v]][["long_desc"]] <-
+      enc2utf8(icd9cm_billable[[v]][["long_desc"]])
   }
   if (save_data)
     save_in_data_dir(icd9cm_billable)
@@ -125,12 +128,17 @@ icd9_parse_leaf_desc_ver <- function(version = icd9cm_latest_edition(),
   fn_short_orig <- dat$short_filename
   fn_long_orig <- dat$long_filename
 
-  f_info_short <- unzip_to_data_raw(dat$url, file_name = fn_short_orig, offline = offline)
+  f_info_short <- unzip_to_data_raw(dat$url,
+                                    file_name = fn_short_orig,
+                                    offline = offline)
   f_info_long <- NULL
   if (!is.na(fn_long_orig))
-    f_info_long <- unzip_to_data_raw(dat$url, file_name = fn_long_orig, offline = offline)
-  message("short filename = ", f_info_short$file_name, "\n long filename = ", f_info_long$file_name)
-  message("short path = ", f_info_short$file_path, "\n long path = ", f_info_long$file_name)
+    f_info_long <- unzip_to_data_raw(dat$url, file_name = fn_long_orig,
+                                     offline = offline)
+  message("short filename = ", f_info_short$file_name,
+          "\n long filename = ", f_info_long$file_name)
+  message("short path = ", f_info_short$file_path,
+          "\n long path = ", f_info_long$file_name)
   # yes, specify encoding twice, once to declare the source format, and again
   # to tell R to flag (apparently only where necessary), the destination
   # strings: in our case this is about ten accented character in long
@@ -188,10 +196,10 @@ icd9_parse_leaf_desc_ver <- function(version = icd9cm_latest_edition(),
     message("Found labelled encodings in long_desc: ",
             paste(unique(encs), collapse = ", "))
     message("non-ASCII rows of long descriptions are: ",
-            paste(get_non_ASCII(out[["long_desc"]]), collapse = ", "))
+            paste(get_non_ascii(out[["long_desc"]]), collapse = ", "))
     message("Encodings found in long_desc: ",
             unique(
-              Encoding(out[["long_desc"]][is_non_ASCII(out[["long_desc"]])])))
+              Encoding(out[["long_desc"]][is_non_ascii(out[["long_desc"]])])))
   }
   invisible(out)
 }
@@ -232,9 +240,9 @@ parse_leaf_desc_icd9cm_v27 <- function(offline = TRUE) {
 #' @template offline
 #' @keywords internal datagen
 #' @noRd
-icd9cm_generate_chapters_hierarchy <- function(save_data = FALSE,
-                                               verbose = FALSE, offline = TRUE,
-                                               perl = TRUE, use_bytes = TRUE) {
+icd9cm_gen_chap_hier <- function(save_data = FALSE,
+                                 verbose = FALSE, offline = TRUE,
+                                 perl = TRUE, use_bytes = TRUE) {
   # TODO: Someday add 'billable' column, and make consistent ICD-9 and ICD-10
   # lookup tables
   stopifnot(is.logical(save_data), length(save_data) == 1)
@@ -257,9 +265,9 @@ icd9cm_generate_chapters_hierarchy <- function(save_data = FALSE,
     chaps)
   # fix congenital abnormalities not having sub-chapter defined: (this might be
   # easier to do when parsing the chapters themselves...)
-  out <- fixSubchapterNa(out, "740", "759")
+  out <- fix_sub_chap_na(out, "740", "759")
   # and hematopoietic organs
-  out <- fixSubchapterNa(out, "280", "289")
+  out <- fix_sub_chap_na(out, "280", "289")
   # insert the short descriptions from the billable codes text file. Where there
   # is no short description, e.g. for most Major codes, or intermediate codes,
   # just copy the long description over.
@@ -295,7 +303,7 @@ icd9cm_generate_chapters_hierarchy <- function(save_data = FALSE,
 #' Fixes a couple of corner cases in parsing the 2011 ICD-9-CM RTF
 #' @keywords internal datagen
 #' @noRd
-fixSubchapterNa <- function(x, start, end) {
+fix_sub_chap_na <- function(x, start, end) {
   # 740 CONGENITAL ANOMALIES is a chapter with no sub-chapters defined. For
   # consistency, assign the same name to sub-chapters
   congenital <- x[["code"]] %in% icd::expand_range(start,

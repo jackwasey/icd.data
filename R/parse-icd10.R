@@ -86,7 +86,7 @@ icd10_generate_chap_lookup <- function(lk_majors) {
   lk_majors <- unique(icd10cm2016[["three_digit"]])
   chap_lookup <- data.frame(major = NULL, desc = NULL)
   for (chap_n in names(icd10_chapters)) {
-    chap <- icd10_chapters[[chap_n]]
+    chap <- icd.data::icd10_chapters[[chap_n]]
     # fix a 2016 error in the CMS XML definitions
     if (chap["end"] == "Y08")
       chap["end"] <- "Y09"
@@ -130,7 +130,7 @@ icd10_parse_cms_pcs_all <- function(save_data = TRUE) {
 }
 
 icd10_parse_cms_pcs_year <- function(year = "2018") {
-  pcs_file <- icd10cm_sources[[year]][["pcs_flat"]]
+  pcs_file <- icd.data::icd10cm_sources[[year]][["pcs_flat"]]
   pcs_path <- file.path(get_raw_data_dir(), pcs_file)
   read.fwf(pcs_path, c(5, 8, 2, 62, 120), header = FALSE,
            col.names = c("count", "pcs", "billable", "short_desc", "long_desc"))

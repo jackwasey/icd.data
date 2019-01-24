@@ -120,7 +120,8 @@ rtf_parse_lines <- function(rtf_lines, verbose = FALSE,
   # for these, construct a string which will be captured in the next block
   # e.g. "Requires fifth digit to identify stage:" becomes
   # "Requires fifth digit to identify stage: 634 Spontaneous abortion"
-  filtered[fifth_backref] <- paste(filtered[fifth_backref], filtered[fifth_backref - 1])
+  filtered[fifth_backref] <-
+    paste(filtered[fifth_backref], filtered[fifth_backref - 1])
   re_fourth_range <- "fourth-digit.+categor"
   fourth_rows <- grep(re_fourth_range, filtered, ...)
   lookup_fourth <- rtf_generate_fourth_lookup(filtered, fourth_rows)
@@ -136,7 +137,8 @@ rtf_parse_lines <- function(rtf_lines, verbose = FALSE,
   for (categ in fourth_digit_zero_categories) {
     parent_row <- grep(paste0("^", categ, " .+"), filtered, value = TRUE, ...)
     filtered[length(filtered) + 1] <-
-      paste0(categ, ".0 ", str_pair_match(parent_row, "([[:digit:]]{3} )(.+)", ...))
+      paste0(categ, ".0 ", str_pair_match(parent_row,
+                                          "([[:digit:]]{3} )(.+)", ...))
   }
   lookup_fifth <- rtf_make_lookup_fifth(filtered, re_fifth_range_other)
   filtered <- rtf_filter_excludes(filtered, ...)
@@ -275,7 +277,8 @@ rtf_generate_fourth_lookup <- function(filtered, fourth_rows, verbose = FALSE) {
       string = filtered[seq(f + 1, f + 37)],
       pattern = "^([[:digit:]])[[:space:]](.*)"
     )
-    re_fourth_defined <- paste(c("\\.[", names(fourth_suffices), "]$"), collapse = "")
+    re_fourth_defined <-
+      paste(c("\\.[", names(fourth_suffices), "]$"), collapse = "")
     # drop members of range which don't have defined fourth digit
     range <- grep(re_fourth_defined, range, value = TRUE)
     # now replace value with the suffix, with name of item being the code itself
@@ -303,7 +306,9 @@ rtf_generate_fourth_lookup <- function(filtered, fourth_rows, verbose = FALSE) {
 #'
 #' @keywords internal datagen
 rtf_lookup_fourth <- function(out, lookup_fourth, verbose = FALSE) {
-  rtf_lookup_fourth_alt_env(out = out, lookup_fourth = lookup_fourth, verbose = verbose)
+  rtf_lookup_fourth_alt_env(out = out,
+                            lookup_fourth = lookup_fourth,
+                            verbose = verbose)
 }
 
 rtf_lookup_fourth_alt_base <- function(out, lookup_fourth, verbose = FALSE) {
@@ -346,7 +351,10 @@ rtf_lookup_fourth_alt_env <- function(out, lookup_fourth, verbose = FALSE) {
   out_fourth
 }
 
-rtf_make_lookup_fifth <- function(filtered, re_fifth_range_other, ..., verbose = FALSE) {
+rtf_make_lookup_fifth <- function(filtered,
+                                  re_fifth_range_other,
+                                  ...,
+                                  verbose = FALSE) {
   re_fifth_range <- "ifth-digit subclas|fifth-digits are for use with codes"
   re_fifth_rows <- paste(re_fifth_range, re_fifth_range_other, sep = "|")
   fifth_rows <- grep(pattern = re_fifth_rows, x = filtered, ...)
@@ -376,29 +384,34 @@ rtf_make_lookup_fifth <- function(filtered, re_fifth_range_other, ..., verbose =
   }
   # V30-39 are a special case because combination of both fourth and fifth
   # digits are specified
-  re_fifth_range_V30V39 <- "The following two fifths-digits are for use with the fourth-digit \\.0"
-  re_V30V39_fifth <- "V3[[:digit:]]\\.0[01]$"
-  lines_V30V39 <- grep(re_fifth_range_V30V39, filtered)
-  stopifnot(length(lines_V30V39) == 1)
-  f1 <- filtered[seq(from = lines_V30V39 + 1, to = lines_V30V39 + 3)]
+  re_fifth_range_v30v39 <-
+    "The following two fifths-digits are for use with the fourth-digit \\.0"
+  re_v30v39_fifth <- "V3[[:digit:]]\\.0[01]$"
+  lines_v30v39 <- grep(re_fifth_range_v30v39, filtered)
+  stopifnot(length(lines_v30v39) == 1)
+  f1 <- filtered[seq(from = lines_v30v39 + 1, to = lines_v30v39 + 3)]
   f2 <- grep(f1, pattern = "^[[:digit:]][[:space:]].*", value = TRUE, ...)
-  suffices_V30V39 <- str_pair_match(f2, "([[:digit:]])[[:space:]](.*)", ...)
+  suffices_v30v39 <- str_pair_match(f2, "([[:digit:]])[[:space:]](.*)", ...)
   range <- c(icd::expand_range("V30", "V37",
                                short_code = FALSE, defined = FALSE),
              icd::children("V39", short_code = FALSE, defined = FALSE))
-  range <- grep(re_V30V39_fifth, range, value = TRUE, ...)
+  range <- grep(re_v30v39_fifth, range, value = TRUE, ...)
   names(range) <- range
-  for (fifth in names(suffices_V30V39)) {
+  for (fifth in names(suffices_v30v39)) {
     # only applies to .0x (in 2015 at least), but .1 also exists without 5th
     # digit
     re_fifth <- paste0("\\.0", fifth, "$")
-    range[grep(re_fifth, range, ...)] <- suffices_V30V39[fifth]
+    range[grep(re_fifth, range, ...)] <- suffices_v30v39[fifth]
   }
   c(lookup_fifth, range)
 }
 
-rtf_lookup_fifth <- function(out, lookup_fifth, verbose = FALSE) {
-  rtf_lookup_fifth_alt_env(out = out, lookup_fifth = lookup_fifth, verbose = verbose)
+rtf_lookup_fifth <- function(out,
+                             lookup_fifth,
+                             verbose = FALSE) {
+  rtf_lookup_fifth_alt_env(out = out,
+                           lookup_fifth = lookup_fifth,
+                           verbose = verbose)
 }
 
 rtf_lookup_fifth_alt_base <- function(out, lookup_fifth, verbose = FALSE) {
@@ -541,10 +554,15 @@ rtf_parse_fifth_digit_range <- function(row_str, verbose = FALSE) {
         last <- paste0(get_icd9_major(base_code), pair[2])
         if (verbose)
           message("expanding specified minor range from ", first, " to ", last)
-        out <- c(out, icd::expand_range(first, last, short_code = FALSE, defined = FALSE))
+        out <- c(out, icd::expand_range(first,
+                                        last,
+                                        short_code = FALSE,
+                                        defined = FALSE))
       } else {
         single <- paste0(get_icd9_major(base_code), dotmnr)
-        out <- c(out, icd::children(single, short_code = FALSE, defined = FALSE))
+        out <- c(out, icd::children(single,
+                                    short_code = FALSE,
+                                    defined = FALSE))
       }
     }
     vals <- vals[1] # still need to process the base code

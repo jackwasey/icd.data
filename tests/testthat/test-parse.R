@@ -1,40 +1,23 @@
-# Copyright (C) 2014 - 2018  Jack O. Wasey
-#
-# This file is part of icd.
-#
-# icd is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# icd is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with icd. If not, see <http:#www.gnu.org/licenses/>.
-
 context("RTF parsing")
 
 test_that("bookmark ends only", {
   expect_equal(
     rtf_strip(
-      paste("{\\*\\bkmkend 200.05}{\\*\\bkmkend 200.06}{\\*\\bkmkend 200.07}{\\*\\bkmkend 200.08}",
-            "{\\*\\bkmkend 200.0}\\hich\\af1\\dbch\\af31505\\loch\\f1 200.0\\tab Reticulosarcoma")),
+      paste("{\\*\\bkmkend 200.05}{\\*\\bkmkend 200.06}{\\*\\bkmkend 200.07}{\\*\\bkmkend 200.08}", #nolint
+            "{\\*\\bkmkend 200.0}\\hich\\af1\\dbch\\af31505\\loch\\f1 200.0\\tab Reticulosarcoma")), #nolint
     "200.0 Reticulosarcoma")
 })
 
 test_that("rtf_strip bug case with combined line", {
   expect_equal(
     rtf_strip(
-      paste(sep = "", "\\rtlch\\fcs1 \\af1\\afs20\\alang1025 \\ltrch\\fcs0 \\fs20\\cf1",
-            "\\lang1033\\langfe1033\\loch\\af1\\hich\\af1\\dbch\\af31505\\cgrid",
+      paste(sep = "", "\\rtlch\\fcs1 \\af1\\afs20\\alang1025 \\ltrch\\fcs0 \\fs20\\cf1",#nolint
+            "\\lang1033\\langfe1033\\loch\\af1\\hich\\af1\\dbch\\af31505\\cgrid",#nolint
             "\\langnp1033\\langfenp1033 {\\rtlch\\fcs1 \\af1 \\ltrch\\fcs0 ",
             "\\insrsid2429293 0\\tab \\hich\\af1\\dbch\\af31505\\loch\\f1 not ",
-            "stated as uncontrolled\\par }\\pard\\plain \\ltrpar\\s30\\ql \\fi-360",
-            "\\li1440\\ri0\\widctlpar\\tx180\\tx360\\tx540\\tx720\\tx900\\tx1080\\tx1260",
-            "\\tx1440\\tx1620\\tx1800\\tx1980\\tx2160\\tx2340\\tx2520\\tx2700\\tx2880\\tx3060",
+            "stated as uncontrolled\\par }\\pard\\plain \\ltrpar\\s30\\ql \\fi-360",#nolint
+            "\\li1440\\ri0\\widctlpar\\tx180\\tx360\\tx540\\tx720\\tx900\\tx1080\\tx1260",#nolint
+            "\\tx1440\\tx1620\\tx1800\\tx1980\\tx2160\\tx2340\\tx2520\\tx2700\\tx2880\\tx3060",#nolint
             "\\tx3240\\tx3420\\tx3600\\tx3780\\tx3960\\tx4140\\wrapdefault",
             "\\faauto\\rin0\\lin1440\\itap0")),
     "0 not stated as uncontrolled")
@@ -44,49 +27,55 @@ test_that("rtf_strip does what it says on the tin", {
   expect_equal(
     rtf_strip(
       paste(sep = "", "\\rtlch\\fcs1 \\af1\\afs20\\alang1025 \\ltrch\\fcs0 ",
-            "\\fs20\\cf1\\lang1033\\langfe1033\\loch\\af1\\hich\\af1\\dbch\\af31505",
-            "\\cgrid\\langnp1033\\langfenp1033 {\\rtlch\\fcs1 \\ab\\af1 \\ltrch\\fcs0 ",
-            "\\b\\insrsid2429293 0\\tab \\hich\\af1\\dbch\\af31505\\loch\\f1 unspecified")),
+            "\\fs20\\cf1\\lang1033\\langfe1033\\loch\\af1\\hich\\af1\\dbch\\af31505",#nolint
+            "\\cgrid\\langnp1033\\langfenp1033 {\\rtlch\\fcs1 \\ab\\af1 \\ltrch\\fcs0 ",#nolint
+            "\\b\\insrsid2429293 0\\tab \\hich\\af1\\dbch\\af31505\\loch\\f1 unspecified")),#nolint
     "0 unspecified")
 
   expect_equal(
     rtf_strip(
-      paste("The following fifth-digit subclassification is for use with categories",
-            "67\\hich\\af1\\dbch\\af31505\\loch\\f1 8-679 to denote the current episode of care:")),
-    paste("The following fifth-digit subclassification is for use with categories 678-679",
+      paste("The following fifth-digit subclassification is for use with categories",#nolint
+            "67\\hich\\af1\\dbch\\af31505\\loch\\f1 8-679 to denote the current episode of care:")),#nolint
+    paste("The following fifth-digit subclassification is for use with categories 678-679",#nolint
           "to denote the current episode of care:"))
 
   expect_equal(
     rtf_strip(
-      paste("The following fifth-digit subclassification is for use with category 711;",
-            "valid digits are in [brackets] under each code.",
+      paste("The following fifth-digit subclassification is for use with",
+            "category 711; valid digits are in [brackets] under each code.",
             "see list at beginning of chapter for definitions:")),
-    paste("The following fifth-digit subclassification is for use with category 711;",
-          "valid digits are in [brackets] under each code.",
+    paste("The following fifth-digit subclassification is for use with",
+          "category 711; valid digits are in [brackets] under each code.",
           "see list at beginning of chapter for definitions:"))
 
   expect_equal(
-    rtf_strip("229.8\\tab Othe\\hich\\af1\\dbch\\af31505\\loch\\f1 r specified sites"),
+    rtf_strip(
+      "229.8\\tab Othe\\hich\\af1\\dbch\\af31505\\loch\\f1 r specified sites"),
     "229.8 Other specified sites")
 
   expect_equal(
     rtf_strip(
       paste(
         sep = "",
-        "\\lsdsemihidden0 \\lsdunhideused0 \\lsdpriority71 \\lsdlocked0 Colorful Shading Accent 6;",
-        "\\lsdsemihidden0 \\lsdunhideused0 \\lsdpriority72 \\lsdlocked0 Colorful List Accent 6;",
-        "\\lsdsemihidden0 \\lsdunhideused0 \\lsdpriority73 \\lsdlocked0 Colorful Grid Accent 6;")),
+        "\\lsdsemihidden0 \\lsdunhideused0 \\lsdpriority71 ",
+        "\\lsdlocked0 Colorful Shading Accent 6;",
+        "\\lsdsemihidden0 \\lsdunhideused0 \\lsdpriority72 ",
+        "\\lsdlocked0 Colorful List Accent 6;",
+        "\\lsdsemihidden0 \\lsdunhideused0 \\lsdpriority73 ",
+        "\\lsdlocked0 Colorful Grid Accent 6;")),
     "")
 
   # make sure we pick up unusual characters within Rtf expressions, otherwise we
   # spill numbers etc into later parsing:
   expect_equal(
     rtf_strip(
-      paste(sep = "", "\\par }\\pard\\plain \\ltrpar\\s82\\ql \\fi-1080\\li2160\\ri0",
-            "\\widctlpar\\tx180\\tx360\\tx540\\tx720\\tx900\\tx1080\\tx1260\\tx1440",
-            "\\tx1620\\tx1800\\tx1980\\tx2160\\tx2340\\tx2520\\tx2700\\tx2880\\tx3060",
-            "\\tx3240\\tx3420\\tx3600\\tx3780\\tx3960\\tx4140\\wrapdefault\\faauto\\rin0",
-            "\\lin2160\\itap0 ")),
+      paste(
+        sep = "",
+        "\\par }\\pard\\plain \\ltrpar\\s82\\ql \\fi-1080\\li2160\\ri0",
+        "\\widctlpar\\tx180\\tx360\\tx540\\tx720\\tx900\\tx1080\\tx1260",
+        "\\tx1440\\tx1620\\tx1800\\tx1980\\tx2160\\tx2340\\tx2520\\tx2700",
+        "\\tx2880\\tx3060\\tx3240\\tx3420\\tx3600\\tx3780\\tx3960\\tx4140",
+        "\\wrapdefault\\faauto\\rin0\\lin2160\\itap0 ")),
     "")
 })
 
@@ -95,8 +84,8 @@ test_that("extraction from qualifier subset works", {
                "[0,1,3]", "[0-4]", "[0,3]", "[0-1,3]", "[1-2]", "[0, 1, 3]",
                "[0,1,4]", "[0,1]", "[0,2,4]", "[0-2,4]", "[0-9]", "[0,4,9]",
                "[0,9]", "[0-5,7-9]", "[5]", "[0-7,9]", "[0-6,9]", "[0-3,9]",
-               "[0-4,9]", "[0-6, 9]", "[0]", "[0-7]", "[0,2-4,8,9]", "[0,2,4,8,9]",
-               "[0,4,8,9]", "[6-9]", "[0,8,9]")
+               "[0-4,9]", "[0-6, 9]", "[0]", "[0-7]", "[0,2-4,8,9]",
+               "[0,2,4,8,9]", "[0,4,8,9]", "[6-9]", "[0,8,9]")
   expect_equal(
     rtf_parse_qualifier_subset("[0-6]"),
     as.character(c(0, 1, 2, 3, 4, 5, 6)))
@@ -148,21 +137,26 @@ if (rtf_year_ok(test_year)) {
   })
 
   test_that("all defined codes from csv are in rtf extract", {
-    expect_equal(length(missing_from_rtf), 0,
-                 info = paste("missing codes are:", paste(missing_from_rtf, collapse = ", ")))
+    expect_equal(
+      length(missing_from_rtf), 0,
+      info = paste("missing codes are:",
+                   paste(missing_from_rtf, collapse = ", ")))
   })
 
   test_that("majors extracted from web page are the same as those from RTF", {
-    webmajors <- unlist(icd9_majors) # why is this even a list not a named vector?
+    # why is this even a list not a named vector?
+    webmajors <- unlist(icd9_majors)
     work <- swap_names_vals(rtf)
     rtfmajors <- work[icd::is_major(work)]
 
-    expect_identical(setdiff(rtfmajors, webmajors), character(0),
-                     info = paste("these majors are from RTF but not retrieved from web: ",
-                                  paste(setdiff(rtfmajors, webmajors), collapse = ", ")))
-    expect_identical(setdiff(webmajors, rtfmajors), character(0),
-                     info = paste("these majors are on web but not retrieved from RTF: ",
-                                  paste(setdiff(webmajors, rtfmajors), collapse = ", ")))
+    expect_identical(
+      setdiff(rtfmajors, webmajors), character(0),
+      info = paste("these majors are from RTF but not retrieved from web: ",
+                   paste(setdiff(rtfmajors, webmajors), collapse = ", ")))
+    expect_identical(
+      setdiff(webmajors, rtfmajors), character(0),
+      info = paste("these majors are on web but not retrieved from RTF: ",
+                   paste(setdiff(webmajors, rtfmajors), collapse = ", ")))
   })
 
 
@@ -170,7 +164,8 @@ if (rtf_year_ok(test_year)) {
     test_ver <- "32"
     skip_flat_icd9_avail(test_ver)
 
-    v32 <- icd9_parse_leaf_desc_ver(version = test_ver, save_data = FALSE, offline = TRUE)
+    v32 <- icd9_parse_leaf_desc_ver(version = test_ver, save_data = FALSE,
+                                    offline = TRUE)
     leaves <- icd::short_to_decimal(v32$code)
     expect_true(all(leaves %in% nrtf))
 

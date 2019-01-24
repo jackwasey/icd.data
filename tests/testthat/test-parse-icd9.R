@@ -1,9 +1,12 @@
 context("RTF ICD-9")
-
+j <- expect_icd9_sub_chap_equal
 test_that("some known sub vs chap confusion", {
-  # some things shouldn't have been called sub-chapters, just chapters. Known troublemakers:
-  expect_icd9_only_chap("Supplementary Classification Of External Causes Of Injury And Poisoning")
-  expect_icd9_only_chap("Supplementary Classification Of Factors Influencing Health Status And Contact With Health Services") # nolint
+  # some things shouldn't have been called sub-chapters, just chapters. Known
+  # troublemakers:
+  expect_icd9_only_chap(
+    "Supplementary Classification Of External Causes Of Injury And Poisoning")
+  expect_icd9_only_chap(
+    "Supplementary Classification Of Factors Influencing Health Status And Contact With Health Services") # nolint
   # and scan all, noting each is tested twice and half the test is circular,
   # since it looks up with the looped group.
   for (i in names(icd9_chapters))
@@ -15,13 +18,13 @@ test_that("some known sub vs chap confusion", {
 
 test_that("sub_chapter parsing went okay, tricky cases", {
   # "TUBERCULOSIS(010-018)" # nolint
-  expect_icd9_sub_chap_equal("Tuberculosis", "010", "018")
+  j("Tuberculosis", "010", "018")
   # or with comma: "Vehicle Accidents, Not Elsewhere Classifiable"
-  expect_icd9_sub_chap_equal("Vehicle Accidents Not Elsewhere Classifiable", "E846", "E848")
-  expect_icd9_sub_chap_equal("Accidental Poisoning By Drugs, Medicinal Substances, And Biologicals", "E850", "E858") # nolint
-  expect_icd9_sub_chap_equal("Accidental Poisoning By Other Solid And Liquid Substances, Gases, And Vapors", "E860", "E869") # nolint
-  expect_icd9_sub_chap_equal("External Cause Status", "E000", "E000")
-  expect_icd9_sub_chap_equal("Injury Resulting From Operations Of War", "E990", "E999")
+  j("Vehicle Accidents Not Elsewhere Classifiable", "E846", "E848")
+  j("Accidental Poisoning By Drugs, Medicinal Substances, And Biologicals", "E850", "E858") # nolint
+  j("Accidental Poisoning By Other Solid And Liquid Substances, Gases, And Vapors", "E860", "E869") # nolint
+  j("External Cause Status", "E000", "E000")
+  j("Injury Resulting From Operations Of War", "E990", "E999")
 })
 
 test_that("majors okay", {
@@ -32,7 +35,8 @@ test_that("majors okay", {
   expect_icd9_major_equals("Gastrointestinal mucositis (ulcerative)", "538")
   expect_icd9_major_equals("Perinatal disorders of digestive system", "777")
   expect_icd9_major_equals("Iron deficiency anemias", "280")
-  expect_icd9_major_equals("Other diseases of blood and blood-forming organs", "289")
+  expect_icd9_major_equals("Other diseases of blood and blood-forming organs",
+                           "289")
   expect_icd9_major_equals("Anencephalus and similar anomalies", "740")
   expect_icd9_major_equals("Other and unspecified congenital anomalies", "759")
 
@@ -54,17 +58,19 @@ test_that("some majors are the same as sub-chapters", {
 
 })
 
-test_that("Some known problem codes are correctly explained, github #126, #124, #123", {
+test_that("Some known problem codes explained, github #126, #124, #123", {
   eee("0381", "Staphylococcal septicemia")
   eee("291", "Alcohol-induced mental disorders")
   eee("361", "Retinal detachments and defects")
-  eee("294", "Persistent mental disorders due to conditions classified elsewhere")
+  eee("294",
+      "Persistent mental disorders due to conditions classified elsewhere")
   eee("6811", "Toe") # Cellulitis and abscess of toe
   eee("7865", "Chest pain")
 })
 
 test_that("7806 is correctly explained, github #116", {
-  eee("7806", "Fever and other physiologic disturbances of temperature regulation")
+  eee("7806",
+      "Fever and other physiologic disturbances of temperature regulation")
 })
 
 test_that("737 is correctly explained, github #111", {
@@ -84,7 +90,8 @@ test_that("414, 4140 and 4141 are parsed correctly, github #99", {
 })
 
 test_that("some randomly chosen codes are correct", {
-  eee("674.54", "Peripartum cardiomyopathy, postpartum condition or complication")
+  eee("674.54",
+      "Peripartum cardiomyopathy, postpartum condition or complication")
   eee("E992.8", "Injury due to war operations by other marine weapons")
   eee("E870.5", "Accidental cut, puncture, perforation or hemorrhage during aspiration of fluid or tissue, puncture, and catheterization") # nolint
   eee("V53.0", "Devices related to nervous system and special senses")
@@ -104,7 +111,8 @@ test_that("some randomly chosen codes are correct", {
   # cases which were special in parsing:
   eee("V30", "Single liveborn")
   eee("V300", "Single liveborn, Born in hospital")
-  eee("V3001", "Single liveborn, born in hospital, delivered by cesarean section")
+  eee("V3001",
+      "Single liveborn, born in hospital, delivered by cesarean section")
   eee("V302", "Single liveborn, born outside hospital and not hospitalized")
   eee("345.01", "Generalized nonconvulsive epilepsy, with intractable epilepsy")
 })
