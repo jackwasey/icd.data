@@ -111,11 +111,11 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
 .fetch_who_api_chapter_names <- function(ver = "icd10",
                                          year = 2016,
                                          lang = "en", verbose = TRUE) {
-  .fetch_who_api_concept_children(ver = ver, year = year, lang = lang,
+  .fetch_who_api_children(ver = ver, year = year, lang = lang,
                                   verbose = verbose)[["label"]]
 }
 
-.fetch_who_api_concept_children <- function(concept_id = NULL, ...) {
+.fetch_who_api_children <- function(concept_id = NULL, ...) {
   if (is.null(concept_id))
     .fetch_who_api(resource = "JsonGetRootConcepts?useHtml=false", ...)
   else
@@ -156,7 +156,7 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
                          sub_chapter = character(),
                          chapter = character())
   if (verbose) message(".fetch_who_api_tree with concept_id = ", concept_id)
-  tree_json <- .fetch_who_api_concept_children(concept_id = concept_id,
+  tree_json <- .fetch_who_api_children(concept_id = concept_id,
                                                year = year,
                                                lang = lang,
                                                verbose = verbose,

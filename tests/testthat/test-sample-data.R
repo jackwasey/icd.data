@@ -1,6 +1,6 @@
 context("sample data")
 test_that("ICD-10 codes in uranium data are okay", {
-  skip("discrepancy between ICD-10-CM, ICD-10-WHO and these codes")
+  testthat::skip("discrepancy between ICD-10-CM, ICD-10-WHO and these codes")
   expect_true(all(icd::is_valid(uranium_pathology$icd10, short_code = FALSE)))
   skip_missing_icd10who2016()
   u <- sub(pattern = ".", replacement = "", fixed = TRUE,
