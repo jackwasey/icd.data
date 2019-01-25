@@ -10,9 +10,13 @@ test_that("icd9cm_hierarchy as saved in data can be recreated as expected", {
   skip_on_no_rtf("2011")
   cmh_headings <- c("code", "short_desc", "long_desc", "three_digit",
                     "major", "sub_chapter", "chapter")
-  cmh <- icd9cm_gen_chap_hier(save_data = FALSE, verbose = FALSE, offline = TRUE)
+  cmh <- icd9cm_gen_chap_hier(save_data = FALSE,
+                              verbose = FALSE,
+                              offline = TRUE)
   for (h in cmh_headings)
-    expect_equal(cmh[[h]], icd9cm_hierarchy[[h]], info = paste("working on :", h))
+    expect_equal(cmh[[h]],
+                 icd9cm_hierarchy[[h]],
+                 info = paste("working on :", h))
 })
 
 test_that("no NA or zero-length values", {

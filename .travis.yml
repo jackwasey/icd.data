@@ -4,5 +4,5 @@ language: R
 sudo: false
 cache: packages
 
-r_github_packages:
-  - jackwasey/icd@v3.4
+#r_github_packages:
+#  - jackwasey/icd@v3.4
