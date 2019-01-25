@@ -81,7 +81,7 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
                            year = 2016,
                            lang = "en",
                            verbose = FALSE) {
-  if (requireNamespace(memoise, quietly = TRUE))
+  if (requireNamespace("memoise", quietly = TRUE))
     httr_get <- memoise::memoise(
       httr::GET,
       cache = memoise::cache_filesystem(
