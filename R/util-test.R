@@ -202,10 +202,14 @@ expect_equal_no_icd <- function(object, expected, ...) {
   testthat::expect_equivalent(object, expected, ...)
 }
 
+#' Skip subsequent tests that depend on WHO ICD-10 data if not available
+#'
+#' Will only skip if the data is absent
+#' @export
 skip_missing_icd10who2016 <- function() {
   dat <- .get_local_icd10who2016()
   if (is.null(dat))
-    skip("WHO not loaded into local environment, or unavailable")
+    testthat::skip("WHO not loaded into local environment, or unavailable")
 }
 
 # nocov end

@@ -4,10 +4,12 @@
 \alias{fetch_icd10who2016}
 \title{Fetch the WHO data from online source}
 \usage{
-fetch_icd10who2016(do_save = TRUE, verbose = FALSE)
+fetch_icd10who2016(do_save = TRUE, ...)
 }
 \arguments{
 \item{do_save}{Logical, defaults to \code{TRUE}}
+
+\item{...}{Arguments passed to internal functions}
 
 \item{verbose}{Logical}
 }

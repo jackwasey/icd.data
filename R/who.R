@@ -81,14 +81,17 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
                            year = 2016,
                            lang = "en",
                            verbose = FALSE) {
-  httr_get <- memoise::memoise(
-    httr::GET,
-    cache = memoise::cache_filesystem(
-      file.path(
-        getOption("icd.data.resource", default = .default_path),
-        "memoise")
+  if (require(memoise, quietly = TRUE))
+    httr_get <- memoise::memoise(
+      httr::GET,
+      cache = memoise::cache_filesystem(
+        file.path(
+          getOption("icd.data.resource", default = .default_path),
+          "memoise")
+      )
     )
-  )
+  else
+    httr_get <- httr::GET
   ver <- match.arg(ver)
   who_base <- "https://apps.who.int/classifications"
   json_url <- paste(who_base, ver, "browse", year, lang, resource, sep = "/")
@@ -112,7 +115,7 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
                                          year = 2016,
                                          lang = "en", verbose = TRUE) {
   .fetch_who_api_children(ver = ver, year = year, lang = lang,
-                                  verbose = verbose)[["label"]]
+                          verbose = verbose)[["label"]]
 }
 
 .fetch_who_api_children <- function(concept_id = NULL, ...) {
@@ -142,10 +145,15 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
 .fetch_icd10_who <- function(concept_id = NULL,
                              year = 2016,
                              lang = "en",
-                             verbose = TRUE,
+                             verbose = FALSE,
                              hier_code = character(),
                              hier_desc = character(),
+                             debug = FALSE,
                              ...) {
+  if (!require("memoise", quietly = TRUE))
+    message("Consider installing 'memoise' from CRAN using:\n",
+            'install.packages("memoise")\n',
+            "This will allow the WHO data download to resume if interrupted.")
   if (verbose) print(hier_code)
   new_rows <- data.frame(code = character(),
                          leaf = logical(),
@@ -157,62 +165,64 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
                          chapter = character())
   if (verbose) message(".fetch_who_api_tree with concept_id = ", concept_id)
   tree_json <- .fetch_who_api_children(concept_id = concept_id,
-                                               year = year,
-                                               lang = lang,
-                                               verbose = verbose,
-                                               ...)
+                                       year = year,
+                                       lang = lang,
+                                       verbose = verbose,
+                                       ...)
   if (is.null(tree_json)) {
     warning("Unable to get results for concept_id: ", concept_id,
             ". Returning NULL. Try re-running the command.")
     return()
   }
   if (verbose) message("hier level = ", length(hier_code))
+  new_hier <- length(hier_code) + 1
   for (branch in seq_len(nrow(tree_json))) {
     # might be looping through chapters, sub-chapters, etc.
     child_code <- tree_json[branch, "ID"]
     child_desc <- tree_json[branch, "label"]
     is_leaf <- tree_json[branch, "isLeaf"]
     # for each level, if not defined by arguments, then assign next possible
-    hier_code[length(hier_code) + 1] <- child_code
-    hier_desc[length(hier_desc) + 1] <- child_desc
+    hier_code[new_hier] <- child_code
+    hier_desc[new_hier] <- child_desc
     sub_sub_chapter <- NA
+    hier_three_digit_idx <- which(nchar(hier_code) == 3 &
+                                    !grepl("[XVI-]", hier_code))
     if (length(hier_code) >= 3 && nchar(hier_code[3]) > 3)
       sub_sub_chapter <- hier_desc[3]
-    three_digit <- hier_code[nchar(hier_code) == 3]
-    major <- hier_desc[nchar(hier_code) == 3]
-    is_hier <- grepl("[XVI-]", child_code)
-    if (!is_hier) {
-      new_rows <- rbind(
-        new_rows,
-        data.frame(code = child_code,
-                   leaf = is_leaf,
-                   desc = child_desc,
-                   three_digit = three_digit,
-                   major = major,
-                   sub_sub_chapter = sub_sub_chapter,
-                   sub_chapter = hier_desc[2],
-                   chapter = hier_desc[1],
-                   stringsAsFactors = FALSE
-        )
-        # TODO: consider add the chapter, subchapter codes
+    this_child_up_hier <- grepl("[XVI-]", child_code)
+    three_digit <- hier_code[hier_three_digit_idx]
+    major <- hier_desc[hier_three_digit_idx]
+    if (!this_child_up_hier && !is.na(three_digit)) {
+      # TODO: consider add the chapter, subchapter codes
+      new_item <- data.frame(code = child_code,
+                             leaf = is_leaf,
+                             desc = child_desc,
+                             three_digit = three_digit,
+                             major = major,
+                             sub_sub_chapter = sub_sub_chapter,
+                             sub_chapter = hier_desc[2],
+                             chapter = hier_desc[1],
+                             stringsAsFactors = FALSE
       )
+      if (debug && child_code %in% new_rows$code) browser()
+      new_rows <- rbind(new_rows, new_item)
     }
     if (!is_leaf) {
       if (verbose) message("Not a leaf, so recursing")
-      new_rows <- rbind(
-        new_rows,
-        .fetch_icd10_who(concept_id = child_code,
-                         year = year,
-                         lang = lang,
-                         verbose = verbose,
-                         hier_code = hier_code,
-                         hier_desc = hier_desc,
-                         ...
-        ) # recurse
-      ) #rbind
+      recursed_rows <- .fetch_icd10_who(concept_id = child_code,
+                                        year = year,
+                                        lang = lang,
+                                        verbose = verbose,
+                                        hier_code = hier_code,
+                                        hier_desc = hier_desc,
+                                        ...
+      ) # recurse
+      if (debug && any(recursed_rows$code %in% new_rows$code)) browser()
+      new_rows <- rbind(new_rows, recursed_rows)
     } # not leaf
   } # for
-  if (verbose) message("leaving recursion@")
+  if (verbose) message("leaving recursion with nrow(new_rows) = ",
+                       nrow(new_rows))
   new_rows
 }
 
@@ -226,19 +236,22 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
 #' anyway).
 #' @param do_save Logical, defaults to `TRUE`
 #' @param verbose Logical
+#' @param ... Arguments passed to internal functions
 #' @export
-fetch_icd10who2016 <- function(do_save = TRUE, verbose = FALSE) {
+fetch_icd10who2016 <- function(do_save = TRUE, ...) {
   message("Downloading WHO ICD data. This will take a few minutes. ",
           "Data is cached, so if there is a download error, re-running the ",
           "command will pick up where it left off.")
-  icd10who2016 <- .fetch_icd10_who(verbose = verbose)
+  icd10who2016 <- .fetch_icd10_who(...)
   rownames(icd10who2016) <- NULL
-  icd10who2016$code <- sub(pattern = "\\.", replacement = "",
-                           x = icd10who2016$code)
-  icd10who2016$chapter <- sub("[^ ]+ ", "", icd10who2016$chapter)
-  icd10who2016$sub_chapter <- sub("[^ ]+ ", "", icd10who2016$sub_chapter)
-  icd10who2016$major <- sub("[^ ]+ ", "", icd10who2016$major)
-  icd10who2016$desc <- sub("[^ ]+ ", "", icd10who2016$desc)
+  icd10who2016$code <-
+    sub(pattern = "\\.", replacement = "", x = icd10who2016$code)
+  for (col_name in c("chapter",
+                     "sub_chapter",
+                     "sub_sub_chapter",
+                     "major",
+                     "desc"))
+    icd10who2016[[col_name]] <- sub("[^ ]+ ", "", icd10who2016[[col_name]])
   if (do_save)
     saveRDS(icd10who2016, file.path(get_resource_path(), "icd10who2016.rds"))
   invisible(icd10who2016)
