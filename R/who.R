@@ -81,7 +81,7 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
                            year = 2016,
                            lang = "en",
                            verbose = FALSE) {
-  if (require(memoise, quietly = TRUE))
+  if (requireNamespace(memoise, quietly = TRUE))
     httr_get <- memoise::memoise(
       httr::GET,
       cache = memoise::cache_filesystem(
@@ -150,7 +150,7 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
                              hier_desc = character(),
                              debug = FALSE,
                              ...) {
-  if (!require("memoise", quietly = TRUE))
+  if (!requireNamespace("memoise", quietly = TRUE))
     message("Consider installing 'memoise' from CRAN using:\n",
             'install.packages("memoise")\n',
             "This will allow the WHO data download to resume if interrupted.")
@@ -235,7 +235,6 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
 #' package location (and this may not be allowed on a multi-user system,
 #' anyway).
 #' @param do_save Logical, defaults to `TRUE`
-#' @param verbose Logical
 #' @param ... Arguments passed to internal functions
 #' @export
 fetch_icd10who2016 <- function(do_save = TRUE, ...) {

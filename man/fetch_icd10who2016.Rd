@@ -10,8 +10,6 @@ fetch_icd10who2016(do_save = TRUE, ...)
 \item{do_save}{Logical, defaults to \code{TRUE}}
 
 \item{...}{Arguments passed to internal functions}
-
-\item{verbose}{Logical}
 }
 \description{
 This will download the latest ICD-10 codes and descriptions from the WHO, and
