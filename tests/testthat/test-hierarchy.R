@@ -3,6 +3,18 @@ context("icd.data::icd9cm_hierarchy was parsed as expected")
 # web scraping, some manually entered data, and (for the short description only)
 # another text file parsing.`
 
+test_that("icd9cm_hierarchy as saved in data can be recreated as expected", {
+  # avoid encoding problems by just doing this on Linux.
+  skip_on_os(c("windows", "mac", "solaris"))
+  skip_flat_icd9_avail_all()
+  skip_on_no_rtf("2011")
+  cmh_headings <- c("code", "short_desc", "long_desc", "three_digit",
+                    "major", "sub_chapter", "chapter")
+  cmh <- icd9cm_gen_chap_hier(save_data = FALSE, verbose = FALSE, offline = TRUE)
+  for (h in cmh_headings)
+    expect_equal(cmh[[h]], icd9cm_hierarchy[[h]], info = paste("working on :", h))
+})
+
 test_that("no NA or zero-length values", {
   expect_false(any(vapply(icd.data::icd9cm_hierarchy,
                           function(x) any(is.na(x)), FUN.VALUE = logical(1))))
