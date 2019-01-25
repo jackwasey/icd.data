@@ -1,6 +1,9 @@
 context("WHO")
 
 test_that("No ranges in code section of WHO data", {
+  skip_on_cran()
+  skip_on_travis()
+  skip_on_appveyor()
   skip_missing_icd10who2016()
   expect_false(any(grep("-", icd10who2016$code)))
   expect_false(any(is.na(icd10who2016$code)))
