@@ -202,4 +202,10 @@ expect_equal_no_icd <- function(object, expected, ...) {
   testthat::expect_equivalent(object, expected, ...)
 }
 
+skip_missing_icd10who2016 <- function() {
+  dat <- .get_local_icd10who2016()
+  if (is.null(dat))
+    skip("WHO not loaded into local environment, or unavailable")
+}
+
 # nocov end

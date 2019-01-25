@@ -3,7 +3,7 @@
 #' @concept ICD-9 ICD-10 ICD
 #' @author Jack O. Wasey \email{jack@@jackwasey.com}
 #' @keywords misc utilities datasets
-#' @importFrom utils read.csv read.fwf
+#' @importFrom utils read.csv read.fwf globalVariables
 #' @importFrom stats setNames
 "_PACKAGE"
 

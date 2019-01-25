@@ -1,3 +1,4 @@
+utils::globalVariables(".icd_data_env")
 .default_path <- file.path(Sys.getenv("HOME"), ".icd.data")
 
 #' Get or set the filesystem path used to save downloaded data
@@ -32,39 +33,47 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
   }
 }
 
+.icd10who2016_in_env <- function() {
+  exists("icd10who2016", envir = .icd_data_env)
+}
+
+.icd10who2016_clean_env <- function() {
+  if (.icd10who2016_in_env())
+    rm("icd10who2016", envir = .icd_data_env)
+}
+
+.get_local_icd10who2016 <- function() {
+  icd10who2016_path <- file.path(get_resource_path(), "icd10who2016.rds")
+  if (.icd10who2016_in_env())
+    return(get("icd10who2016", envir = .icd_data_env))
+  if (file.exists(icd10who2016_path)) {
+    icd10who2016 <- readRDS(icd10who2016_path)
+    assign("icd10who2016", icd10who2016, envir = .icd_data_env)
+    return(icd10who2016)
+  }
+  NULL
+}
+
 # see zzz.R
 .icd10who2016_binding <- function(x) {
-  icd10who2016_path <- file.path(get_resource_path(), "icd10who2016.rds")
-  var_name <- "icd10who2016"
   if (missing(x)) {
-    if (exists(var_name, envir = .icd_data_env))
-      return(get("icd10who2016", envir = .icd_data_env))
-    else {
-      if (file.exists(icd10who2016_path)) {
-        icd10who2016 <- readRDS(icd10who2016_path)
-        assign("icd10who2016", icd10who2016, envir = .icd_data_env)
-        return(icd10who2016)
-      }
-      message("WHO ICD data must be downloaded by each user due to copyright ",
-           "concerns. This may be achieved by running the command:\n\n",
-           "fetch_icd10_who()\n\n",
-           "The data has to be saved somewhere accessible. The ",
-           "location is given by:\n\n",
-           "get_resource_path()\nwhich defaults to:\n\n",
-           "file.path(Sys.getenv(\"HOME\"), \".icd.data\")\n\n",
-           "set_resource_path(\"new/path/to/dir\") can be used to change this.")
-      stop("WHO data are not yet downloaded.")
-    }
+    dat <- .get_local_icd10who2016()
+    if (!is.null(dat)) return(dat)
+    message(
+      "WHO ICD data must be downloaded by each user due to copyright ",
+      "concerns. This may be achieved by running the command:\n\n",
+      "fetch_icd10_who()\n\n",
+      "The data has to be saved somewhere accessible. The ",
+      "location is given by:\n\n",
+      "get_resource_path()\nwhich defaults to:\n\n",
+      "file.path(Sys.getenv(\"HOME\"), \".icd.data\")\n\n",
+      "set_resource_path(\"new/path/to/dir\") can be used to change this.")
   } # end missing
   if (interactive())
-  stop("This binding should be read-only. Use fetch_icd10_who() to populate.")
+    stop("This binding should be read-only. Use fetch_icd10_who() to populate.")
   else
     fetch_icd10_who(do_save = TRUE)
 }
-
-# makeActiveBinding(sym = "icd10who2016d",
-#                   fun = .icd10who2016_binding,
-#                   env = environment())
 
 # returns the JSON data, or fails with NULL
 fetch_who_api <- function(resource,
@@ -102,7 +111,7 @@ fetch_who_api_chapter_names <- function(ver = "icd10",
                                         year = 2016,
                                         lang = "en", verbose = TRUE) {
   fetch_who_api_concept_children(ver = ver, year = year, lang = lang,
-                verbose = verbose)[["label"]]
+                                 verbose = verbose)[["label"]]
 }
 
 fetch_who_api_concept_children <- function(concept_id = NULL, ...) {
@@ -130,12 +139,13 @@ fetch_who_api_concept_children <- function(concept_id = NULL, ...) {
 #' @keywords internal
 #' @noRd
 .fetch_icd10_who <- function(concept_id = NULL,
-                            year = 2016,
-                            lang = "en",
-                            verbose = TRUE,
-                            hier_code = character(),
-                            hier_desc = character(),
-                            ...) {
+                             year = 2016,
+                             lang = "en",
+                             verbose = TRUE,
+                             hier_code = character(),
+                             hier_desc = character(),
+                             ...) {
+  print(hier_code)
   new_rows <- data.frame(code = character(),
                          leaf = logical(),
                          desc = character(),
@@ -154,39 +164,60 @@ fetch_who_api_concept_children <- function(concept_id = NULL, ...) {
             ". Returning NULL. Try re-running the command.")
     return()
   }
+  if (is.na(hier_code["chapter"])) {
+    message("chapter level")
+    #hier_code <- character()
+  } else if (is.na(hier_code["sub_chapter"])) {
+    message("sub_chapter level")
+    #hier_code <- hier_code[1]
+  } else if (is.na(hier_code["three_digit"])) {
+    message("major level")
+    #hier_code <- hier_code[1:2]
+  } else {
+    message("decimal(s) level")
+  }
+  chapter_code <- hier_code["chapter"]
+  #chapter_desc <- hier_desc["chapter"]
+  sub_chapter_code <- hier_code["sub_chapter"]
+  #sub_chapter_desc <- hier_desc["sub_chapter"]
+  three_digit <- hier_code["three_digit"]
+  #major <- hier_desc["three_digit"]
   for (branch in seq_len(nrow(tree_json))) {
+    # might be looping through chapters, sub-chapters, etc. We can tell by
+    # testing chapter_code etc for NA
     child_code <- tree_json[branch, "ID"]
     child_desc <- tree_json[branch, "label"]
     # for each level, if not defined by arguments, then assign next possible
-    if (is.na(hier_code["chapter"])) {
+    if (is.na(chapter_code)) {
+      if (verbose) message("assigning chapter")
       hier_code["chapter"] <- child_code
       hier_desc["chapter"] <- child_desc
-    } else if (is.na(hier_code["sub_chapter"])) {
+    } else if (is.na(sub_chapter_code)) {
+      if (verbose) message("assigning sub_chapter")
       hier_code["sub_chapter"] <- child_code
       hier_desc["sub_chapter"] <- child_desc
-    } else if (is.na(hier_code["three_digit"])) {
+    } else if (is.na(three_digit) &&
+               grepl(x = child_code, pattern = "-")) {
+      if (verbose) message("assigning major")
       hier_code["three_digit"] <- child_code
-      hier_desc["major"] <- child_desc
+      hier_desc["three_digit"] <- child_desc
     } else {
-      if (verbose) message("chapter, subchapter and major already defined")
+      if (verbose) message("chapter, subchapter and major all already defined")
     }
     if (nchar(child_code) == 3) {
       if (verbose) message("code is three digit, so re-setting three-digit")
-      three_digit <- child_code
-      major <- child_desc
-    } else {
-      three_digit <- hier_code["three_digit"]
-      major <- hier_desc["major"]
+      hier_code["three_digit"] <- child_code
+      hier_desc["three_digit"] <- child_desc
     }
     is_leaf <- tree_json[branch, "isLeaf"]
-    if (!is.na(hier_code["three_digit"])) {
-      # wait until we have a three-digit code/section before writing out
+    if (!is.na(three_digit)) {
+      # wait until we have at least a three-digit code/section before writing out
       new_rows <- rbind(new_rows,
                         data.frame(code = child_code,
                                    leaf = is_leaf,
                                    desc = child_desc,
                                    three_digit = hier_code["three_digit"],
-                                   major = hier_desc["major"],
+                                   major = hier_desc["three_digit"],
                                    sub_chapter = hier_desc["sub_chapter"],
                                    chapter = hier_desc["chapter"],
                                    stringsAsFactors = FALSE
@@ -196,17 +227,20 @@ fetch_who_api_concept_children <- function(concept_id = NULL, ...) {
     }
     if (!is_leaf) {
       if (verbose) message("Not a leaf, so recursing")
-      new_rows <- rbind(new_rows,
-                        .fetch_icd10_who(concept_id = child_code,
-                                        year = year,
-                                        lang = lang,
-                                        verbose = verbose,
-                                        hier_code = hier_code,
-                                        hier_desc = hier_desc,
-                                        ...)
-      )
-    }
-  }
+      new_rows <- rbind(
+        new_rows,
+        .fetch_icd10_who(concept_id = child_code,
+                         year = year,
+                         lang = lang,
+                         verbose = verbose,
+                         hier_code = hier_code,
+                         hier_desc = hier_desc,
+                         ...
+        ) # recurse
+      ) #rbind
+    } # not leaf
+  } # for
+  if (verbose) message("leaving recursion@")
   new_rows
 }
 
@@ -235,4 +269,5 @@ fetch_icd10_who <- function(do_save = TRUE, verbose = FALSE) {
   icd10who2016$desc <- sub("[^ ]+ ", "", icd10who2016$desc)
   if (do_save)
     saveRDS(icd10who2016, file.path(get_resource_path(), "icd10who2016.rds"))
+  invisible(icd10who2016)
 }

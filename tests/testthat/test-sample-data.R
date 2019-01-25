@@ -1,15 +1,11 @@
 context("sample data")
 test_that("ICD-10 codes in uranium data are okay", {
+  skip("discrepancy between ICD-10-CM, ICD-10-WHO and these codes")
   expect_true(all(icd::is_valid(uranium_pathology$icd10, short_code = FALSE)))
-  skip("reinstate this test once ICD-10 WHO codes are available for comparison.
-       Uranium Pathology data is not ICD-10-CM, but ICD-10 WHO.")
-  expect_true(
-    all(strip(uranium_pathology$icd10, ".") %in% icd10cm2016$code)
-  )
-  # See codes missing from RHS. e.g. https://www.sdrugs.com/?c=icd&s=x67 exists
-  # in ICD-10 international, but not in ICD-10-CM
-  setdiff(uranium_pathology$icd10  %>%  strip("."), icd10cm2016$code)
-  # http://apps.who.int/classifications/icd10/browse/2015/en#!/Y86
+  skip_missing_icd10who2016()
+  u <- sub(pattern = ".", replacement = "", fixed = TRUE,
+           uranium_pathology$icd10)
+  expect_true(all(trimws(u) %in% icd10who2016$code))
 })
 
 test_that("sample data frames have correct class", {

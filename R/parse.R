@@ -229,6 +229,33 @@ parse_leaf_desc_icd9cm_v27 <- function(offline = TRUE) {
   invisible(icd9cm_billable27[reorder, ])
 }
 
+#' Fix NA sub-chapters in RTF parsing
+#'
+#' Fixes a couple of corner cases in parsing the 2011 ICD-9-CM RTF
+#' @keywords internal datagen
+#' @noRd
+fix_sub_chap_na <- function(x, start, end) {
+  # 740 CONGENITAL ANOMALIES is a chapter with no sub-chapters defined. For
+  # consistency, assign the same name to sub-chapters
+  congenital <- x[["code"]] %in% icd::expand_range(start,
+                                                   end,
+                                                   short_code = TRUE,
+                                                   defined = FALSE)
+  # assert all the same:
+  stopifnot(all(x[congenital[1], "chapter"] == x[congenital[-1], "chapter"]))
+  # insert a new level into the sub-chapter factor in the right place
+  previous_sub <- as_char_no_warn(x[(which(congenital) - 1)[1], "sub_chapter"])
+  previous_sub_pos <- which(levels(x$sub_chapter) == previous_sub)
+  congenital_title <- as_char_no_warn(x[which(congenital)[1], "chapter"])
+  new_subs <- as_char_no_warn(x$sub_chapter)
+  new_subs[congenital] <- congenital_title
+  new_levels <- append(levels(x$sub_chapter),
+                       congenital_title,
+                       previous_sub_pos)
+  x$sub_chapter <- factor(new_subs, new_levels)
+  x
+}
+
 #' Generate ICD-9-CM hierarchy
 #'
 #' For each row of billing code, give the chapter, sub-chapter, major code and
@@ -296,33 +323,6 @@ icd9cm_gen_chap_hier <- function(save_data = FALSE,
   if (save_data)
     save_in_data_dir(icd9cm_hierarchy)
   invisible(icd9cm_hierarchy)
-}
-
-#' Fix NA sub-chapters in RTF parsing
-#'
-#' Fixes a couple of corner cases in parsing the 2011 ICD-9-CM RTF
-#' @keywords internal datagen
-#' @noRd
-fix_sub_chap_na <- function(x, start, end) {
-  # 740 CONGENITAL ANOMALIES is a chapter with no sub-chapters defined. For
-  # consistency, assign the same name to sub-chapters
-  congenital <- x[["code"]] %in% icd::expand_range(start,
-                                                   end,
-                                                   short_code = TRUE,
-                                                   defined = FALSE)
-  # assert all the same:
-  stopifnot(all(x[congenital[1], "chapter"] == x[congenital[-1], "chapter"]))
-  # insert a new level into the sub-chapter factor in the right place
-  previous_sub <- as_char_no_warn(x[(which(congenital) - 1)[1], "sub_chapter"])
-  previous_sub_pos <- which(levels(x$sub_chapter) == previous_sub)
-  congenital_title <- as_char_no_warn(x[which(congenital)[1], "chapter"])
-  new_subs <- as_char_no_warn(x$sub_chapter)
-  new_subs[congenital] <- congenital_title
-  new_levels <- append(levels(x$sub_chapter),
-                       congenital_title,
-                       previous_sub_pos)
-  x$sub_chapter <- factor(new_subs, new_levels)
-  x
 }
 
 #' get ICD-9 Chapters from vector of ICD-9 codes
