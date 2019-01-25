@@ -62,7 +62,7 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
     message(
       "WHO ICD data must be downloaded by each user due to copyright ",
       "concerns. This may be achieved by running the command:\n\n",
-      "fetch_icd10_who()\n\n",
+      "fetch_icd10who2016()\n\n",
       "The data has to be saved somewhere accessible. The ",
       "location is given by:\n\n",
       "get_resource_path()\nwhich defaults to:\n\n",
@@ -70,9 +70,10 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
       "set_resource_path(\"new/path/to/dir\") can be used to change this.")
   } # end missing
   if (interactive())
-    stop("This binding should be read-only. Use fetch_icd10_who() to populate.")
+    stop("This binding should be read-only.",
+         " Use fetch_icd10who2016() to populate.")
   else
-    fetch_icd10_who(do_save = TRUE)
+    fetch_icd10who2016(do_save = TRUE)
 }
 
 # returns the JSON data, or fails with NULL
@@ -145,12 +146,13 @@ fetch_who_api_concept_children <- function(concept_id = NULL, ...) {
                              hier_code = character(),
                              hier_desc = character(),
                              ...) {
-  print(hier_code)
+  if (verbose) print(hier_code)
   new_rows <- data.frame(code = character(),
                          leaf = logical(),
                          desc = character(),
                          three_digit = character(),
                          major = character(),
+                         sub_sub_chapter = character(),
                          sub_chapter = character(),
                          chapter = character())
   if (verbose) message("fetch_who_api_tree with concept_id = ", concept_id)
@@ -164,65 +166,35 @@ fetch_who_api_concept_children <- function(concept_id = NULL, ...) {
             ". Returning NULL. Try re-running the command.")
     return()
   }
-  if (is.na(hier_code["chapter"])) {
-    message("chapter level")
-    #hier_code <- character()
-  } else if (is.na(hier_code["sub_chapter"])) {
-    message("sub_chapter level")
-    #hier_code <- hier_code[1]
-  } else if (is.na(hier_code["three_digit"])) {
-    message("major level")
-    #hier_code <- hier_code[1:2]
-  } else {
-    message("decimal(s) level")
-  }
-  chapter_code <- hier_code["chapter"]
-  #chapter_desc <- hier_desc["chapter"]
-  sub_chapter_code <- hier_code["sub_chapter"]
-  #sub_chapter_desc <- hier_desc["sub_chapter"]
-  three_digit <- hier_code["three_digit"]
-  #major <- hier_desc["three_digit"]
+  if (verbose) message("hier level = ", length(hier_code))
   for (branch in seq_len(nrow(tree_json))) {
-    # might be looping through chapters, sub-chapters, etc. We can tell by
-    # testing chapter_code etc for NA
+    # might be looping through chapters, sub-chapters, etc.
     child_code <- tree_json[branch, "ID"]
     child_desc <- tree_json[branch, "label"]
-    # for each level, if not defined by arguments, then assign next possible
-    if (is.na(chapter_code)) {
-      if (verbose) message("assigning chapter")
-      hier_code["chapter"] <- child_code
-      hier_desc["chapter"] <- child_desc
-    } else if (is.na(sub_chapter_code)) {
-      if (verbose) message("assigning sub_chapter")
-      hier_code["sub_chapter"] <- child_code
-      hier_desc["sub_chapter"] <- child_desc
-    } else if (is.na(three_digit) &&
-               grepl(x = child_code, pattern = "-")) {
-      if (verbose) message("assigning major")
-      hier_code["three_digit"] <- child_code
-      hier_desc["three_digit"] <- child_desc
-    } else {
-      if (verbose) message("chapter, subchapter and major all already defined")
-    }
-    if (nchar(child_code) == 3) {
-      if (verbose) message("code is three digit, so re-setting three-digit")
-      hier_code["three_digit"] <- child_code
-      hier_desc["three_digit"] <- child_desc
-    }
     is_leaf <- tree_json[branch, "isLeaf"]
-    if (!is.na(three_digit)) {
-      # wait until we have at least a three-digit code/section before writing out
-      new_rows <- rbind(new_rows,
-                        data.frame(code = child_code,
-                                   leaf = is_leaf,
-                                   desc = child_desc,
-                                   three_digit = hier_code["three_digit"],
-                                   major = hier_desc["three_digit"],
-                                   sub_chapter = hier_desc["sub_chapter"],
-                                   chapter = hier_desc["chapter"],
-                                   stringsAsFactors = FALSE
-                        )
-                        # TODO: consider add the chapter, subchapter codes
+    # for each level, if not defined by arguments, then assign next possible
+    hier_code[length(hier_code) + 1] <- child_code
+    hier_desc[length(hier_desc) + 1] <- child_desc
+    sub_sub_chapter = NA
+    if (length(hier_code) >= 3 && nchar(hier_code[3]) > 3)
+      sub_sub_chapter <- hier_desc[3]
+    three_digit <- hier_code[nchar(hier_code) == 3]
+    major <- hier_desc[nchar(hier_code) == 3]
+    is_hier <- grepl("[XVI-]", child_code)
+    if (!is_hier) {
+      new_rows <- rbind(
+        new_rows,
+        data.frame(code = child_code,
+                   leaf = is_leaf,
+                   desc = child_desc,
+                   three_digit = three_digit,
+                   major = major,
+                   sub_sub_chapter = sub_sub_chapter,
+                   sub_chapter = hier_desc[2],
+                   chapter = hier_desc[1],
+                   stringsAsFactors = FALSE
+        )
+        # TODO: consider add the chapter, subchapter codes
       )
     }
     if (!is_leaf) {
@@ -255,7 +227,7 @@ fetch_who_api_concept_children <- function(concept_id = NULL, ...) {
 #' @param do_save Logical, defaults to `TRUE`
 #' @param verbose Logical
 #' @export
-fetch_icd10_who <- function(do_save = TRUE, verbose = FALSE) {
+fetch_icd10who2016 <- function(do_save = TRUE, verbose = FALSE) {
   message("Downloading WHO ICD data. This will take a few minutes. ",
           "Data is cached, so if there is a download error, re-running the ",
           "command will pick up where it left off.")
