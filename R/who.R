@@ -68,20 +68,18 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
       "get_resource_path()\nwhich defaults to:\n\n",
       "file.path(Sys.getenv(\"HOME\"), \".icd.data\")\n\n",
       "set_resource_path(\"new/path/to/dir\") can be used to change this.")
-  } # end missing
-  if (interactive())
+  } else {
     stop("This binding should be read-only.",
          " Use fetch_icd10who2016() to populate.")
-  else
-    fetch_icd10who2016(do_save = TRUE)
+  }
 }
 
 # returns the JSON data, or fails with NULL
-fetch_who_api <- function(resource,
-                          ver = "icd10",
-                          year = 2016,
-                          lang = "en",
-                          verbose = FALSE) {
+.fetch_who_api <- function(resource,
+                           ver = "icd10",
+                           year = 2016,
+                           lang = "en",
+                           verbose = FALSE) {
   httr_get <- memoise::memoise(
     httr::GET,
     cache = memoise::cache_filesystem(
@@ -108,18 +106,19 @@ fetch_who_api <- function(resource,
 #' Of note, the `WHO` package does not provide access to classifications, just
 #' WHO summary data.
 #' @keywords internal
-fetch_who_api_chapter_names <- function(ver = "icd10",
-                                        year = 2016,
-                                        lang = "en", verbose = TRUE) {
-  fetch_who_api_concept_children(ver = ver, year = year, lang = lang,
-                                 verbose = verbose)[["label"]]
+#' @noRd
+.fetch_who_api_chapter_names <- function(ver = "icd10",
+                                         year = 2016,
+                                         lang = "en", verbose = TRUE) {
+  .fetch_who_api_concept_children(ver = ver, year = year, lang = lang,
+                                  verbose = verbose)[["label"]]
 }
 
-fetch_who_api_concept_children <- function(concept_id = NULL, ...) {
+.fetch_who_api_concept_children <- function(concept_id = NULL, ...) {
   if (is.null(concept_id))
-    fetch_who_api(resource = "JsonGetRootConcepts?useHtml=false", ...)
+    .fetch_who_api(resource = "JsonGetRootConcepts?useHtml=false", ...)
   else
-    fetch_who_api(
+    .fetch_who_api(
       resource = paste0("JsonGetChildrenConcepts?ConceptId=",
                         concept_id,
                         "&useHtml=false"), ...)
@@ -136,7 +135,7 @@ fetch_who_api_concept_children <- function(concept_id = NULL, ...) {
 #' @param year integer 4-digit year
 #' @param lang Currently it seems only 'en' works
 #' @param verbose logical
-#' @param ... further arguments passed to self recursively, or `fetch_who_api`
+#' @param ... further arguments passed to self recursively, or `.fetch_who_api`
 #' @keywords internal
 #' @noRd
 .fetch_icd10_who <- function(concept_id = NULL,
@@ -155,12 +154,12 @@ fetch_who_api_concept_children <- function(concept_id = NULL, ...) {
                          sub_sub_chapter = character(),
                          sub_chapter = character(),
                          chapter = character())
-  if (verbose) message("fetch_who_api_tree with concept_id = ", concept_id)
-  tree_json <- fetch_who_api_concept_children(concept_id = concept_id,
-                                              year = year,
-                                              lang = lang,
-                                              verbose = verbose,
-                                              ...)
+  if (verbose) message(".fetch_who_api_tree with concept_id = ", concept_id)
+  tree_json <- .fetch_who_api_concept_children(concept_id = concept_id,
+                                               year = year,
+                                               lang = lang,
+                                               verbose = verbose,
+                                               ...)
   if (is.null(tree_json)) {
     warning("Unable to get results for concept_id: ", concept_id,
             ". Returning NULL. Try re-running the command.")
@@ -175,7 +174,7 @@ fetch_who_api_concept_children <- function(concept_id = NULL, ...) {
     # for each level, if not defined by arguments, then assign next possible
     hier_code[length(hier_code) + 1] <- child_code
     hier_desc[length(hier_desc) + 1] <- child_desc
-    sub_sub_chapter = NA
+    sub_sub_chapter <- NA
     if (length(hier_code) >= 3 && nchar(hier_code[3]) > 3)
       sub_sub_chapter <- hier_desc[3]
     three_digit <- hier_code[nchar(hier_code) == 3]
