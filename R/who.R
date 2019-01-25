@@ -59,15 +59,16 @@ set_resource_path <- function(path = .default_path, verbose = TRUE) {
   if (missing(x)) {
     dat <- .get_local_icd10who2016()
     if (!is.null(dat)) return(dat)
-    message(
-      "WHO ICD data must be downloaded by each user due to copyright ",
-      "concerns. This may be achieved by running the command:\n\n",
-      "fetch_icd10who2016()\n\n",
-      "The data has to be saved somewhere accessible. The ",
-      "location is given by:\n\n",
-      "get_resource_path()\nwhich defaults to:\n\n",
-      "file.path(Sys.getenv(\"HOME\"), \".icd.data\")\n\n",
-      "set_resource_path(\"new/path/to/dir\") can be used to change this.")
+    if (interactive())
+      message(
+        "WHO ICD data must be downloaded by each user due to copyright ",
+        "concerns. This may be achieved by running the command:\n\n",
+        "fetch_icd10who2016()\n\n",
+        "The data has to be saved somewhere accessible. The ",
+        "location is given by:\n\n",
+        "get_resource_path()\nwhich defaults to:\n\n",
+        "file.path(Sys.getenv(\"HOME\"), \".icd.data\")\n\n",
+        "set_resource_path(\"new/path/to/dir\") can be used to change this.")
   } else {
     stop("This binding should be read-only.",
          " Use fetch_icd10who2016() to populate.")
