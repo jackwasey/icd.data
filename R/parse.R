@@ -38,6 +38,7 @@ update_everything <- function() {
   # The next step depends on icd9cm_billable
   icd9cm_gen_chap_hier(save_data = TRUE, offline = FALSE,
                        verbose = FALSE)
+  icd10_parse_ahrq_pcs(save_data = TRUE)
 }
 
 # quick sanity checks - full tests of x in test-parse.R
