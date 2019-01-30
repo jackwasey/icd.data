@@ -1,3 +1,5 @@
+I am submitting icd 3.4, icd.data 1.1 and a new pacakge nhds 1.0 simultaneously.
+
 This version needs icd >= 3.4 to build the documentation, and I am submitting an updated 'icd' package at this same time.
 
 Updated from initial submission with spelling correction in DESCRIPTION Title.
