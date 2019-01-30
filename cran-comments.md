@@ -9,9 +9,7 @@ Updated from initial submission with spelling correction in DESCRIPTION Title.
 
 ## R CMD check results
 
-0 errors | 0 warnings | 2 notes
-
-New submission
+0 errors | 0 warnings | 1 note
 
 * checking installed package size ... NOTE
     installed size is 15.5Mb
