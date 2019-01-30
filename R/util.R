@@ -108,7 +108,7 @@ get_encodings <- function(x) {
 #'   'start' and 'end'.
 #' @noRd
 #' @keywords internal manip
-chapter_to_desc_range <- function(x, re_major) {
+.chapter_to_desc_range <- function(x, re_major) {
   stopifnot(is.character(x), is.character(re_major))
   re_code_range <- paste0("(.*)[[:space:]]?\\((",
                           re_major, ")-(",
@@ -129,11 +129,11 @@ chapter_to_desc_range <- function(x, re_major) {
 }
 
 chapter_to_desc_range.icd9 <- function(x) { #nolint
-  chapter_to_desc_range(x, re_major = re_icd9_major_bare)
+  .chapter_to_desc_range(x, re_major = re_icd9_major_bare)
 }
 
 chapter_to_desc_range.icd10 <- function(x) { #nolint
-  chapter_to_desc_range(x, re_major = re_icd10_major_bare)
+  .chapter_to_desc_range(x, re_major = re_icd10_major_bare)
 }
 
 to_title_case <- function(x) {

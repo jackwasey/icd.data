@@ -221,7 +221,7 @@ rtf_make_sub_chapters <- function(filtered, ..., save = FALSE) {
     "(", re_icd9_major_strict_bare, ")",
     "(-(", re_icd9_major_strict_bare, "))?",
     "\\)")
-  chapter_to_desc_range(
+  chapter_to_desc_range.icd9(
     grep(re_subchap_either, filtered,
          value = TRUE, ...)
   )

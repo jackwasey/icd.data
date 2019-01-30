@@ -1,4 +1,4 @@
-This is the initial CRAN release containing the larger data files from 'icd' which change very rarely. Will follow with an updated 'icd' package.
+This version need icd >= 3.4 to build the documentation, and I am submitting an updated 'icd' package at this same time.
 
 Updated from initial submission with spelling correction in DESCRIPTION Title.
 

@@ -24,11 +24,7 @@ icd10cm_extract_sub_chapters <- function(save_data = FALSE, offline = TRUE) {
   f_info <- icd10cm_get_xml_file(offline = offline)
   stopifnot(!is.null(f_info))
   j <- xml2::read_xml(f_info$file_path)
-  # using magrittr::equals and extract because I don't want to import them. See
-  # \code{icd-package.R} for what is imported. No harm in being explicit, since
-  # :: will do an implicit requireNamespace.
   xml2::xml_name(xml2::xml_children(j)) == "chapter" -> chapter_indices
-  # could do xpath, but harder to loop
   chaps <- xml2::xml_children(j)[chapter_indices]
   icd10_sub_chapters <- list()
   for (chap in chaps) {
@@ -37,7 +33,7 @@ icd10cm_extract_sub_chapters <- function(save_data = FALSE, offline = TRUE) {
     subchaps <- c_kids[subchap_indices]
     for (subchap in subchaps) {
       new_sub_chap_range <-
-        chapter_to_desc_range(
+        chapter_to_desc_range.icd10(
           xml2::xml_text(
             xml2::xml_children(
               subchap
