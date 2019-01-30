@@ -20,8 +20,6 @@ Description: ICD-9 and ICD-10 definitions from the United States
 License: GPL-3
 Depends: 
     R (>= 3.4.0)
-Imports:
-    utils
 Suggests:
     httr,
     icd (>= 3.4),
@@ -29,6 +27,7 @@ Suggests:
     memoise,
     RODBC,
     testthat,
+    utils,
     xml2
 Encoding: UTF-8
 Language: en-US
