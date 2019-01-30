@@ -4,6 +4,7 @@ language: R
 sudo: false
 cache: packages
 
-r_github_packages:
-  - jackwasey/icd
+# should work with older version of icd
+# r_github_packages:
+#  - jackwasey/icd
 #  - jackwasey/icd@v3.4

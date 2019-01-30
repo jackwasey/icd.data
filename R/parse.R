@@ -178,7 +178,7 @@ icd9_parse_leaf_desc_ver <- function(version = icd9cm_latest_edition(),
                     long_desc = long_descs,
                     stringsAsFactors = FALSE)
   message("now sort so that E is after V")
-  reorder <- icd::order.icd9(out[["code"]])
+  reorder <- get_icd34fun("order.icd9")(out[["code"]])
   stopifnot(!anyNA(out[["code"]]))
   stopifnot(!anyNA(reorder))
   stopifnot(!any(grepl(out[["code"]], pattern = "[[:space:]]")))
@@ -226,7 +226,7 @@ parse_leaf_desc_icd9cm_v27 <- function(offline = TRUE) {
   close(f)
   names(icd9cm_billable27) <- c("code", "long_desc", "short_desc")
   icd9cm_billable27 <- icd9cm_billable27[c(1, 3, 2)] # reorder columns
-  reorder <- icd::order.icd9(icd9cm_billable27[["code"]])
+  reorder <- get_icd34fun("order.icd9")(icd9cm_billable27[["code"]])
   invisible(icd9cm_billable27[reorder, ])
 }
 
@@ -358,15 +358,15 @@ icd9_get_chapters <- function(x, short_code, verbose = FALSE) {
   )
   chap_lookup <- lapply(icd9_chapters, function(y)
     vec_to_env_true(
-      icd::expand_range_major(icd::as.icd9cm(y[["start"]]),
-                              y[["end"]], defined = FALSE)
+      icd::icd_expand_range_major.icd9(icd::as.icd9cm(y[["start"]]),
+                                       y[["end"]], defined = FALSE)
     )
   )
   subchap_lookup <- lapply(icd9_sub_chapters, function(y)
     vec_to_env_true(
-      icd::expand_range_major(icd::as.icd9cm(y[["start"]]),
-                              y[["end"]],
-                              defined = FALSE)
+      icd::icd_expand_range_major.icd9(icd::as.icd9cm(y[["start"]]),
+                                       y[["end"]],
+                                       defined = FALSE)
     )
   )
   for (i in seq_along(majors)) {

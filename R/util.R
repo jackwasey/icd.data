@@ -144,3 +144,11 @@ to_title_case <- function(x) {
   }
   x
 }
+
+# two functions are not exported in icd < 3.4
+get_icd34fun <- function(f) {
+  if (exists(f, where = asNamespace("icd"), mode = "function"))
+    get(f, envir = asNamespace("icd"), mode = "function")
+  else
+    stop("Function ", f, " is not exported with icd < 3.4")
+}
