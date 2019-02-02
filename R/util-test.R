@@ -207,7 +207,7 @@ expect_equal_no_icd <- function(object, expected, ...) {
 #' Will only skip if the data is absent
 #' @export
 skip_missing_icd10who2016 <- function() {
-  dat <- .get_local_icd10who2016()
+  dat <- get_icd10who2016()
   if (is.null(dat))
     testthat::skip("WHO not loaded into local environment, or unavailable")
 }

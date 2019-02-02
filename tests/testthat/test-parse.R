@@ -172,12 +172,6 @@ if (rtf_year_ok(test_year)) {
     rtf_leaves <- sort(
       swap_names_vals(
         rtf[nrtf %in% icd::short_to_decimal(v32$code)]))
-    if (FALSE && interactive()) {
-      assign("manual_compare_descs",
-             data.frame("From TXT" = v32$long_desc,
-                        "From RTF = rtf_leaves" = names(rtf_leaves)),
-             envir = .GlobalEnv)
-    }
   })
 
   test_that("RTF extract has no duplicates", {

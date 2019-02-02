@@ -1,4 +1,6 @@
 library(testthat)
 library(icd.data)
 library(icd)
+options("icd.data.resource" = tempdir())
 test_check("icd.data")
+unlink(getOption("icd.data.resource"))
