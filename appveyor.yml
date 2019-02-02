@@ -21,6 +21,9 @@ before_build:
 #  - Rscript -e "remotes::install_github(\"jackwasey/icd\", ref = \"v3.4\")"
   - Rscript -e "remotes::install_github(\"jackwasey/icd\")"
 
+environment:
+  USE_RTOOLS: true # Set to false if no GitHub packages are necessary
+
 build_script:
   - travis-tool.sh install_deps
 
