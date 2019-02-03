@@ -100,10 +100,18 @@ make_icd9cm_sources <- function() {
 
 make_icd10cm_sources <- function() {
   list(
+    "2019" = list(
+      base_url = "https://www.cms.gov/Medicare/Coding/ICD10/Downloads/",
+      dx_zip = "2019-ICD-10-CM-Code-Descriptions.zip",
+      dx_xml_zip = "2019-ICD-10-CM-Tables-and-Index.zip",
+      dx_flat = "icd10cm_codes_2019.txt",
+      pcs_zip = "2019-ICD-10-PCS-Order-File.zip",
+      pcs_xml_zip = "2019-ICD-10-PCS-Tables-And-Index.zip",
+      pcs_flat = "icd10pcs_order_2019.txt"),
     "2018" = list(
       base_url = "https://www.cms.gov/Medicare/Coding/ICD10/Downloads/",
       dx_zip = "2018-ICD-10-Code-Descriptions.zip",
-      dx_xml_zip = "2018-ICD-10-Code-Tables-Index.zip",
+      dx_xml_zip = "2018-ICD-10-Table-And-Index.zip",
       dx_flat = "icd10cm_codes_2018.txt",
       pcs_zip = "2018-ICD-10-PCS-Order-File.zip",
       pcs_xml_zip = "2018-ICD-10-PCS-Tables-And-Index.zip",
@@ -119,7 +127,7 @@ make_icd10cm_sources <- function() {
     "2016" = list(
       base_url = "https://www.cms.gov/Medicare/Coding/ICD10/Downloads/",
       dx_zip = "2016-Code-Descriptions-in-Tabular-Order.zip",
-      dx_xml_zip = "2016-ICD10-Code-Tables-Index.zip",
+      dx_xml_zip = "2016-CM-Code-Tables-and-Index.zip",
       dx_flat = "icd10cm_codes_2016.txt",
       pcs_zip = "2016-PCS-Long-Abbrev-Titles.zip",
       pcs_xml_zip = "2016-PCS-Code-Tables.zip",
@@ -141,5 +149,41 @@ make_icd10cm_sources <- function() {
       pcs_xml_zip = "2014-Code-Tables-and-Index.zip",
       pcs_flat = "icd10pcs_order_2014.txt")
   )
+}
+
+url_ok <- function(url) {
+  httr::HEAD(url)$status_code < 400
+}
+
+url_warn_or_stop <- function(url, warn = FALSE) {
+  if (!url_ok(url)) {
+    if (warn)
+      warning("NA: ", url, call. = FALSE)
+    else
+      stop("NA: ", url, call. = FALSE)
+  }
+  else
+    message("OK: ", url)
+}
+
+check_icd9cm_urls <- function(warn = FALSE) {
+  oldwarn = options("warn" = 1)
+  on.exit(options(oldwarn))
+  urls <- c(make_icd9cm_sources()$url, make_icd9cm_sources()$rtf_url)
+  for (url in urls)
+    url_warn_or_stop(url, warn)
+  message("now regenerate sysdata with\ngenerate_sysdata()")
+}
+
+check_icd10cm_urls <- function(warn = FALSE) {
+  oldwarn = options("warn" = 1)
+  on.exit(options(oldwarn))
+  lapply(make_icd10cm_sources(), function(year) {
+    zips <- grep("zip$", names(year))
+    urls <- paste0(year$base_url, unlist(unname(year))[zips])
+    for (url in urls)
+      url_warn_or_stop(url, warn)
+  })
+  message("now regenerate sysdata with\ngenerate_sysdata()")
 }
 #nocov end
