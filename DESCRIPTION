@@ -22,7 +22,7 @@ Depends:
     R (>= 3.4.0)
 Suggests:
     httr,
-    icd (>= 3.4),
+    icd,
     jsonlite,
     memoise,
     RODBC,
