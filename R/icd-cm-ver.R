@@ -4,13 +4,13 @@
 #'   requested version is actually available in this R session.
 #' @export
 set_icd10cm_active_ver <- function(ver, check_exists = TRUE) {
-  ver <- as.character(ver)
-  stopifnot(nchar(ver) == 4L)
-  stopifnot(ver %in% names(icd10cm_sources))
+  v <- as.character(ver)
+  stopifnot(grepl("^[[:digit:]]{4}$", as.character(v)))
+  stopifnot(v %in% names(icd10cm_sources))
   if (check_exists)
-    stopifnot(exists(paste0("icd10cm", ver), inherits = TRUE))
-  options("icd.data.icd10cm_active_ver" = ver)
-  invisible(ver)
+    stopifnot(exists(paste0("icd10cm", v), inherits = TRUE))
+  options("icd.data.icd10cm_active_ver" = v)
+  invisible(v)
 }
 
 #' @rdname set_icd10cm_active_ver
@@ -25,6 +25,9 @@ get_icd10cm_active_ver <- function() {
 }
 
 #' Get the data for a given version (four-digit year) of ICD-10-CM
+#'
+#' When called without an argument, it returns the curerntly active version as
+#' set by \code{set_icd10cm_active_ver()}
 #' @param ver Version, currently this is always four-digit year
 #' @examples
 #' \dontrun{
@@ -32,14 +35,15 @@ get_icd10cm_active_ver <- function() {
 #' }
 #' @export
 get_icd10cm_version <- function(ver = get_icd10cm_active_ver()) {
-  list(
+  stopifnot(grepl("^[[:digit:]]{4}$", as.character(ver)))
+  switch(ver,
     "2014" = icd.data::icd10cm2014,
     "2015" = icd.data::icd10cm2015,
     "2016" = icd.data::icd10cm2016,
     "2017" = icd.data::icd10cm2017,
     "2018" = icd.data::icd10cm2018,
     "2019" = icd.data::icd10cm2019
-  )[[ver]]
+  )
 }
 
 #' Get the data for the latest ICD-10-CM version in this package.
@@ -64,22 +68,14 @@ get_icd10cm_version <- function(ver = get_icd10cm_active_ver()) {
 get_icd10cm_latest <- function() {
   var_name <- "icd10cm2019"
   if (exists(var_name)) return(get(var_name))
+  getExportedValue(asNamespace("icd.data"), var_name)
   eval(parse(text = paste0("icd.data::", var_name)))
 }
 
 .icd10cm_active_binding <- function(x) {
   if (!missing(x)) stop("This binding returns the active ICD-10-CM data.\n",
                         "Use `set_icd10cm_active_ver(\"2019\") instead.")
-  # for now, hard code this to avoid complicated namespace issues, even if
-  # icd.data is in "Imports" of another package.
-  list(
-    "2014" = icd.data::icd10cm2014,
-    "2015" = icd.data::icd10cm2015,
-    "2016" = icd.data::icd10cm2016,
-    "2017" = icd.data::icd10cm2017,
-    "2018" = icd.data::icd10cm2018,
-    "2019" = icd.data::icd10cm2019
-  )[[get_icd10cm_active_ver()]]
+  get_icd10cm_version()
 }
 
 .icd10cm_latest_binding <- function(x) {

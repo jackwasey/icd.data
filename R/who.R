@@ -151,6 +151,7 @@ get_icd10who2016 <- function() {
                            year = 2016,
                            lang = "en",
                            verbose = FALSE) {
+  httr_get <- httr::GET
   if (requireNamespace("memoise", quietly = TRUE))
     httr_get <- memoise::memoise(
       httr::GET,
@@ -161,8 +162,6 @@ get_icd10who2016 <- function() {
           "memoise")
       )
     )
-  else
-    httr_get <- httr::GET
   ver <- match.arg(ver)
   who_base <- "https://apps.who.int/classifications"
   json_url <- paste(who_base, ver, "browse", year, lang, resource, sep = "/")

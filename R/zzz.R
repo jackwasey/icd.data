@@ -25,3 +25,7 @@
   lockBinding(sym = "icd10cm_active", env = parent.env(environment()))
   invisible()
 }
+
+release_questions <- function() {
+  c("codetools::checkUsagePackage('icd.data', all = TRUE)")
+}

@@ -1,6 +1,5 @@
 # nocov start
-utils::globalVariables(c("icd10cm2016",
-                         "icd10cm2019",
+utils::globalVariables(c("icd10cm2019",
                          "icd10cm_sources",
                          "icd10_chapters",
                          "icd10_sub_chapters"))
@@ -86,7 +85,7 @@ icd10cm_parse_all_defined_year <- function(
 }
 
 icd10_generate_subchap_lookup <- function(
-  lk_majors = unique(icd10cm2016[["three_digit"]]),
+  lk_majors = unique(icd10cm2019[["three_digit"]]),
   verbose = FALSE
 ) {
   sc_lookup <- data.frame(major = NULL, desc = NULL)
@@ -107,10 +106,10 @@ icd10_generate_subchap_lookup <- function(
 }
 
 icd10_generate_chap_lookup <- function(lk_majors) {
-  lk_majors <- unique(icd10cm2016[["three_digit"]])
+  lk_majors <- unique(icd10cm2019[["three_digit"]])
   chap_lookup <- data.frame(major = NULL, desc = NULL)
   for (chap_n in names(icd10_chapters)) {
-    chap <- icd.data::icd10_chapters[[chap_n]]
+    chap <- icd10_chapters[[chap_n]]
     # fix a 2016 error in the CMS XML definitions
     if (chap["end"] == "Y08")
       chap["end"] <- "Y09"

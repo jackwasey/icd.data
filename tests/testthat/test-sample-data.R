@@ -3,8 +3,8 @@ test_that("ICD-10 codes in uranium data are okay", {
   expect_true(all(icd::is_valid(uranium_pathology$icd10, short_code = FALSE)))
   skip("not sure whether there are errors in this data yet.")
   expect_equal(
-    setdiff(levels(icd::decimal_to_short(icd.data::uranium_pathology$icd10)),
-            icd.data::icd10cm2016$code),
+    setdiff(levels(icd::decimal_to_short(uranium_pathology$icd10)),
+            icd10cm2016$code),
     character(0))
 })
 

@@ -10,7 +10,8 @@ get_icd10cm_version(ver = get_icd10cm_active_ver())
 \item{ver}{Version, currently this is always four-digit year}
 }
 \description{
-Get the data for a given version (four-digit year) of ICD-10-CM
+When called without an argument, it returns the curerntly active version as
+set by \code{set_icd10cm_active_ver()}
 }
 \examples{
 \dontrun{

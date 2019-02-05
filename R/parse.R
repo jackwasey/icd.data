@@ -27,9 +27,6 @@ update_everything <- function() {
                        No dependencies on other data.")
   parse_leaf_descriptions_all(save_data = TRUE, offline = FALSE)
   load(system.file("data", "icd9cm_billable.RData", package = "icd.data"))
-  message("Parsing comorbidity mappings from SAS and text sources.
-                       (Make sure lookup files are updated first.)
-                       Depends on icd9cm_hierarchy being updated.")
   icd10cm_parse_all_defined(save_data = TRUE, offline = FALSE)
   icd10cm_extract_sub_chapters(save_data = TRUE, offline = FALSE)
   # reload the newly saved data before generating chapters.
