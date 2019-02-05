@@ -1,8 +1,4 @@
-I am submitting icd 3.4, icd.data 1.1 and a new pacakge nhds 1.0 simultaneously.
-
-This version needs icd >= 3.4 to build the documentation, and I am submitting an updated 'icd' package at this same time.
-
-Updated from initial submission with spelling correction in DESCRIPTION Title.
+I am submitting icd 3.4.1, icd.data 1.1.1 and a new pacakge nhds 1.0 simultaneously, although they no longer have version inter-dependencies.
 
 ## Test environments
 * local OS X install, R 3.5.2
@@ -13,8 +9,8 @@ Updated from initial submission with spelling correction in DESCRIPTION Title.
 
 0 errors | 0 warnings | 1 note
 
-* checking installed package size ... NOTE
-    installed size is 15.5Mb
-    sub-directories of 1Mb or more:
-      data  15.2Mb
+* checking installed package size ...
+     installed size is 21.5Mb
+     sub-directories of 1Mb or more:
+       data  21.2Mb
 

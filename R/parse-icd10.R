@@ -123,6 +123,7 @@ icd10_generate_chap_lookup <- function(lk_majors) {
   chap_lookup
 }
 
+# duplicated with same function in 'icd'
 icd10_parse_ahrq_pcs <- function(save_data = TRUE) {
   f <- unzip_to_data_raw(
     url = paste0("https://www.hcup-us.ahrq.gov/toolssoftware/",
@@ -137,11 +138,8 @@ icd10_parse_ahrq_pcs <- function(save_data = TRUE) {
   dat$class_number <- NULL
   dat$code <- gsub(dat$code, pattern = "'", replacement = "")
   icd10_pcs <- list("2018" = dat[c("code", "desc")])
-  icd10_map_ahrq_pcs <- split(dat$code, dat$class)
-  if (save_data) {
+  if (save_data)
     save_in_data_dir(icd10_pcs)
-    save_in_data_dir(icd10_map_ahrq_pcs)
-  }
 }
 
 icd10_parse_cms_pcs_all <- function(save_data = TRUE) {
