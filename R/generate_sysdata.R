@@ -104,7 +104,9 @@ make_icd10cm_sources <- function() {
       base_url = "https://www.cms.gov/Medicare/Coding/ICD10/Downloads/",
       dx_zip = "2019-ICD-10-CM-Code-Descriptions.zip",
       dx_xml_zip = "2019-ICD-10-CM-Tables-and-Index.zip",
-      dx_flat = "icd10cm_codes_2019.txt",
+      dx_xml = "Tabular.xml",
+      dx_leaf = "icd10cm_codes_2019.txt",
+      dx_hier = "icd10cm_order_2019.txt",
       pcs_zip = "2019-ICD-10-PCS-Order-File.zip",
       pcs_xml_zip = "2019-ICD-10-PCS-Tables-And-Index.zip",
       pcs_flat = "icd10pcs_order_2019.txt"),
@@ -112,7 +114,9 @@ make_icd10cm_sources <- function() {
       base_url = "https://www.cms.gov/Medicare/Coding/ICD10/Downloads/",
       dx_zip = "2018-ICD-10-Code-Descriptions.zip",
       dx_xml_zip = "2018-ICD-10-Table-And-Index.zip",
-      dx_flat = "icd10cm_codes_2018.txt",
+      dx_xml = "Tabular.xml",
+      dx_leaf = "icd10cm_codes_2018.txt",
+      dx_hier = "icd10cm_order_2018.txt",
       pcs_zip = "2018-ICD-10-PCS-Order-File.zip",
       pcs_xml_zip = "2018-ICD-10-PCS-Tables-And-Index.zip",
       pcs_flat = "icd10pcs_order_2018.txt"),
@@ -121,14 +125,18 @@ make_icd10cm_sources <- function() {
       dx_zip = "2017-ICD10-Code-Descriptions.zip",
       pcs_zip = "2017-PCS-Long-Abbrev-Titles.zip",
       pcs_xml_zip = "2017-PCS-Code-Tables.zip",
+      dx_xml = "Tabular.xml",
       dx_xml_zip = "2017-ICD10-Code-Tables-Index.zip",
-      dx_flat = "icd10cm_codes_2017.txt",
+      dx_leaf = "icd10cm_codes_2017.txt",
+      dx_hier = "icd10cm_order_2017.txt",
       pcs_flat = "icd10pcs_order_2017.txt"),
     "2016" = list(
       base_url = "https://www.cms.gov/Medicare/Coding/ICD10/Downloads/",
       dx_zip = "2016-Code-Descriptions-in-Tabular-Order.zip",
       dx_xml_zip = "2016-CM-Code-Tables-and-Index.zip",
-      dx_flat = "icd10cm_codes_2016.txt",
+      dx_xml = "Tabular.xml",
+      dx_leaf = "icd10cm_codes_2016.txt",
+      dx_hier = "icd10cm_order_2016.txt",
       pcs_zip = "2016-PCS-Long-Abbrev-Titles.zip",
       pcs_xml_zip = "2016-PCS-Code-Tables.zip",
       pcs_flat = "icd10pcs_order_2016.txt"),
@@ -136,7 +144,9 @@ make_icd10cm_sources <- function() {
       base_url = "https://www.cms.gov/Medicare/Coding/ICD10/Downloads/",
       dx_zip = "2015-code-descriptions.zip",
       dx_xml_zip = "2015-tables-index.zip",
-      dx_flat = "icd10cm_order_2015.txt",
+      dx_xml = "Tabular.xml",
+      dx_leaf = "icd10cm_codes_2015.txt",
+      dx_hier = "icd10cm_order_2015.txt",
       pcs_zip = "2015-PCS-long-and-abbreviated-titles.zip",
       pcs_xml_zip = "2015-Code_Tables-and-Index.zip",
       pcs_flat = "icd10pcs_order_2015.txt"),
@@ -144,7 +154,9 @@ make_icd10cm_sources <- function() {
       base_url = "https://www.cms.gov/Medicare/Coding/ICD10/Downloads/",
       dx_zip = "2014-ICD10-Code-Descriptions.zip",
       dx_xml_zip = "2014-ICD10-Code-Tables-and-Index.zip",
-      dx_flat = "icd10cm_order_2014.txt",
+      dx_xml = "Tabular.xml",
+      dx_leaf = "icd10cm_codes_2014.txt",
+      dx_hier = "icd10cm_order_2014.txt",
       pcs_zip = "2014-PCS-long-and-abbreviated-titles.zip",
       pcs_xml_zip = "2014-Code-Tables-and-Index.zip",
       pcs_flat = "icd10pcs_order_2014.txt")
@@ -167,7 +179,7 @@ url_warn_or_stop <- function(url, warn = FALSE) {
 }
 
 check_icd9cm_urls <- function(warn = FALSE) {
-  oldwarn = options("warn" = 1)
+  oldwarn <- options("warn" = 1)
   on.exit(options(oldwarn))
   urls <- c(make_icd9cm_sources()$url, make_icd9cm_sources()$rtf_url)
   for (url in urls)
@@ -176,7 +188,7 @@ check_icd9cm_urls <- function(warn = FALSE) {
 }
 
 check_icd10cm_urls <- function(warn = FALSE) {
-  oldwarn = options("warn" = 1)
+  oldwarn <- options("warn" = 1)
   on.exit(options(oldwarn))
   lapply(make_icd10cm_sources(), function(year) {
     zips <- grep("zip$", names(year))

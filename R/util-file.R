@@ -1,10 +1,25 @@
-#nocov start
-icd10_url_cdc <- "http://www.cdc.gov/nchs/data/icd/icd10cm/"
+# nocov start
+#
+# Prefer CMS? NCHS actually generates the ICD-10-CM codes, at least the
+# diagnostic ones. http://www.cdc.gov/nchs/data/icd/icd10cm/
 
-icd10cm_get_flat_file <- function(...) {
+icd10cm_get_flat_file_cdc <- function(...) {
+  icd10_url_cdc <- "http://www.cdc.gov/nchs/data/icd/icd10cm/"
   unzip_to_data_raw(
     url = paste0(icd10_url_cdc, "2016/ICD10CM_FY2016_code_descriptions.zip"),
     file_name = "icd10cm_order_2016.txt", ...)
+}
+
+#' Get annual version of ICD-10-CM
+#' @param year four-digit
+#' @param ... passed through, e.g., `offline = FALSE`
+icd10cm_get_flat_file <- function(year, ...) {
+  y <- icd10cm_sources[[as.character(year)]]
+  unzip_to_data_raw(
+    paste0(y$base_url, y$dx_zip),
+    # dx_leaf is same, just leaves
+    file_name = y$dx_hier,
+    ...)
 }
 
 #' Fetch ICD-10-CM data from the CMS web site
@@ -24,17 +39,23 @@ fetch_icd10cm_all <- function(verbose = FALSE, ...) {
 #' @rdname fetch_icd10cm_all
 #' @keywords internal
 #' @noRd
-fetch_icd10cm_year <- function(year = "2018", dx = TRUE,
-                               verbose = FALSE, offline = FALSE, ...) {
-  stopifnot(is.character(year), length(year) == 1)
+fetch_icd10cm_year <- function(
+  year = 2018,
+  dx = TRUE,
+  verbose = FALSE,
+  offline = FALSE,
+  ...
+) {
+  stopifnot(is.numeric(year) || is.character(year), length(year) == 1)
   stopifnot(is.logical(dx), length(dx) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
   stopifnot(is.logical(offline), length(offline) == 1)
-  stopifnot(year %in% names(icd10cm_sources))
+  stopifnot(as.character(year) %in% names(icd10cm_sources))
   if (verbose) message(ifelse(dx, "dx", "pcs"))
   s <- icd10cm_sources[[year]]
   url <- paste0(s$base_url, s$dx_zip)
-  file_name <- s$dx_flat
+  # fox dx codes, get either the hier or just leaf flat file here:
+  file_name <- s$dx_hier
   if (!dx) {
     if ("pcs_zip" %nin% names(s) || is.na(s$pcs_zip)) {
       if (verbose) message("No PCS flat file zip name.")
@@ -52,7 +73,8 @@ fetch_icd10cm_year <- function(year = "2018", dx = TRUE,
   unzip_to_data_raw(url = url,
                     file_name = file_name,
                     verbose = verbose,
-                    offline = offline, ...)
+                    offline = offline,
+                    ...)
 }
 
 #' Get the raw data directory
@@ -62,7 +84,7 @@ fetch_icd10cm_year <- function(year = "2018", dx = TRUE,
 #' @noRd
 #' @keywords internal
 get_raw_data_dir <- function()
-  system.file("extdata", package = "icd")
+  system.file("data-raw", package = "icd.data")
 
 
 #' Save given variable in package data directory
@@ -93,7 +115,7 @@ save_in_data_dir <- function(var_name, suffix = "", data_path = "data",
   save(list = var_name,
        envir = envir,
        file = file.path(package_dir, data_path,
-                        strip(paste0(var_name, suffix, ".rda"))),
+                        strip(paste0(var_name, suffix, ".RData"))),
        compress = "xz")
   message("Now reload package to enable updated/new data: ", var_name)
   invisible(get(var_name, envir = envir))

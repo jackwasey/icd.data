@@ -1,11 +1,9 @@
 #nocov start
-
 utils::globalVariables(c("icd9_sub_chapters",
                          "icd9_chapters",
                          "icd9cm_latest_edition",
                          "icd9cm_billable",
                          "icd9cm_sources",
-                         "icd10cm_sources",
                          "icd9_majors"))
 
 #' generate all package data
@@ -27,12 +25,12 @@ update_everything <- function() {
   message("Parsing plain text billable codes to create icd9cm_billable list of
                        data frames with descriptions of billable codes only.
                        No dependencies on other data.")
-  parse_leaf_descriptions_all(save_data = TRUE, offline = FALSE) # nolint
-  load(system.file("data", "icd9cm_billable.RData", package = "icd"))
+  parse_leaf_descriptions_all(save_data = TRUE, offline = FALSE)
+  load(system.file("data", "icd9cm_billable.RData", package = "icd.data"))
   message("Parsing comorbidity mappings from SAS and text sources.
                        (Make sure lookup files are updated first.)
                        Depends on icd9cm_hierarchy being updated.")
-  icd10cm_get_all_defined(save_data = TRUE, offline = FALSE)
+  icd10cm_parse_all_defined(save_data = TRUE, offline = FALSE)
   icd10cm_extract_sub_chapters(save_data = TRUE, offline = FALSE)
   # reload the newly saved data before generating chapters.
   # The next step depends on icd9cm_billable
@@ -183,7 +181,7 @@ icd9_parse_leaf_desc_ver <- function(version = icd9cm_latest_edition(),
   stopifnot(!anyNA(reorder))
   stopifnot(!any(grepl(out[["code"]], pattern = "[[:space:]]")))
   stopifnot(!anyDuplicated(reorder))
-  stopifnot(all(seq_len(nrow(out))) %in% reorder)
+  stopifnot(all(seq_len(nrow(out)) %in% reorder))
   # catches a mistaken zero-indexed reorder result
   stopifnot(length(setdiff(seq_len(nrow(out)), reorder)) == 0)
   stopifnot(length(setdiff(reorder, seq_len(nrow(out)))) == 0)

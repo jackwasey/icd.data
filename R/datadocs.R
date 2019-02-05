@@ -113,7 +113,8 @@ NULL
 #'
 #' There are annual revisions to this data. Currently, the 2016 edition is
 #' included.
-#' @name icd10cm2016
+#' @name icd10cm2019
+#' @aliases icd10cm2014 icd10cm2015 icd10cm2016 icd10cm2017 icd10cm2018
 #' @source \url{http://www.cdc.gov/nchs/icd/icd10cm.htm}
 #' @docType data
 #' @keywords datasets
@@ -145,6 +146,28 @@ NULL
 #' @docType data
 #' @keywords datasets
 #' @export
+NULL
+
+#' The latest available version of ICD-10-CM in this package
+#' @details This is an active binding.
+#' @docType data
+#' @keywords sysdata
+#' @export
+#' @name icd10cm_latest
+NULL
+
+#' The currently active version of ICD-10-CM in this package.
+#'
+#' The default is the latest version, but it may be set using `set_icd10cm_ver()`
+#' @examples
+#' \dontrun{
+#' set_icd10cm_active_ver("2016")
+#' }
+#' @details This is an active binding.
+#' @docType data
+#' @keywords sysdata
+#' @export
+#' @name icd10cm_active
 NULL
 
 #' ICD-10-CM Procedure Codes

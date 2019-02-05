@@ -12,13 +12,16 @@
                     fun = .icd10who2016_binding,
                     env = parent.env(environment()))
   lockBinding(sym = "icd10who2016", env = parent.env(environment()))
-  if (!("icd.data.icd10cm_ver" %in% names(options()))) {
-    #set_icd10cm_ver(max(names(icd10cm_sources)))
-    set_icd10cm_ver(2016, check_exists = FALSE)
+  if (!("icd.data.icd10cm_active_ver" %in% names(options()))) {
+    set_icd10cm_active_ver(2019, check_exists = FALSE)
   }
   makeActiveBinding(sym = "icd10cm_latest",
                     fun = .icd10cm_latest_binding,
                     env = parent.env(environment()))
   lockBinding(sym = "icd10cm_latest", env = parent.env(environment()))
+  makeActiveBinding(sym = "icd10cm_active",
+                    fun = .icd10cm_active_binding,
+                    env = parent.env(environment()))
+  lockBinding(sym = "icd10cm_active", env = parent.env(environment()))
   invisible()
 }

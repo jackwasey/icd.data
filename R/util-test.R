@@ -24,13 +24,17 @@ skip_flat_icd9_avail <- function(ver = "31") {
   if (is.null(f_info_short)) testthat::skip(msg)
 }
 
-skip_flat_icd9_all_avail <- function()
+skip_flat_icd9_all_avail <- function() {
   for (v in icd9cm_sources$version) skip_flat_icd9_avail(v)
+}
 
 skip_icd10cm_flat_avail <- function(
-  msg = "skipping test because flat file ICD-10-CM source not available")
-  if (is.null(icd10cm_get_flat_file(offline = TRUE)))
+  year,
+  msg = "skipping test because flat file ICD-10-CM source not available"
+) {
+  if (is.null(icd10cm_get_flat_file(year = year, offline = TRUE)))
     testthat::skip(msg)
+}
 
 skip_icd10cm_xml_avail <- function(
   msg = "skipping test because XML file ICD-10-CM source not available")
@@ -205,10 +209,12 @@ expect_equal_no_icd <- function(object, expected, ...) {
 #' Skip subsequent tests that depend on WHO ICD-10 data if not available
 #'
 #' Will only skip if the data is absent
+#' @param ver Version of WHO ICD-10 to use, currently a four-digit year
 #' @export
-skip_missing_icd10who2016 <- function() {
-  dat <- get_icd10who2016()
-  if (is.null(dat))
+skip_missing_icd10who <- function(ver = "2016") {
+  if (ver %nin% c("2016"))
+    warning("Unknown WHO ICD-10 version/year sought.")
+  if (is.null(get_icd10who2016()))
     testthat::skip("WHO not loaded into local environment, or unavailable")
 }
 

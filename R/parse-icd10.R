@@ -1,21 +1,44 @@
 # nocov start
-
-utils::globalVariables(c("icd10cm2016", "icd10_chapters", "icd10_sub_chapters"))
+utils::globalVariables(c("icd10cm2016",
+                         "icd10cm2019",
+                         "icd10cm_sources",
+                         "icd10_chapters",
+                         "icd10_sub_chapters"))
 #' get all ICD-10-CM codes
 #'
-#' Gets all ICD-10-CM codes from an archive on the CDC web site at Initially,
-#' this just grabs 2016.
+#' Gets all ICD-10-CM codes from an archive on the CDC web site.
 #'
 #' The factor generation uses \code{sort.default} which is locale dependent.
 #' This meant a lot of time debugging a problem when white space was ignored for
 #' sorting on some platforms, but not others.
-#' @source
+#' @source \url{https://www.cms.gov/Medicare/Coding/ICD10} also available from
 #'   \url{http://www.cdc.gov/nchs/data/icd/icd10cm/2016/ICD10CM_FY2016_code_descriptions.zip}.
 #' @references
-#'   https://www.cms.gov/Medicare/Coding/ICD10/downloads/icd-10quickrefer.pdf
+#'   \href{https://www.cms.gov/Medicare/Coding/ICD10/downloads/icd-10quickrefer.pdf}{CMS ICD-10 Quick Reference}
+#'   \href{https://www.cdc.gov/nchs/icd/icd10cm.htm#FY\%202019\%20release\%20of\%20ICD-10-CM}{CDC copy of ICD-10-CM for 2019}
 #' @keywords internal
-icd10cm_get_all_defined <- function(save_data = FALSE, offline = TRUE) {
-  f_info <- icd10cm_get_flat_file(offline = offline)
+icd10cm_parse_all_defined <- function(
+  save_data = FALSE,
+  offline = TRUE
+) {
+  out <- lapply(
+    names(icd10cm_sources),
+    icd10cm_parse_all_defined_year,
+    save_data = save_data,
+    offline = offline)
+  names(out) <- names(icd10cm_sources)
+  out
+}
+
+icd10cm_parse_all_defined_year <- function(
+  year = 2019,
+  save_data = FALSE,
+  offline = TRUE
+) {
+  stopifnot(is.numeric(year) || is.character(year))
+  stopifnot(is.logical(save_data), is.logical(offline))
+  stopifnot(as.character(year) %in% names(icd10cm_sources))
+  f_info <- icd10cm_get_flat_file(year = year, offline = offline)
   stopifnot(!is.null(f_info))
   # readLines may muck up encoding, resulting in weird factor order generation
   # later?
@@ -24,7 +47,7 @@ icd10cm_get_all_defined <- function(save_data = FALSE, offline = TRUE) {
   # Beware: stringr::str_trim may do some encoding tricks which result in
   # different factor order on different platforms. Seems to affect "major" which
   # comes from "short_desc"
-  icd10cm2016 <- data.frame(
+  dat <- data.frame(
     #id = substr(x, 1, 5),
     code = trimws(substr(x, 7, 13)),
     billable = trimws(substr(x, 14, 15)) == "1",
@@ -32,15 +55,15 @@ icd10cm_get_all_defined <- function(save_data = FALSE, offline = TRUE) {
     long_desc = trimws(substr(x, 77, stop = 1e5)),
     stringsAsFactors = FALSE
   )
-  icd10cm2016[["code"]] <-
+  dat[["code"]] <-
     icd::as.short_diag(
-      icd::as.icd10cm(icd10cm2016[["code"]]))
-  icd10cm2016[["three_digit"]] <-
-    factor(get_icd10_major(icd10cm2016[["code"]]))
+      icd::as.icd10cm(dat[["code"]]))
+  dat[["three_digit"]] <-
+    factor(get_icd10_major(dat[["code"]]))
   # here we must re-factor so we don't have un-used levels in major
-  icd10cm2016[["major"]] <- factor(
-    merge(x = icd10cm2016["three_digit"],
-          y = icd10cm2016[c("code", "short_desc")],
+  dat[["major"]] <- factor(
+    merge(x = dat["three_digit"],
+          y = dat[c("code", "short_desc")],
           by.x = "three_digit", by.y = "code",
           all.x = TRUE)[["short_desc"]]
   )
@@ -48,17 +71,18 @@ icd10cm_get_all_defined <- function(save_data = FALSE, offline = TRUE) {
   # the output of this function (and it can't just do numeric ranges because
   # there are some non-numeric characters scattered around)
   sc_lookup <- icd10_generate_subchap_lookup()
-  icd10cm2016[["sub_chapter"]] <-
-    merge(x = icd10cm2016["three_digit"], y = sc_lookup,
+  dat[["sub_chapter"]] <-
+    merge(x = dat["three_digit"], y = sc_lookup,
           by.x = "three_digit", by.y = "sc_major", all.x = TRUE)[["sc_desc"]]
   chap_lookup <- icd10_generate_chap_lookup()
-  icd10cm2016[["chapter"]] <-
-    merge(icd10cm2016["three_digit"], chap_lookup,
+  dat[["chapter"]] <-
+    merge(dat["three_digit"], chap_lookup,
           by.x = "three_digit", by.y = "chap_major",
           all.x = TRUE)[["chap_desc"]]
+  assign(paste0("icd10cm", year), value = dat)
   if (save_data)
-    save_in_data_dir(icd10cm2016)
-  invisible(icd10cm2016)
+    save_in_data_dir(paste0("icd10cm", year))
+  invisible(dat)
 }
 
 icd10_generate_subchap_lookup <- function(
@@ -130,7 +154,7 @@ icd10_parse_cms_pcs_all <- function(save_data = TRUE) {
 }
 
 icd10_parse_cms_pcs_year <- function(year = "2018") {
-  pcs_file <- icd.data::icd10cm_sources[[year]][["pcs_flat"]]
+  pcs_file <- icd10cm_sources[[year]][["pcs_flat"]]
   pcs_path <- file.path(get_raw_data_dir(), pcs_file)
   read.fwf(pcs_path, c(5, 8, 2, 62, 120), header = FALSE,
            col.names = c("count", "pcs", "billable", "short_desc", "long_desc"))

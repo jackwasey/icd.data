@@ -4,7 +4,7 @@ test_that("No ranges or NA in code section of WHO data", {
   skip_on_cran()
   skip_on_travis()
   skip_on_appveyor()
-  skip_missing_icd10who2016()
+  skip_missing_icd10who("2016")
   # assign somehow forces binding to work when doing R CMD check, otherwise it
   # tries to subset the function
   i <- icd10who2016
@@ -25,7 +25,7 @@ test_that("no duplicated codes or descriptions", {
   skip_on_cran()
   skip_on_travis()
   skip_on_appveyor()
-  skip_missing_icd10who2016()
+  skip_missing_icd10who("2016")
   i <- icd10who2016
   if (!is.data.frame(i))
     skip("icd10who2016 binding is not usable during check")

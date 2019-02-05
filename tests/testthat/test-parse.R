@@ -111,43 +111,42 @@ test_year <- "2011"
 # test whether the RTF is available offline. N.b. we skip in a 'context' so all
 # subsequent tests are skipped.
 if (rtf_year_ok(test_year)) {
-
   rtf_dat <- icd9cm_sources[icd9cm_sources$f_year == test_year, ]
   f_info_short <- unzip_to_data_raw(rtf_dat$rtf_url,
                                     file_name = rtf_dat$rtf_filename,
                                     offline = TRUE)
-
-  # SOMEDAY, test with and without perl, useBytes
   rtf <- rtf_parse_lines(readLines(f_info_short$file_path, warn = FALSE),
                          perl = TRUE, useBytes = TRUE)
   nrtf <- names(rtf)
-
   test_that("all parsed codes are valid decimals", {
     expect_true(all(icd::is_valid(nrtf, short_code = FALSE)),
                 info = paste("invalid codes are :",
                              paste(icd::get_invalid(nrtf),
                                    collapse = ", ")))
   })
-
   test_that("no rtf formatting left in descriptions", {
     expect_false(any(grepl("[\\\\{}]", rtf)),
                  info = paste("rtf codes in descriptions:",
                               paste(grep("[\\\\{}]", rtf, value = TRUE))))
 
   })
-
   test_that("all defined codes from csv are in rtf extract", {
+    missing_from_rtf <- setdiff(
+      icd::short_to_decimal(icd9cm_hierarchy[["code"]]),
+      nrtf)
     expect_equal(
       length(missing_from_rtf), 0,
       info = paste("missing codes are:",
                    paste(missing_from_rtf, collapse = ", ")))
   })
-
+  is_major <- function(x) {
+    nchar(x) - startsWith(x, "E") < 4
+  }
   test_that("majors extracted from web page are the same as those from RTF", {
     # why is this even a list not a named vector?
     webmajors <- unlist(icd9_majors)
     work <- swap_names_vals(rtf)
-    rtfmajors <- work[icd::is_major(work)]
+    rtfmajors <- work[is_major(work)]
 
     expect_identical(
       setdiff(rtfmajors, webmajors), character(0),
@@ -159,16 +158,14 @@ if (rtf_year_ok(test_year)) {
                    paste(setdiff(webmajors, rtfmajors), collapse = ", ")))
   })
 
-
   test_that("all leaf codes from TXT are in flat file extract", {
     test_ver <- "32"
     skip_flat_icd9_avail(test_ver)
-
-    v32 <- icd9_parse_leaf_desc_ver(version = test_ver, save_data = FALSE,
+    v32 <- icd9_parse_leaf_desc_ver(version = test_ver,
+                                    save_data = FALSE,
                                     offline = TRUE)
     leaves <- icd::short_to_decimal(v32$code)
     expect_true(all(leaves %in% nrtf))
-
     rtf_leaves <- sort(
       swap_names_vals(
         rtf[nrtf %in% icd::short_to_decimal(v32$code)]))

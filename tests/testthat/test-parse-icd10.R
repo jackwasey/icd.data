@@ -3,31 +3,34 @@ context("icd10 fixed width parse")
 test_icd10_most_majors <- outer(LETTERS, sprintf(0:99, fmt = "%02i"), paste0)
 
 test_that("icd10 2016 flat file details are okay", {
-  skip_icd10cm_flat_avail()
+  skip_icd10cm_flat_avail("2016")
   # check cols at a time, so I get better error feedback:
-  col_names <- c("code", "billable", "short_desc", "long_desc", "three_digit",
-                 "major", "sub_chapter", "chapter")
-  expect_warning(res <- icd10cm_get_all_defined(save_data = FALSE), regexp = NA)
-  expect_identical(colnames(res), col_names)
-  expect_is(res$code, "character")
-  expect_is(res$billable, "logical")
-  expect_is(res$short_desc, "character")
-  expect_is(res$long_desc, "character")
-  expect_is(icd10cm2016$code, "character")
-  expect_is(icd10cm2016$billable, "logical")
-  expect_is(icd10cm2016$short_desc, "character")
-  expect_is(icd10cm2016$long_desc, "character")
-  for (n in c("three_digit", "major", "sub_chapter", "chapter")) {
-    expect_true(is.factor(res[[n]]))
-    expect_true(is.factor(icd10cm2016[[n]]))
-    expect_identical(levels(res[[n]]),
-                     levels(icd10cm2016[[n]]),
-                     info = paste("working on ", n))
-    expect_identical(res[[n]],
-                     icd10cm2016[[n]],
-                     info = paste("working on ", n))
-  }
-  expect_identical(res, icd10cm2016)
+  col_names <- c("code",
+                 "billable",
+                 "short_desc",
+                 "long_desc",
+                 "three_digit",
+                 "major",
+                 "sub_chapter",
+                 "chapter")
+  expect_warning(
+    all_res <- icd10cm_parse_all_defined(save_data = FALSE),
+    regexp = NA)
+  for (v in as.character(2014:2019)) {
+    res <- all_res[[v]]
+    expect_identical(colnames(res), col_names)
+    expect_is(res$code, "character")
+    expect_is(res$billable, "logical")
+    expect_is(res$short_desc, "character")
+    expect_is(res$long_desc, "character")
+    for (n in c("three_digit",
+                "major",
+                "sub_chapter",
+                "chapter")) {
+      expect_true(is.factor(res[[n]]))
+      expect_identical(res, get_icd10cm_version(v))
+    }
+  } # for all versions
 })
 
 context("icd10 XML parse")

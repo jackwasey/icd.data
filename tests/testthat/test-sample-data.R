@@ -1,11 +1,11 @@
 context("sample data")
 test_that("ICD-10 codes in uranium data are okay", {
-  testthat::skip("discrepancy between ICD-10-CM, ICD-10-WHO and these codes")
   expect_true(all(icd::is_valid(uranium_pathology$icd10, short_code = FALSE)))
-  skip_missing_icd10who2016()
-  u <- sub(pattern = ".", replacement = "", fixed = TRUE,
-           uranium_pathology$icd10)
-  expect_true(all(trimws(u) %in% icd10who2016$code))
+  skip("not sure whether there are errors in this data yet.")
+  expect_equal(
+    setdiff(levels(icd::decimal_to_short(icd.data::uranium_pathology$icd10)),
+            icd.data::icd10cm2016$code),
+    character(0))
 })
 
 test_that("sample data frames have correct class", {

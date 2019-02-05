@@ -1,9 +1,14 @@
 # nocov start
 
-icd10cm_get_xml_file <- function(...) {
+# TODO: don't default to one particular year unless I have to.
+icd10cm_get_xml_file <- function(ver = "2019", ...) {
+  # http://www.cdc.gov/nchs/data/icd/icd10cm/2016/ICD10CM_FY2016_Full_XML.ZIP
+  s <- icd10cm_sources[[ver]]
+  # TODO: different years may unzip to the same file name! need to add annual
+  # prefix to everything?
   unzip_to_data_raw(
-    url = paste0(icd10_url_cdc, "2016/ICD10CM_FY2016_Full_XML.ZIP"),
-    file_name = "Tabular.xml", ...)
+    url = paste0(s$base_url, s$dx_xml_zip),
+    file_name = s$dx_xml, ...)
 }
 
 #' Get sub-chapters from the 2016 XML for ICD-10-CM

@@ -19,10 +19,15 @@
 #' @param data_raw_path path where the raw directory is
 #' @return path of unzipped file in the raw data directory
 #' @keywords internal
-unzip_to_data_raw <- function(url, file_name, force = FALSE,
-                              verbose = FALSE, offline = TRUE,
-                              data_raw_path = get_raw_data_dir(),
-                              save_name = file_name) {
+unzip_to_data_raw <- function(
+  url,
+  file_name,
+  force = FALSE,
+  verbose = FALSE,
+  offline = TRUE,
+  data_raw_path = get_raw_data_dir(),
+  save_name = file_name
+) {
   stopifnot(is.character(url), length(url) == 1)
   stopifnot(is.character(file_name), length(file_name) == 1)
   stopifnot(is.logical(force), length(force) == 1)

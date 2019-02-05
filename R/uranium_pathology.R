@@ -19,7 +19,7 @@ generate_uranium_pathology <- function(save_data = TRUE, offline = TRUE) {
   stopifnot(is.logical(offline), length(offline) == 1)
   file_path <- file.path("data-raw",
                          "Pathology_Office2007.accdb",
-                         package = "icd")
+                         package = "icd.data")
   # odbcConnectAccess2007 is only in the Windows version of RODBC
   channel <- RODBC::odbcConnectAccess2007(file_path)
   uranium_pathology <- RODBC::sqlFetch(channel, "qry_ICD-10")
