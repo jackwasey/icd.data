@@ -3,7 +3,7 @@
 \docType{data}
 \name{icd10fr2018}
 \alias{icd10fr2018}
-\title{Définitions CIM-10-FR}
+\title{Définitions CIM-10-FR de l'OMS (WHO ICD-10 definitions)}
 \source{
 \url{https://www.atih.sante.fr/cim-10-fr-2018-usage-pmsi}
 }

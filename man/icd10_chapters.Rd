@@ -3,6 +3,7 @@
 \docType{data}
 \name{icd10_chapters}
 \alias{icd10_chapters}
+\alias{icd10_chapters_fr}
 \title{ICD-10 chapters}
 \source{
 http://apps.who.int/classifications/icd10/browse/2016/en

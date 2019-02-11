@@ -98,8 +98,9 @@ set_resource_path <- function(
         "Would you liketo get the latest English WHO definitions now? (Yy/Nn) ")
       if (startsWith(tolower(resp), "y"))
         return(fetch_icd10who2016(save_data = TRUE))
+      message("User declined WHO data download")
     }
-    stop("User declined WHO data download, or not in interactive mode")
+
   } else {
     stop("This binding is read-only. Use
          fetch_icd10who2016(save_data = TRUE)
@@ -117,8 +118,8 @@ set_resource_path <- function(
       resp <- readline("Get the most recent French WHO definitions? (Yy/Nn) ")
       if (startsWith(tolower(resp), "y"))
         return(fetch_icd10who2008fr(save_data = TRUE))
+      message("User declined WHO data download")
     }
-    stop("User declined WHO data download, or not in interactive mode")
   } else {
     stop("This binding is read-only. Use
          fetch_icd10who2008fr(save_data = TRUE)

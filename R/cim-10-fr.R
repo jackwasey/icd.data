@@ -85,13 +85,14 @@ parse_icd10cm_be <- function(save_data = TRUE, ...) {
   icd10be_pc_fr <- icd10be_pc_fr[order(raw_dx$code), ]
   icd10be_pc_nl <- icd10be_pc_nl[order(raw_dx$code), ]
   icd10be_pc_en <- icd10be_pc_en[order(raw_dx$code), ]
-  if (save_data)
-  save_in_data_dir(icd10be_fr,
-                   icd10be_nl,
-                   icd10be_en,
-                   icd10be_pc_fr,
-                   icd10be_pc_nl,
-                   icd10be_pc_en)
+  if (save_data) {
+    save_in_data_dir(icd10be_fr)
+    save_in_data_dir(icd10be_nl)
+    save_in_data_dir(icd10be_en)
+    save_in_data_dir(icd10be_pc_fr)
+    save_in_data_dir(icd10be_pc_nl)
+    save_in_data_dir(icd10be_pc_en)
+  }
   invisible(list(icd10be_fr,
                  icd10be_nl,
                  icd10be_en,

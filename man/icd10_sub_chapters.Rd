@@ -2,6 +2,7 @@
 % Please edit documentation in R/datadocs.R
 \name{icd10_sub_chapters}
 \alias{icd10_sub_chapters}
+\alias{icd10_sub_chapters_fr}
 \title{ICD-10 sub-chapters}
 \source{
 http://apps.who.int/classifications/icd10/browse/2016/en

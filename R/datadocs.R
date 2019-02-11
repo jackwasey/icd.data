@@ -48,6 +48,7 @@ NULL
 #' @details Format:  list with chapter names stored in list names, each with two element
 #'   named character vector with start and end codes.
 #' @name icd10_chapters
+#' @aliases icd10_chapters_fr
 #' @docType data
 #' @keywords datasets
 NULL
@@ -64,6 +65,7 @@ NULL
 #' @details Format:  list with sub-chapter or major names stored in list names, each with
 #'   two element named character vector with start and end codes.
 #' @name icd10_sub_chapters
+#' @aliases icd10_sub_chapters_fr
 NULL
 
 #' Latest ICD-9-CM diagnosis codes, in flat \code{data.frame} format
@@ -266,7 +268,7 @@ NULL
 #' @keywords datasets
 NULL
 
-#' Définitions CIM-10-FR
+#' Définitions CIM-10-FR de l'OMS (WHO ICD-10 definitions)
 #'
 #' La Classification internationale statistique des maladies (CIM), version 10,
 #' edition francaise. (The International Classification of Diseases (ICD),
