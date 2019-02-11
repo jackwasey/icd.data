@@ -4,7 +4,7 @@
 \name{icd9cm_billable}
 \alias{icd9cm_billable}
 \alias{icd9Billable}
-\title{list of annual versions of billable leaf nodes of ICD-9-CM}
+\title{List of annual versions of billable leaf nodes of ICD-9-CM}
 \source{
 \url{http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html}
 }

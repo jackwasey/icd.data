@@ -104,8 +104,13 @@ get_raw_data_dir <- function()
 #' @return invisibly returns the data
 #' @keywords internal
 #' @noRd
-save_in_data_dir <- function(var_name, suffix = "", data_path = "data",
-                             package_dir = getwd(), envir = parent.frame()) {
+save_in_data_dir <- function(
+  var_name,
+  suffix = "",
+  data_path = "data",
+  package_dir = getwd(),
+  envir = parent.frame()
+) {
   stopifnot(is.character("suffix"))
   if (!is.character(var_name))
     var_name <- as.character(substitute(var_name))

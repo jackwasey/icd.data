@@ -11,14 +11,12 @@ ICD-9 and ICD-10 definitions from the United States
     Center for Medicare and Medicaid Services (CMS) are included in this
     package. A function is provided to extract the WHO ICD-10 definitions
     from the public interface, but the data themselves may not currently
-    be redistributed.  The function 'fetch_icd10who2016()' should be run
-    once after installing this package. There are diagnostic and procedure
-    codes, and lists of the chapter and sub-chapter headings and the
-    ranges of ICD codes they encompass. There are also two sets of sample
-    patient data with ICD-9 and ICD-10 codes representing real patients
-    and spanning common structures of patient data. These data are used by
-    the 'icd' package for finding comorbidities and working with ICD
-    codes.
+    be redistributed. There are diagnostic and procedure codes, and lists
+    of the chapter and sub-chapter headings and the ranges of ICD codes
+    they encompass. There are also two sets of sample patient data with
+    ICD-9 and ICD-10 codes representing real patients and spanning common
+    structures of patient data. These data are used by the 'icd' package
+    for finding comorbidities and working with ICD codes.
 }
 \author{
 Jack O. Wasey \email{jack@jackwasey.com}

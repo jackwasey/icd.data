@@ -1,4 +1,4 @@
-#' ICD-9 chapters
+#' ICD-9 chapters and sub_chapters
 #'
 #' \code{icd9_chapters}, \code{icd9_chapters_sub} and \code{icd9_majors} contain
 #' mappings from the higher level descriptions of ICD-9 codes to the ranges of
@@ -103,7 +103,7 @@ NULL
 #' @keywords datasets internal
 NULL
 
-#' ICD-10-CM
+#' United States ICD-10-CM definitions, mostly a superset of WHO ICD-10
 #'
 #' The public domain modified ICD-10 classification as published in the public
 #' domain by the US CDC. Currently this has a slightly different structure to
@@ -148,8 +148,8 @@ NULL
 #' @export
 NULL
 
-#' The latest available version of ICD-10-CM in this package
-#' @details This is an active binding.
+#' The latest version of ICD-10-CM available in this package
+#' @details This is an active binding to the latest data.
 #' @docType data
 #' @keywords sysdata
 #' @export
@@ -158,7 +158,8 @@ NULL
 
 #' The currently active version of ICD-10-CM in this package.
 #'
-#' The default is the latest version, but it may be set using `set_icd10cm_ver()`
+#' The default is the latest version, but it may be set using
+#' `set_icd10cm_ver()`
 #' @examples
 #' \dontrun{
 #' set_icd10cm_active_ver("2016")
@@ -174,10 +175,10 @@ NULL
 #'
 #' ICD-10-PCS is the annually-updated set of procedure codes designed by 3M for
 #' the US CMS. There is no directory of WHO ICD procedure codes.
-#' @details Format:  A named list of data frames. The elements of the list are named by
-#'   the year, e.g., \code{"2018"}. Each data frame contains two character
-#'   columns, the first, named \code{code} is the procedure code; the second,
-#'   named \code{desc}, has the description.
+#' @details Format:  A named list of data frames. The elements of the list are
+#'   named by the year, e.g., \code{"2018"}. Each data frame contains two
+#'   character columns, the first, named \code{code} is the procedure code; the
+#'   second, named \code{desc}, has the description.
 #' @name icd10_pcs
 #' @aliases icd10_pcs_2014 icd10_pcs_2015 icd10_pcs_2016 icd10_pcs_2017
 #'   icd10_pcs_2018
@@ -201,7 +202,7 @@ NULL
 NULL
 
 
-#' list of annual versions of billable leaf nodes of ICD-9-CM
+#' List of annual versions of billable leaf nodes of ICD-9-CM
 #'
 #' These are derived from the CMS published updates, with versions 23 to 32
 #' currently available going back to 2004/5. The source files back to version 27
@@ -257,10 +258,23 @@ NULL
 
 #' United States Transuranium & Uranium Registries
 #'
-#' This is an ICD-10 data set (not ICD-10-CM) with mortality from the United States
-#' Transuranium & Uranium Registries, published in the public domain.
+#' This is an ICD-10 data set with mortality from the United States Transuranium
+#' & Uranium Registries, published in the public domain.
 #' @name uranium_pathology
 #' @source \url{https://ustur.wsu.edu/about-us/}
+#' @docType data
+#' @keywords datasets
+NULL
+
+#' Définitions CIM-10-FR
+#'
+#' La Classification internationale statistique des maladies (CIM), version 10,
+#' edition francaise. (The International Classification of Diseases (ICD),
+#' version 10, French edition.) Comme la version américaine, l'édition française
+#' a beaucoup de changéements par rapport à l'édition de l'OMS. Juste l'année
+#' 2018 est présentée pour le moment.
+#' @name icd10fr2018
+#' @source \url{https://www.atih.sante.fr/cim-10-fr-2018-usage-pmsi}
 #' @docType data
 #' @keywords datasets
 NULL

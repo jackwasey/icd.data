@@ -1,7 +1,9 @@
-#' Get or set the annual version of ICD-10-CM to use
-#' @param ver Four digit year (may be a version string in future, e.g., "2021b")
+#' Get or set the annual version or language of ICD-10-CM to use
+#' @param ver Four digit year. May be non-numeric in future.
 #' @param check_exists \code{TRUE} by default, which forces a check that the
 #'   requested version is actually available in this R session.
+#' @examples
+#'   set_icd10cm_active_ver(2019)
 #' @export
 set_icd10cm_active_ver <- function(ver, check_exists = TRUE) {
   v <- as.character(ver)

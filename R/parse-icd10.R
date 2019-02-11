@@ -84,42 +84,30 @@ icd10cm_parse_all_defined_year <- function(
   invisible(dat)
 }
 
-icd10_generate_subchap_lookup <- function(
-  lk_majors = unique(icd10cm2019[["three_digit"]]),
-  verbose = FALSE
-) {
-  sc_lookup <- data.frame(major = NULL, desc = NULL)
-  for (scn in names(icd10_sub_chapters)) {
-    sc <- icd10_sub_chapters[[scn]]
-    si <- grep(sc["start"], lk_majors)
-    se <- grep(sc["end"], lk_majors)
-    sc_majors <- lk_majors[si:se]
-    if (verbose)
-      message("start = ", sc["start"], ", end = ", sc[["end"]],
-              ", si = ", si, ", se = ", se)
-    sc_lookup <- rbind(
-      sc_lookup,
-      data.frame(sc_major = sc_majors, sc_desc = scn)
-    )
-  }
-  sc_lookup
+icd10_generate_subchap_lookup <- function() {
+  icd10_generate_chap_lookup(
+    chapters = icd.data::icd10_sub_chapters,
+    prefix = "sc"
+  )
 }
 
-icd10_generate_chap_lookup <- function(lk_majors) {
-  lk_majors <- unique(icd10cm2019[["three_digit"]])
-  chap_lookup <- data.frame(major = NULL, desc = NULL)
-  for (chap_n in names(icd10_chapters)) {
-    chap <- icd10_chapters[[chap_n]]
-    # fix a 2016 error in the CMS XML definitions
-    if (chap["end"] == "Y08")
-      chap["end"] <- "Y09"
-    si <- grep(chap["start"], lk_majors)
-    se <- grep(chap["end"], lk_majors)
-    chap_lookup <- rbind(
-      chap_lookup,
-      data.frame(chap_major = lk_majors[si:se], chap_desc = chap_n)
-    )
-  }
+icd10_generate_chap_lookup <- function(
+  chapters = icd.data::icd10_chapters,
+  prefix = "chap"
+) {
+  lk_majors <- unique(icd10cm_latest[["three_digit"]])
+  df_rows <- lapply(
+    names(chapters),
+    function(nm) {
+      chap <- chapters[[nm]]
+      si <- grep(chap["start"], lk_majors)
+      se <- grep(chap["end"], lk_majors)
+      data.frame(lk_majors[si:se], nm)
+    }
+  )
+  chap_lookup <- do.call(rbind, df_rows)
+  names(chap_lookup) <- c(paste0(prefix, "_major"),
+                          paste0(prefix, "_desc"))
   chap_lookup
 }
 

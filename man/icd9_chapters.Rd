@@ -5,7 +5,7 @@
 \alias{icd9_chapters}
 \alias{icd9_sub_chapters}
 \alias{icd9_majors}
-\title{ICD-9 chapters}
+\title{ICD-9 chapters and sub_chapters}
 \source{
 \url{http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html}
 }

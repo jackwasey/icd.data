@@ -3,11 +3,11 @@
 \docType{data}
 \name{icd10cm_latest}
 \alias{icd10cm_latest}
-\title{The latest available version of ICD-10-CM in this package}
+\title{The latest version of ICD-10-CM available in this package}
 \description{
-The latest available version of ICD-10-CM in this package
+The latest version of ICD-10-CM available in this package
 }
 \details{
-This is an active binding.
+This is an active binding to the latest data.
 }
 \keyword{sysdata}

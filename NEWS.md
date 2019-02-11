@@ -1,9 +1,10 @@
 # icd.data 1.1
 
+* Includes the French ICD-10 definitions. There are corresponding updates in the 'icd' package to use this data.
+* Added capability for each user to download and use the WHO ICD-10 data on first use. There are corresponding updates in the 'icd' package to use this data.
 * Includes ICD-10-CM 2019 with more than 2000 new codes. The most recent available ICD-10-CM version is also made available using icd.data::icd10cm_latest when an specific annual version is not needed.
 * ICD-10-CM for all year fro 2014 to 2019, with functions to select which to use. Default is currently 2019.
 * icd10cm_latest and icd10cm_active return the appropriate data
-* Added capability for each user to download the WHO ICD-10 data on first use.
 * Moved data creation code from 'icd' package to 'icd.data'
 * Expand Vermont data from 1,000 to about 50,000 rows
 

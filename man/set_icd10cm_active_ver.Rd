@@ -3,18 +3,21 @@
 \name{set_icd10cm_active_ver}
 \alias{set_icd10cm_active_ver}
 \alias{get_icd10cm_active_ver}
-\title{Get or set the annual version of ICD-10-CM to use}
+\title{Get or set the annual version or language of ICD-10-CM to use}
 \usage{
 set_icd10cm_active_ver(ver, check_exists = TRUE)
 
 get_icd10cm_active_ver()
 }
 \arguments{
-\item{ver}{Four digit year (may be a version string in future, e.g., "2021b")}
+\item{ver}{Four digit year. May be non-numeric in future.}
 
 \item{check_exists}{\code{TRUE} by default, which forces a check that the
 requested version is actually available in this R session.}
 }
 \description{
-Get or set the annual version of ICD-10-CM to use
+Get or set the annual version or language of ICD-10-CM to use
+}
+\examples{
+  set_icd10cm_active_ver(2019)
 }

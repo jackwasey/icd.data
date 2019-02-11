@@ -5,7 +5,8 @@
 \alias{icd10cm_active}
 \title{The currently active version of ICD-10-CM in this package.}
 \description{
-The default is the latest version, but it may be set using \code{set_icd10cm_ver()}
+The default is the latest version, but it may be set using
+\code{set_icd10cm_ver()}
 }
 \details{
 This is an active binding.
