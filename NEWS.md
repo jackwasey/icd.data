@@ -1,12 +1,16 @@
 # icd.data 1.1
 
-* Includes the French ICD-10 definitions. There are corresponding updates in the 'icd' package to use this data.
-* Added capability for each user to download and use the WHO ICD-10 data on first use. There are corresponding updates in the 'icd' package to use this data.
+* Includes the French ICD-10 definitions used in France. There are corresponding updates in the 'icd' package to use this data.
+* French and Dutch translations of ICD-10-CM diagnostic and procedure codes, for 2014.
+* Added capability for each user to download and use the WHO ICD-10 data on first use. There are corresponding updates in the 'icd' package to use this data. Accessing `icd10who2016` will trigger the prompt to download the data in interactive mode only. It takes a couple of minutes with a good internet connection.
 * Includes ICD-10-CM 2019 with more than 2000 new codes. The most recent available ICD-10-CM version is also made available using icd.data::icd10cm_latest when an specific annual version is not needed.
-* ICD-10-CM for all year fro 2014 to 2019, with functions to select which to use. Default is currently 2019.
+* ICD-10-CM for all year for 2014 to 2019, with proposed functions to select which to use. Default is currently 2019. This is pretty complicated so consider this beta quality, and expect the API to change.
+* ICD-10 procedure code data frames renamed to be consistent with international and diagnostic codes. Existing names icd10_pcs_YEAR available, but deprecated.
 * icd10cm_latest and icd10cm_active return the appropriate data
 * Moved data creation code from 'icd' package to 'icd.data'
 * Expand Vermont data from 1,000 to about 50,000 rows
+* standardizing 'code' field in ICD data frames, renaming from 'pcs' in procedure code data
+* standardizing 'leaf' field in ICD data frame, renaming from 'billable' which is US-centric.
 
 # icd.data 1.0
 

@@ -110,38 +110,4 @@ icd10_generate_chap_lookup <- function(
                           paste0(prefix, "_desc"))
   chap_lookup
 }
-
-# duplicated with same function in 'icd'
-icd10_parse_ahrq_pcs <- function(save_data = TRUE) {
-  f <- unzip_to_data_raw(
-    url = paste0("https://www.hcup-us.ahrq.gov/toolssoftware/",
-                 "procedureicd10/pc_icd10pcs_2018_1.zip"),
-    file_name = "pc_icd10pcs_2018.csv", offline = !save_data)
-  dat <- read.csv(file = f$file_path, skip = 1, stringsAsFactors = FALSE,
-                  colClasses = "character", encoding = "latin1")
-  names(dat) <- c("code", "desc", "class_number", "class")
-  dat$class <- factor(dat$class,
-                      levels = c("Minor Diagnostic", "Minor Therapeutic",
-                                 "Major Diagnostic", "Major Therapeutic"))
-  dat$class_number <- NULL
-  dat$code <- gsub(dat$code, pattern = "'", replacement = "")
-  icd10_pcs <- list("2018" = dat[c("code", "desc")])
-  if (save_data)
-    save_in_data_dir(icd10_pcs)
-}
-
-icd10_parse_cms_pcs_all <- function(save_data = TRUE) {
-  for (year in names(icd10cm_sources)) {
-    var_name <- paste0("icd10_pcs_", year)
-    assign(var_name, icd10_parse_cms_pcs_year(year))
-    save_in_data_dir(var_name)
-  }
-}
-
-icd10_parse_cms_pcs_year <- function(year = "2018") {
-  pcs_file <- icd10cm_sources[[year]][["pcs_flat"]]
-  pcs_path <- file.path(get_raw_data_dir(), pcs_file)
-  read.fwf(pcs_path, c(5, 8, 2, 62, 120), header = FALSE,
-           col.names = c("count", "pcs", "billable", "short_desc", "long_desc"))
-}
 # nocov end

@@ -116,7 +116,7 @@ NULL
 #' There are annual revisions to this data. Currently, the 2016 edition is
 #' included.
 #' @name icd10cm2019
-#' @aliases icd10cm2014 icd10cm2015 icd10cm2016 icd10cm2017 icd10cm2018
+#' @aliases icd10cm2014 icd10cm2015 icd10cm2016 icd10cm2017 icd10cm2018 icd10cm2014_fr icd10cm2014_nl
 #' @source \url{http://www.cdc.gov/nchs/icd/icd10cm.htm}
 #' @docType data
 #' @keywords datasets
@@ -182,13 +182,21 @@ NULL
 #'   character columns, the first, named \code{code} is the procedure code; the
 #'   second, named \code{desc}, has the description.
 #' @name icd10_pcs
-#' @aliases icd10_pcs_2014 icd10_pcs_2015 icd10_pcs_2016 icd10_pcs_2017
-#'   icd10_pcs_2018
+#' @aliases icd10cm2014_pc icd10cm2015_pc icd10cm2016_pc icd10cm2017_pc
+#'   icd10cm2018_pc icd10cm2019_pc icd10_pcs_2014 icd10_pcs_2015 icd10_pcs_2016
+#'   icd10_pcs_2017 icd10_pcs_2018 icd10cm2014_pc_fr icd10cm2014_pc_nl
 #' @seealso
 #' \url{https://www.cms.gov/Medicare/Coding/ICD10/downloads/pcs_refman.pdf}
 #' @docType data
 #' @keywords datasets
 NULL
+
+# deprecated name synonyms
+# icd10_pcs_2014 <- icd.data::icd10cm2014_pc
+# icd10_pcs_2015 <- icd.data::icd10cm2015_pc
+# icd10_pcs_2016 <- icd.data::icd10cm2016_pc
+# icd10_pcs_2017 <- icd.data::icd10cm2017_pc
+# icd10_pcs_2018 <- icd.data::icd10cm2018_pc
 
 #' AHRQ ICD-10-PCS categories
 #'
@@ -275,6 +283,7 @@ NULL
 #' version 10, French edition.) Comme la version américaine, l'édition française
 #' a beaucoup de changéements par rapport à l'édition de l'OMS. Juste l'année
 #' 2018 est présentée pour le moment.
+#' @seealso \code{\link{icd10cm2014_fr}}
 #' @name icd10fr2018
 #' @source \url{https://www.atih.sante.fr/cim-10-fr-2018-usage-pmsi}
 #' @docType data

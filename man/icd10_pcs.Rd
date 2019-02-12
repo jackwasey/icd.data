@@ -3,11 +3,19 @@
 \docType{data}
 \name{icd10_pcs}
 \alias{icd10_pcs}
+\alias{icd10cm2014_pc}
+\alias{icd10cm2015_pc}
+\alias{icd10cm2016_pc}
+\alias{icd10cm2017_pc}
+\alias{icd10cm2018_pc}
+\alias{icd10cm2019_pc}
 \alias{icd10_pcs_2014}
 \alias{icd10_pcs_2015}
 \alias{icd10_pcs_2016}
 \alias{icd10_pcs_2017}
 \alias{icd10_pcs_2018}
+\alias{icd10cm2014_pc_fr}
+\alias{icd10cm2014_pc_nl}
 \title{ICD-10-CM Procedure Codes}
 \description{
 ICD-10-PCS is the annually-updated set of procedure codes designed by 3M for

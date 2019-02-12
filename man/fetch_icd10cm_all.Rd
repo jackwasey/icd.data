@@ -10,4 +10,9 @@ fetch_icd10cm_all(verbose = FALSE, ...)
 YEAR-ICD10-Code-Descriptions has flat files, YEAR-ICD10-Code-Tables-Index has
 XML
 }
+\examples{
+\dontrun{
+fetch_icd10cm_all(verbose = TRUE, offline = FALSE)
+}
+}
 \keyword{internal}

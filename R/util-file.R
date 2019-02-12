@@ -26,9 +26,13 @@ icd10cm_get_flat_file <- function(year, ...) {
 #'
 #' YEAR-ICD10-Code-Descriptions has flat files, YEAR-ICD10-Code-Tables-Index has
 #' XML
+#' @examples
+#' \dontrun{
+#' fetch_icd10cm_all(verbose = TRUE, offline = FALSE)
+#' }
 #' @keywords internal
 fetch_icd10cm_all <- function(verbose = FALSE, ...) {
-  for (year in as.character(2014:2018)) {
+  for (year in 2014:2019) {
     for (dx in c(TRUE, FALSE)) {
       if (verbose) message("Working on year: ", year, " and dx is ", dx)
       fetch_icd10cm_year(year, dx = dx, verbose = verbose, ...)
@@ -47,10 +51,11 @@ fetch_icd10cm_year <- function(
   ...
 ) {
   stopifnot(is.numeric(year) || is.character(year), length(year) == 1)
+  year <- as.character(year)
   stopifnot(is.logical(dx), length(dx) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
   stopifnot(is.logical(offline), length(offline) == 1)
-  stopifnot(as.character(year) %in% names(icd10cm_sources))
+  stopifnot(year %in% names(icd10cm_sources))
   if (verbose) message(ifelse(dx, "dx", "pcs"))
   s <- icd10cm_sources[[year]]
   url <- paste0(s$base_url, s$dx_zip)
@@ -74,6 +79,7 @@ fetch_icd10cm_year <- function(
                     file_name = file_name,
                     verbose = verbose,
                     offline = offline,
+                    save_name = get_annual_data_path(file_name),
                     ...)
 }
 
@@ -83,9 +89,13 @@ fetch_icd10cm_year <- function(
 #' \code{inst/extdata}. \pkg{devtools} overrides \code{system.file}.
 #' @noRd
 #' @keywords internal
-get_raw_data_dir <- function()
+get_raw_data_dir <- function() {
   system.file("data-raw", package = "icd.data")
+}
 
+get_annual_data_path <- function(base_name, year) {
+  file.path(get_raw_data_dir(), paste0("yr", year, "_", base_name))
+}
 
 #' Save given variable in package data directory
 #'
@@ -140,8 +150,11 @@ unzip_single <- function(url, file_name, save_path) {
   stopifnot(is.character(file_name))
   stopifnot(is.character(save_path))
   zipfile <- tempfile()
-  dl_code <- utils::download.file(url = url, destfile = zipfile,
-                                  quiet = TRUE, method = "libcurl", mode = "wb")
+  dl_code <- utils::download.file(url = url,
+                                  destfile = zipfile,
+                                  quiet = TRUE,
+                                  method = "libcurl",
+                                  mode = "wb")
   stopifnot(dl_code == 0)
   zipdir <- tempfile() # i do want tempfile, so I get an empty new directory
   dir.create(zipdir)

@@ -8,6 +8,8 @@
 \alias{icd10cm2016}
 \alias{icd10cm2017}
 \alias{icd10cm2018}
+\alias{icd10cm2014_fr}
+\alias{icd10cm2014_nl}
 \title{United States ICD-10-CM definitions, mostly a superset of WHO ICD-10}
 \source{
 \url{http://www.cdc.gov/nchs/icd/icd10cm.htm}

@@ -7,7 +7,9 @@
 get_icd10cm_version(ver = get_icd10cm_active_ver())
 }
 \arguments{
-\item{ver}{Version, currently this is always four-digit year}
+\item{ver}{Character version of ICD-10-CM to use, corresponding to the suffix
+of the \code{data.frame} name, e.g. for 2019 ICD-10-CM, use "icd10cm2019" for
+Dutch 2014 ICD-CM translations, use 'icd10cm2014_nl"}
 }
 \description{
 When called without an argument, it returns the curerntly active version as

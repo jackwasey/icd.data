@@ -14,4 +14,7 @@ version 10, French edition.) Comme la version américaine, l'édition française
 a beaucoup de changéements par rapport à l'édition de l'OMS. Juste l'année
 2018 est présentée pour le moment.
 }
+\seealso{
+\code{\link{icd10cm2014_fr}}
+}
 \keyword{datasets}

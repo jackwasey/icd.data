@@ -4,7 +4,7 @@
 \alias{parse_icd10cm_be}
 \title{Get French and Dutch translations of ICD-10-CM for Beglian coding}
 \usage{
-parse_icd10cm_be(save_data = TRUE, ...)
+parse_icd10cm_be(save_data = FALSE, ...)
 }
 \arguments{
 \item{...}{passed to \code{download_to_data_raw}, e.g., \code{offline = FALSE}.}

@@ -42,7 +42,7 @@ parse_cim_fr <- function(save = FALSE) {
 #' \url{https://www.health.belgium.be/fr/fy2014reflisticd-10-bexlsx}
 #' @param ... passed to `download_to_data_raw`, e.g., `offline = FALSE`.
 #' @keywords internal
-parse_icd10cm_be <- function(save_data = TRUE, ...) {
+parse_icd10cm_be <- function(save_data = FALSE, ...) {
   # It is actually in English! Seems to just be a copy of the US version.
   # There is currently nothing later than 2014.
   #
@@ -73,30 +73,59 @@ parse_icd10cm_be <- function(save_data = TRUE, ...) {
   common_names <- c("code", "not_leaf", "sex", "age_group", "leaf")
   names(raw_dx)[1:5] <- common_names
   names(raw_pc)[1:5] <- common_names
-  icd10be_fr <- raw_dx[c(common_names, "ICDTXTFR", "SHORT_TXTFR")]
-  icd10be_nl <- raw_dx[c(common_names, "ICDTXTNL", "SHORT_TXTNL")]
-  icd10be_en <- raw_dx[c(common_names, "ICDTXTEN", "SHORT_TXTEN")]
-  icd10be_pc_fr <- raw_pc[c(common_names, "ICDTXTFR", "SHORT_TXTFR")]
-  icd10be_pc_nl <- raw_pc[c(common_names, "ICDTXTNL", "SHORT_TXTNL")]
-  icd10be_pc_en <- raw_pc[c(common_names, "ICDTXTEN", "SHORT_TXTEN")]
-  icd10be_fr <- icd10be_fr[order(raw_dx$code), ]
-  icd10be_nl <- icd10be_nl[order(raw_dx$code), ]
-  icd10be_en <- icd10be_en[order(raw_dx$code), ]
-  icd10be_pc_fr <- icd10be_pc_fr[order(raw_dx$code), ]
-  icd10be_pc_nl <- icd10be_pc_nl[order(raw_dx$code), ]
-  icd10be_pc_en <- icd10be_pc_en[order(raw_dx$code), ]
+  icd10cm2014_fr <- raw_dx[c(common_names, "ICDTXTFR", "SHORT_TXTFR")]
+  icd10cm2014_nl <- raw_dx[c(common_names, "ICDTXTNL", "SHORT_TXTNL")]
+  #icd10cm2014_en <- raw_dx[c(common_names, "ICDTXTEN", "SHORT_TXTEN")]
+  icd10cm2014_pc_fr <- raw_pc[c(common_names, "ICDTXTFR", "SHORT_TXTFR")]
+  icd10cm2014_pc_nl <- raw_pc[c(common_names, "ICDTXTNL", "SHORT_TXTNL")]
+  #icd10cm2014_pc_en <- raw_pc[c(common_names, "ICDTXTEN", "SHORT_TXTEN")]
+  names(icd10cm2014_fr)[6:7] <- c("long_desc", "short_desc")
+  names(icd10cm2014_nl)[6:7] <- c("long_desc", "short_desc")
+  #names(icd10cm2014_en)[6:7] <- c("long_desc", "short_desc")
+  names(icd10cm2014_pc_fr)[6:7] <- c("long_desc", "short_desc")
+  names(icd10cm2014_pc_nl)[6:7] <- c("long_desc", "short_desc")
+  #names(icd10cm2014_pc_en)[6:7] <- c("long_desc", "short_desc")
+  icd10cm2014_fr <- icd10cm2014_fr[order(raw_dx$code), c(1:5, 7, 6)]
+  icd10cm2014_nl <- icd10cm2014_nl[order(raw_dx$code), c(1:5, 7, 6)]
+  #icd10cm2014_en <- icd10cm2014_en[order(raw_dx$code), c(1:5, 7, 6)]
+  icd10cm2014_pc_fr <- icd10cm2014_pc_fr[order(raw_pc$code), c(1:5, 7, 6)]
+  icd10cm2014_pc_nl <- icd10cm2014_pc_nl[order(raw_pc$code), c(1:5, 7, 6)]
+  #icd10cm2014_pc_en <- icd10cm2014_pc_en[order(raw_dx$code), c(1:5, 7, 6)]
   if (save_data) {
-    save_in_data_dir(icd10be_fr)
-    save_in_data_dir(icd10be_nl)
-    save_in_data_dir(icd10be_en)
-    save_in_data_dir(icd10be_pc_fr)
-    save_in_data_dir(icd10be_pc_nl)
-    save_in_data_dir(icd10be_pc_en)
+    save_in_data_dir(icd10cm2014_fr)
+    save_in_data_dir(icd10cm2014_nl)
+    #    save_in_data_dir(icd10cm2014_en)
+    save_in_data_dir(icd10cm2014_pc_fr)
+    save_in_data_dir(icd10cm2014_pc_nl)
+    #    save_in_data_dir(icd10cm2014_pc_en)
   }
-  invisible(list(icd10be_fr,
-                 icd10be_nl,
-                 icd10be_en,
-                 icd10be_pc_fr,
-                 icd10be_pc_nl,
-                 icd10be_pc_en))
+  invisible(list(icd10cm2014_fr,
+                 icd10cm2014_nl,
+                 #                 icd10cm2014_en,
+                 icd10cm2014_pc_fr,
+                 icd10cm2014_pc_nl
+                 #                 icd10cm2014_pc_en
+  ))
 }
+
+# internal analysis
+compare_cm_to_be_cm <- function() {
+  # BE version is identical to ICD-10-CM frmo 2014, across all languages
+  stopifnot(nrow(icd10cm2014) == nrow(icd10cm2014_fr))
+  #stopifnot(length(setdiff(icd10cm2014$code, icd10cm2014_en$code)) == 0) # just in CM
+  #stopifnot(length(setdiff(icd10cm2014_en$code, icd10cm2014$code)) == 0) # just in BE
+  stopifnot(length(setdiff(icd10cm2014$code, icd10cm2014_fr$code)) == 0) # just in CM
+  stopifnot(length(setdiff(icd10cm2014_fr$code, icd10cm2014$code)) == 0) # just in BE
+  stopifnot(length(setdiff(icd10cm2014$code, icd10cm2014_nl$code)) == 0) # just in CM
+  stopifnot(length(setdiff(icd10cm2014_nl$code, icd10cm2014$code)) == 0) # just in BE
+  stopifnot(nrow(icd10cm2014_pc) == nrow(icd10cm2014_pc_fr))
+  stopifnot(length(setdiff(as.character(trimws(icd10cm2014_pc$pcs)),
+                           icd10cm2014_pc_fr$code)) == 0) # just in CM
+  stopifnot(length(setdiff(icd10cm2014_pc_fr$code,
+                           as.character(trimws(icd10cm2014_pc$pcs)))) == 0) # just in BE
+  stopifnot(length(setdiff(as.character(trimws(icd10cm2014_pc$pcs)),
+                           icd10cm2014_pc_nl$code)) == 0) # just in CM
+  stopifnot(length(setdiff(icd10cm2014_pc_nl$code,
+                           as.character(trimws(icd10cm2014_pc$pcs)))) == 0) # just in BE
+}
+compare_cm_to_be_cm <- NULL
