@@ -178,9 +178,9 @@ NULL
 #'   the year, e.g., \code{"2018"}. Each data frame contains two character
 #'   columns, the first, named \code{code} is the procedure code; the second,
 #'   named \code{desc}, has the description.
-#' @name icd10_pcs
-#' @aliases icd10_pcs_2014 icd10_pcs_2015 icd10_pcs_2016 icd10_pcs_2017
-#'   icd10_pcs_2018
+#' @name icd10
+#' @aliases icd10cm2014_pc icd10cm2015_pc icd10cm2016_pc icd10cm2017_pc
+#'   icd10cm2018_pc icd10cm2019_pc
 #' @seealso
 #' \url{https://www.cms.gov/Medicare/Coding/ICD10/downloads/pcs_refman.pdf}
 #' @docType data
