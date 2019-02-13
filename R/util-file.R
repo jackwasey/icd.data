@@ -74,6 +74,7 @@ fetch_icd10cm_year <- function(
                     file_name = file_name,
                     verbose = verbose,
                     offline = offline,
+                    save_name = make_raw_data_name(file_name, year),
                     ...)
 }
 
@@ -83,9 +84,15 @@ fetch_icd10cm_year <- function(
 #' \code{inst/extdata}. \pkg{devtools} overrides \code{system.file}.
 #' @noRd
 #' @keywords internal
-get_raw_data_dir <- function()
+get_raw_data_dir <- function() {
   system.file("data-raw", package = "icd.data")
+}
 
+make_raw_data_name <- function(base_name, year) {
+  file.path(get_raw_data_dir(),
+            paste0("yr", year, "_", base_name)
+  )
+}
 
 #' Save given variable in package data directory
 #'

@@ -142,9 +142,9 @@ icd10_parse_ahrq_pcs <- function(save_data = TRUE) {
     save_in_data_dir(icd10_pcs)
 }
 
-icd10_parse_cms_pcs_all <- function(save_data = TRUE) {
+icd10_parse_cms_pcs_all <- function(save_data = FALSE) {
   for (year in names(icd10cm_sources)) {
-    var_name <- paste0("icd10_pcs_", year)
+    var_name <- paste0("icd10cm", year, "_pc")
     assign(var_name, icd10_parse_cms_pcs_year(year))
     save_in_data_dir(var_name)
   }
@@ -152,8 +152,13 @@ icd10_parse_cms_pcs_all <- function(save_data = TRUE) {
 
 icd10_parse_cms_pcs_year <- function(year = "2018") {
   pcs_file <- icd10cm_sources[[year]][["pcs_flat"]]
-  pcs_path <- file.path(get_raw_data_dir(), pcs_file)
-  read.fwf(pcs_path, c(5, 8, 2, 62, 120), header = FALSE,
-           col.names = c("count", "pcs", "billable", "short_desc", "long_desc"))
+  pcs_path <- make_raw_data_name(pcs_file, year)
+  out <- read.fwf(pcs_path, c(5, 8, 2, 62, 120), header = FALSE,
+           col.names = c("count",
+                         "code",
+                         "leaf",
+                         "short_desc",
+                         "long_desc"))
+  out[-1]
 }
 # nocov end
