@@ -3,6 +3,7 @@
 \docType{data}
 \name{icd10_chapters}
 \alias{icd10_chapters}
+\alias{icd10_chapters_fr}
 \title{ICD-10 chapters}
 \source{
 http://apps.who.int/classifications/icd10/browse/2016/en
@@ -20,5 +21,8 @@ emergency use U82-U85 - Resistance to antimicrobial and anti-neoplastic drugs
 
 Format:  list with chapter names stored in list names, each with two element
 named character vector with start and end codes.
+}
+\seealso{
+\code{\link{icd10_sub_chapters}}
 }
 \keyword{datasets}

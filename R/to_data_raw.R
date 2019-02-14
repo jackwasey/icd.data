@@ -33,7 +33,6 @@ unzip_to_data_raw <- function(
   stopifnot(is.logical(force), length(force) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
   stopifnot(is.logical(offline), length(offline) == 1)
-  # TODO: This temporary directory should be cleaned up if run during testing.
   if (!dir.exists(data_raw_path)) data_raw_path <- tempdir()
   file_path <- file.path(data_raw_path, make.names(save_name))
   if (verbose) sprintf("file path = %s\nfile name = %s\nsave name = %s",

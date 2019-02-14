@@ -84,81 +84,30 @@ icd10cm_parse_all_defined_year <- function(
   invisible(dat)
 }
 
-icd10_generate_subchap_lookup <- function(
-  lk_majors = unique(icd10cm2019[["three_digit"]]),
-  verbose = FALSE
+icd10_generate_subchap_lookup <- function() {
+  icd10_generate_chap_lookup(
+    chapters = icd.data::icd10_sub_chapters,
+    prefix = "sc"
+  )
+}
+
+icd10_generate_chap_lookup <- function(
+  chapters = icd.data::icd10_chapters,
+  prefix = "chap"
 ) {
-  sc_lookup <- data.frame(major = NULL, desc = NULL)
-  for (scn in names(icd10_sub_chapters)) {
-    sc <- icd10_sub_chapters[[scn]]
-    si <- grep(sc["start"], lk_majors)
-    se <- grep(sc["end"], lk_majors)
-    sc_majors <- lk_majors[si:se]
-    if (verbose)
-      message("start = ", sc["start"], ", end = ", sc[["end"]],
-              ", si = ", si, ", se = ", se)
-    sc_lookup <- rbind(
-      sc_lookup,
-      data.frame(sc_major = sc_majors, sc_desc = scn)
-    )
-  }
-  sc_lookup
-}
-
-icd10_generate_chap_lookup <- function(lk_majors) {
-  lk_majors <- unique(icd10cm2019[["three_digit"]])
-  chap_lookup <- data.frame(major = NULL, desc = NULL)
-  for (chap_n in names(icd10_chapters)) {
-    chap <- icd10_chapters[[chap_n]]
-    # fix a 2016 error in the CMS XML definitions
-    if (chap["end"] == "Y08")
-      chap["end"] <- "Y09"
-    si <- grep(chap["start"], lk_majors)
-    se <- grep(chap["end"], lk_majors)
-    chap_lookup <- rbind(
-      chap_lookup,
-      data.frame(chap_major = lk_majors[si:se], chap_desc = chap_n)
-    )
-  }
+  lk_majors <- unique(icd10cm_latest[["three_digit"]])
+  df_rows <- lapply(
+    names(chapters),
+    function(nm) {
+      chap <- chapters[[nm]]
+      si <- grep(chap["start"], lk_majors)
+      se <- grep(chap["end"], lk_majors)
+      data.frame(lk_majors[si:se], nm)
+    }
+  )
+  chap_lookup <- do.call(rbind, df_rows)
+  names(chap_lookup) <- c(paste0(prefix, "_major"),
+                          paste0(prefix, "_desc"))
   chap_lookup
-}
-
-# duplicated with same function in 'icd'
-icd10_parse_ahrq_pcs <- function(save_data = TRUE) {
-  f <- unzip_to_data_raw(
-    url = paste0("https://www.hcup-us.ahrq.gov/toolssoftware/",
-                 "procedureicd10/pc_icd10pcs_2018_1.zip"),
-    file_name = "pc_icd10pcs_2018.csv", offline = !save_data)
-  dat <- read.csv(file = f$file_path, skip = 1, stringsAsFactors = FALSE,
-                  colClasses = "character", encoding = "latin1")
-  names(dat) <- c("code", "desc", "class_number", "class")
-  dat$class <- factor(dat$class,
-                      levels = c("Minor Diagnostic", "Minor Therapeutic",
-                                 "Major Diagnostic", "Major Therapeutic"))
-  dat$class_number <- NULL
-  dat$code <- gsub(dat$code, pattern = "'", replacement = "")
-  icd10_pcs <- list("2018" = dat[c("code", "desc")])
-  if (save_data)
-    save_in_data_dir(icd10_pcs)
-}
-
-icd10_parse_cms_pcs_all <- function(save_data = FALSE) {
-  for (year in names(icd10cm_sources)) {
-    var_name <- paste0("icd10cm", year, "_pc")
-    assign(var_name, icd10_parse_cms_pcs_year(year))
-    save_in_data_dir(var_name)
-  }
-}
-
-icd10_parse_cms_pcs_year <- function(year = "2018") {
-  pcs_file <- icd10cm_sources[[year]][["pcs_flat"]]
-  pcs_path <- make_raw_data_name(pcs_file, year)
-  out <- read.fwf(pcs_path, c(5, 8, 2, 62, 120), header = FALSE,
-           col.names = c("count",
-                         "code",
-                         "leaf",
-                         "short_desc",
-                         "long_desc"))
-  out[-1]
 }
 # nocov end

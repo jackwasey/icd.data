@@ -3,14 +3,26 @@
 \docType{data}
 \name{icd10fr2019}
 \alias{icd10fr2019}
-\title{French ICD-10-FR modification of WHO ICD-10}
+\title{French ICD-10-FR modification of WHO ICD-10 used in France}
+\source{
+\url{https://www.atih.sante.fr/cim-10-fr-2018-usage-pmsi}
+}
 \description{
+La Classification internationale statistique des maladies (CIM), version 10,
+edition francaise. (The International Classification of Diseases (ICD),
+version 10, French edition.) Comme la version américaine, l'édition française
+a beaucoup de changéements par rapport à l'édition de l'OMS. Juste l'année
+2018 est présentée pour le moment.
 The short descriptions are capitalized, and, as is correct in French, do not
 require accents. These were not converted to lower or sentence case to avoid
 introducing spellingn errors.
+Définitions CIM-10-FR de l'OMS (WHO ICD-10 definitions)
 }
 \references{
 \href{https://www.atih.sante.fr/nomenclatures-de-recueil-de-linformation/cim}{ATIH
 CIM-10-FR}
+}
+\seealso{
+\code{\link{icd10cm2014_fr}}
 }
 \keyword{datasets}

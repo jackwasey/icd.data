@@ -136,6 +136,53 @@ chapter_to_desc_range.icd10 <- function(x) { #nolint
   .chapter_to_desc_range(x, re_major = re_icd10_major_bare)
 }
 
+get_chapter_ranges_from_flat <- function(
+  flat_hier = icd10cm2019,
+  field = "chapter"
+) {
+  u <- if (is.factor(flat_hier[[field]]))
+    levels(flat_hier[[field]])
+  else
+    as.character(unique(flat_hier[[field]]))
+  three_digits <- as.character(flat_hier[["three_digit"]])
+  lapply(
+    setNames(u, u),
+    function(chap) {
+      three_digits <- sort(
+        unique(three_digits[flat_hier[[field]] == chap])
+      )
+      c(
+        start = three_digits[1],
+        end = three_digits[length(three_digits)]
+      )
+    })
+}
+
+#' Use the WHO ICD-10 French 'hierarchy' flat file to infer chapter ranges
+#'
+#' These are UTF-8 encoded. If there are no UTF-8 characters, it seems that R
+#' forces the 'unknown' encoding label. This could be scraped from the web site
+#' directly, which is what \code{.fetch_who_api_chapters()} does, but this is
+#' at least as good.
+#' @keywords internal
+get_chapters_fr <- function(save_data = FALSE) {
+  icd10_chapters_fr <- get_chapter_ranges_from_flat(
+    flat_hier = icd10who2008fr,
+    field = "chapter")
+  save_in_data_dir(icd10_chapters_fr)
+  invisible(icd10_chapters_fr)
+}
+
+#' @rdname get_chapters_fr
+#' @keywords internal
+get_sub_chapters_fr <- function(save_data = FALSE) {
+  icd10_sub_chapters_fr <- get_chapter_ranges_from_flat(
+    flat_hier = icd10who2008fr,
+    field = "sub_chapter")
+  save_in_data_dir(icd10_sub_chapters_fr)
+  invisible(icd10_sub_chapters_fr)
+}
+
 to_title_case <- function(x) {
   for (split_char in c(" ", "-", "[")) {
     s <- strsplit(x, split_char, fixed = TRUE)[[1]]

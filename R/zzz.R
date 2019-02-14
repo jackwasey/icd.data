@@ -19,6 +19,9 @@
   if (!("icd.data.icd10cm_active_ver" %in% names(options()))) {
     set_icd10cm_active_ver(2019, check_exists = FALSE)
   }
+  if (!("icd.data.icd10cm_active_lang" %in% names(options()))) {
+    set_icd10cm_active_lang("en")
+  }
   makeActiveBinding(sym = "icd10cm_latest",
                     fun = .icd10cm_latest_binding,
                     env = parent.env(environment()))

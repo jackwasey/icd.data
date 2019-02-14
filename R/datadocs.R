@@ -48,6 +48,8 @@ NULL
 #' @details Format:  list with chapter names stored in list names, each with two element
 #'   named character vector with start and end codes.
 #' @name icd10_chapters
+#' @aliases icd10_chapters_fr
+#' @seealso \code{\link{icd10_sub_chapters}}
 #' @docType data
 #' @keywords datasets
 NULL
@@ -63,7 +65,9 @@ NULL
 #' @source http://apps.who.int/classifications/icd10/browse/2016/en
 #' @details Format:  list with sub-chapter or major names stored in list names, each with
 #'   two element named character vector with start and end codes.
+#' @seealso \code{\link{icd10_chapters}}
 #' @name icd10_sub_chapters
+#' @aliases icd10_sub_chapters_fr
 NULL
 
 #' Latest ICD-9-CM diagnosis codes, in flat \code{data.frame} format
@@ -103,37 +107,50 @@ NULL
 #' @keywords datasets internal
 NULL
 
-#' ICD-10-CM
+#' United States ICD-10-CM
 #'
 #' The public domain modified ICD-10 classification as published in the public
 #' domain by the US CDC. Currently this has a slightly different structure to
 #' \code{icd9cm_hierarchy} because the published data helpfully has a
 #' \emph{leaf} flag indicating whether a code is a \emph{billable} leaf node, or
 #' a code higher in the hierarchy which nevertheless will have a description.
-#'
-#' There are annual revisions to this data. Currently, the 2016 edition is
-#' included.
+#' @section Editions:
+#' There are annual revisions to this data in the US. The Belgian authorities publish an exact replica of the 2014 ICD-10-CM codes with French and Dutch translations, and these are provided.
 #' @name icd10cm2019
 #' @aliases icd10cm2014 icd10cm2015 icd10cm2016 icd10cm2017 icd10cm2018
+#'   icd10cm2014_fr icd10cm2014_nl
 #' @source \url{http://www.cdc.gov/nchs/icd/icd10cm.htm}
 #' @docType data
 #' @keywords datasets
-#' @details Format:  data frame, with columns for code, leaf status (0 or 1), short and
-#'   long descriptions.
+#' @details Format:  data frame, with columns for code, leaf status (0 or 1),
+#'   short and long descriptions.
 #' @seealso \url{https://www.cms.gov/Medicare/Coding/ICD10/}
-#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2018-ICD-10-PCS-Tables-And-Index.zip}
-#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2018-ICD-10-PCS-Order-File.zip}
-#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2017-PCS-Code-Tables.zip}
-#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2017-PCS-Long-Abbrev-Titles.zip}
-#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2016-Code-Descriptions-in-Tabular-Order.zip}
-#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-code-descriptions.zip}
-#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-tables-index.zip}
-#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-Code_Tables-and-Index.zip}
-#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-PCS-long-and-abbreviated-titles.zip}
-#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-ICD10-Code-Descriptions.zip}
-#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-ICD10-Code-Tables-and-Index.zip}
-#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-Code-Tables-and-Index.zip}
-#' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-PCS-long-and-abbreviated-titles.zip}
+#'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2018-ICD-10-PCS-Tables-And-Index.zip}
+#'
+#'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2018-ICD-10-PCS-Order-File.zip}
+#'
+#'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2017-PCS-Code-Tables.zip}
+#'
+#'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2017-PCS-Long-Abbrev-Titles.zip}
+#'
+#'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2016-Code-Descriptions-in-Tabular-Order.zip}
+#'
+#'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-code-descriptions.zip}
+#'
+#'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-tables-index.zip}
+#'
+#'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-Code_Tables-and-Index.zip}
+#'
+#'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-PCS-long-and-abbreviated-titles.zip}
+#'
+#'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-ICD10-Code-Descriptions.zip}
+#'
+#'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-ICD10-Code-Tables-and-Index.zip}
+#'
+#'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-Code-Tables-and-Index.zip}
+#'
+#'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-PCS-long-and-abbreviated-titles.zip}
+#'
 NULL
 
 #' 2016 WHO ICD-10 data
@@ -184,11 +201,20 @@ NULL
 #' @name icd10cm_active
 NULL
 
-#' French ICD-10-FR modification of WHO ICD-10
+#' French ICD-10-FR modification of WHO ICD-10 used in France
 #'
+#' La Classification internationale statistique des maladies (CIM), version 10,
+#' edition francaise. (The International Classification of Diseases (ICD),
+#' version 10, French edition.) Comme la version américaine, l'édition française
+#' a beaucoup de changéements par rapport à l'édition de l'OMS. Juste l'année
+#' 2018 est présentée pour le moment.
+#"
 #' The short descriptions are capitalized, and, as is correct in French, do not
 #' require accents. These were not converted to lower or sentence case to avoid
 #' introducing spellingn errors.
+#' Définitions CIM-10-FR de l'OMS (WHO ICD-10 definitions)
+#' @seealso \code{\link{icd10cm2014_fr}}
+#' @source \url{https://www.atih.sante.fr/cim-10-fr-2018-usage-pmsi}
 #' @references
 #'   \href{https://www.atih.sante.fr/nomenclatures-de-recueil-de-linformation/cim}{ATIH
 #'   CIM-10-FR}
@@ -201,13 +227,13 @@ NULL
 #'
 #' ICD-10-PCS is the annually-updated set of procedure codes designed by 3M for
 #' the US CMS. There is no directory of WHO ICD procedure codes.
-#' @details Format:  A named list of data frames. The elements of the list are named by
+#' @format A named list of data frames. The elements of the list are named by
 #'   the year, e.g., \code{"2018"}. Each data frame contains two character
 #'   columns, the first, named \code{code} is the procedure code; the second,
 #'   named \code{desc}, has the description.
 #' @name icd10
 #' @aliases icd10cm2014_pc icd10cm2015_pc icd10cm2016_pc icd10cm2017_pc
-#'   icd10cm2018_pc icd10cm2019_pc
+#'   icd10cm2018_pc icd10cm2019_pc icd10cm2014_pc_fr icd10cm2014_pc_nl
 #' @seealso
 #' \url{https://www.cms.gov/Medicare/Coding/ICD10/downloads/pcs_refman.pdf}
 #' @docType data

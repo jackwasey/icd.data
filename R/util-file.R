@@ -28,7 +28,7 @@ icd10cm_get_flat_file <- function(year, ...) {
 #' XML
 #' @keywords internal
 fetch_icd10cm_all <- function(verbose = FALSE, ...) {
-  for (year in as.character(2014:2018)) {
+  for (year in as.character(2014:2019)) {
     for (dx in c(TRUE, FALSE)) {
       if (verbose) message("Working on year: ", year, " and dx is ", dx)
       fetch_icd10cm_year(year, dx = dx, verbose = verbose, ...)
@@ -40,7 +40,7 @@ fetch_icd10cm_all <- function(verbose = FALSE, ...) {
 #' @keywords internal
 #' @noRd
 fetch_icd10cm_year <- function(
-  year = 2018,
+  year = 2019,
   dx = TRUE,
   verbose = FALSE,
   offline = FALSE,
@@ -74,7 +74,7 @@ fetch_icd10cm_year <- function(
                     file_name = file_name,
                     verbose = verbose,
                     offline = offline,
-                    save_name = make_raw_data_name(file_name, year),
+                    save_name = get_annual_data_path(file_name, year),
                     ...)
 }
 
@@ -88,10 +88,8 @@ get_raw_data_dir <- function() {
   system.file("data-raw", package = "icd.data")
 }
 
-make_raw_data_name <- function(base_name, year) {
-  file.path(get_raw_data_dir(),
-            paste0("yr", year, "_", base_name)
-  )
+get_annual_data_path <- function(base_name, year) {
+  file.path(get_raw_data_dir(), paste0("yr", year, "_", base_name))
 }
 
 #' Save given variable in package data directory
@@ -111,8 +109,13 @@ make_raw_data_name <- function(base_name, year) {
 #' @return invisibly returns the data
 #' @keywords internal
 #' @noRd
-save_in_data_dir <- function(var_name, suffix = "", data_path = "data",
-                             package_dir = getwd(), envir = parent.frame()) {
+save_in_data_dir <- function(
+  var_name,
+  suffix = "",
+  data_path = "data",
+  package_dir = getwd(),
+  envir = parent.frame()
+) {
   stopifnot(is.character("suffix"))
   if (!is.character(var_name))
     var_name <- as.character(substitute(var_name))
@@ -142,10 +145,14 @@ unzip_single <- function(url, file_name, save_path) {
   stopifnot(is.character(file_name))
   stopifnot(is.character(save_path))
   zipfile <- tempfile()
-  dl_code <- utils::download.file(url = url, destfile = zipfile,
-                                  quiet = TRUE, method = "libcurl", mode = "wb")
+  dl_code <- utils::download.file(url = url,
+                                  destfile = zipfile,
+                                  quiet = TRUE,
+                                  method = "libcurl",
+                                  mode = "wb")
   stopifnot(dl_code == 0)
-  zipdir <- tempfile() # i do want tempfile, so I get an empty new directory
+  # I do want tempfile, so I get an empty new directory
+  zipdir <- tempfile()
   dir.create(zipdir)
   utils::unzip(zipfile, exdir = zipdir)  # files="" so extract all
   files <- list.files(zipdir)

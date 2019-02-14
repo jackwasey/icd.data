@@ -8,7 +8,9 @@
 \alias{icd10cm2016}
 \alias{icd10cm2017}
 \alias{icd10cm2018}
-\title{ICD-10-CM}
+\alias{icd10cm2014_fr}
+\alias{icd10cm2014_nl}
+\title{United States ICD-10-CM}
 \source{
 \url{http://www.cdc.gov/nchs/icd/icd10cm.htm}
 }
@@ -20,26 +22,40 @@ domain by the US CDC. Currently this has a slightly different structure to
 a code higher in the hierarchy which nevertheless will have a description.
 }
 \details{
-There are annual revisions to this data. Currently, the 2016 edition is
-included.
-
-Format:  data frame, with columns for code, leaf status (0 or 1), short and
-long descriptions.
+Format:  data frame, with columns for code, leaf status (0 or 1),
+short and long descriptions.
 }
+\section{Editions}{
+
+There are annual revisions to this data in the US. The Belgian authorities publish an exact replica of the 2014 ICD-10-CM codes with French and Dutch translations, and these are provided.
+}
+
 \seealso{
 \url{https://www.cms.gov/Medicare/Coding/ICD10/}
 \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2018-ICD-10-PCS-Tables-And-Index.zip}
+
 \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2018-ICD-10-PCS-Order-File.zip}
+
 \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2017-PCS-Code-Tables.zip}
+
 \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2017-PCS-Long-Abbrev-Titles.zip}
+
 \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2016-Code-Descriptions-in-Tabular-Order.zip}
+
 \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-code-descriptions.zip}
+
 \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-tables-index.zip}
+
 \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-Code_Tables-and-Index.zip}
+
 \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-PCS-long-and-abbreviated-titles.zip}
+
 \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-ICD10-Code-Descriptions.zip}
+
 \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-ICD10-Code-Tables-and-Index.zip}
+
 \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-Code-Tables-and-Index.zip}
+
 \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-PCS-long-and-abbreviated-titles.zip}
 }
 \keyword{datasets}
