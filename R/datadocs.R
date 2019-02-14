@@ -136,14 +136,26 @@ NULL
 #' \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-PCS-long-and-abbreviated-titles.zip}
 NULL
 
-#' WHO ICD-10 data
+#' 2016 WHO ICD-10 data
 #'
 #' This data must be downloaded on a per-user basis. A prompt is given when the
 #' data is first attempted to be accessed.
 #'
 #' Unlike other data, it is exported, because it is an active binding.
 #' @name icd10who2016
-#' @aliases icd10who2008fr
+#' @source \url{http://www.who.int}
+#' @docType data
+#' @keywords datasets
+#' @export
+NULL
+
+#' 2008 WHO ICD-10 data in French
+#'
+#' This data must be downloaded on a per-user basis. A prompt is given when the
+#' data is first attempted to be accessed.
+#'
+#' Unlike other data, it is exported, because it is an active binding.
+#' @name icd10who2008fr
 #' @source \url{http://www.who.int}
 #' @docType data
 #' @keywords datasets
