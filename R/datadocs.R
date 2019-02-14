@@ -139,9 +139,11 @@ NULL
 #' WHO ICD-10 data
 #'
 #' This data must be downloaded on a per-user basis. A prompt is given when the
-#' data is first attempted to be accessed. Unlike other data, it is exported,
-#' because it is an active binding.
+#' data is first attempted to be accessed.
+#'
+#' Unlike other data, it is exported, because it is an active binding.
 #' @name icd10who2016
+#' @aliases icd10who2008fr
 #' @source \url{http://www.who.int}
 #' @docType data
 #' @keywords datasets
@@ -172,7 +174,12 @@ NULL
 
 #' French ICD-10-FR modification of WHO ICD-10
 #'
-#' The latest edition available on-line is from 2008
+#' The short descriptions are capitalized, and, as is correct in French, do not
+#' require accents. These were not converted to lower or sentence case to avoid
+#' introducing spellingn errors.
+#' @references
+#'   \href{https://www.atih.sante.fr/nomenclatures-de-recueil-de-linformation/cim}{ATIH
+#'   CIM-10-FR}
 #' @docType data
 #' @keywords datasets
 #' @name icd10fr2019

@@ -3,13 +3,16 @@
 \docType{data}
 \name{icd10who2016}
 \alias{icd10who2016}
+\alias{icd10who2008fr}
 \title{WHO ICD-10 data}
 \source{
 \url{http://www.who.int}
 }
 \description{
 This data must be downloaded on a per-user basis. A prompt is given when the
-data is first attempted to be accessed. Unlike other data, it is exported,
-because it is an active binding.
+data is first attempted to be accessed.
+}
+\details{
+Unlike other data, it is exported, because it is an active binding.
 }
 \keyword{datasets}

@@ -5,6 +5,12 @@
 \alias{icd10fr2019}
 \title{French ICD-10-FR modification of WHO ICD-10}
 \description{
-The latest edition available on-line is from 2008
+The short descriptions are capitalized, and, as is correct in French, do not
+require accents. These were not converted to lower or sentence case to avoid
+introducing spellingn errors.
+}
+\references{
+\href{https://www.atih.sante.fr/nomenclatures-de-recueil-de-linformation/cim}{ATIH
+CIM-10-FR}
 }
 \keyword{datasets}

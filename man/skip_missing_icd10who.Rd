@@ -4,11 +4,14 @@
 \alias{skip_missing_icd10who}
 \title{Skip subsequent tests that depend on WHO ICD-10 data if not available}
 \usage{
-skip_missing_icd10who(ver = "2016")
+skip_missing_icd10who(ver = "2016", lang = "en")
 }
 \arguments{
 \item{ver}{Version of WHO ICD-10 to use, currently a four-digit year}
+
+\item{lang}{Language, currently either 'en' or 'fr'}
 }
 \description{
-Will only skip if the data is absent
+Will only skip if the data is absent. For use by 'icd' package, and will be
+removed in the future.
 }

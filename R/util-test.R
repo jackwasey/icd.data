@@ -208,14 +208,22 @@ expect_equal_no_icd <- function(object, expected, ...) {
 
 #' Skip subsequent tests that depend on WHO ICD-10 data if not available
 #'
-#' Will only skip if the data is absent
+#' Will only skip if the data is absent. For use by 'icd' package, and will be
+#' removed in the future.
 #' @param ver Version of WHO ICD-10 to use, currently a four-digit year
+#' @param lang Language, currently either 'en' or 'fr'
 #' @export
-skip_missing_icd10who <- function(ver = "2016") {
-  if (ver %nin% c("2016"))
-    warning("Unknown WHO ICD-10 version/year sought.")
-  if (is.null(get_icd10who2016()))
-    testthat::skip("WHO not loaded into local environment, or unavailable")
+skip_missing_icd10who <- function(ver = "2016", lang = "en") {
+  if (ver == "2016" && lang == "en") {
+    if (is.null(get_icd10who2016())) {
+      testthat::skip("English WHO ICD-10 not loaded, or unavailable")
+    }
+  } else if (ver == "2008" && lang == "fr") {
+    if (is.null(get_icd10who2008fr())) {
+      testthat::skip("French WHO ICD-10 not loaded, or unavailable")
+    }
+  } else
+    stop("Unavailable year/language combination for WHO codes sought.")
 }
 
 # nocov end

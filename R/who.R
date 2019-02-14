@@ -92,6 +92,10 @@ set_resource_path <- function(
   exists("icd10who2016", envir = .icd_data_env)
 }
 
+.icd10who2008fr_in_env <- function() {
+  exists("icd10who2008fr", envir = .icd_data_env)
+}
+
 .icd10who2016_clean_env <- function() {
   if (.icd10who2016_in_env())
     rm("icd10who2016", envir = .icd_data_env)
@@ -125,26 +129,54 @@ get_icd10who2016 <- function() {
   NULL
 }
 
+#' @rdname get_icd10who2016
+#' @export
+get_icd10who2008fr <- function() {
+  icd10who2008fr_path <- file.path(get_resource_path(), "icd10who2008fr.rds")
+  if (.icd10who2008fr_in_env())
+    return(get("icd10who2008fr", envir = .icd_data_env))
+  if (file.exists(icd10who2008fr_path)) {
+    icd10who2008fr <- readRDS(icd10who2008fr_path)
+    assign("icd10who2008fr", icd10who2008fr, envir = .icd_data_env)
+    return(icd10who2008fr)
+  }
+  NULL
+}
+
+message_who <- function() {
+  message(
+    "WHO ICD data must be downloaded by each user due to copyright ",
+    "concerns. This may be achieved by running the command:\n\n",
+    "fetch_icd10who2016()\n\n",
+    "The data has to be saved somewhere accessible. The ",
+    "location is given by:\n\n",
+    "get_resource_path()\nwhich defaults to:\n\n",
+    "file.path(Sys.getenv(\"HOME\"), \".icd.data\")\n\n",
+    "set_resource_path(\"new/path/to/dir\") can be used to change this.")
+}
+
 # see zzz.R
 .icd10who2016_binding <- function(x) {
   if (missing(x)) {
     dat <- get_icd10who2016()
     if (!is.null(dat)) return(dat)
     if (interactive())
-      message(
-        "WHO ICD data must be downloaded by each user due to copyright ",
-        "concerns. This may be achieved by running the command:\n\n",
-        "fetch_icd10who2016()\n\n",
-        "The data has to be saved somewhere accessible. The ",
-        "location is given by:\n\n",
-        "get_resource_path()\nwhich defaults to:\n\n",
-        "file.path(Sys.getenv(\"HOME\"), \".icd.data\")\n\n",
-        "set_resource_path(\"new/path/to/dir\") can be used to change this.")
+      message_who()
   } else {
     stop("This binding is read-only. Use fetch_icd10who2016() to populate.")
   }
 }
 
+.icd10who2008fr_binding <- function(x) {
+  if (missing(x)) {
+    dat <- get_icd10who2008fr()
+    if (!is.null(dat)) return(dat)
+    if (interactive())
+      message_who()
+  } else {
+    stop("This binding is read-only. Use fetch_icd10who2008fr() to populate.")
+  }
+}
 # returns the JSON data, or fails with NULL
 .fetch_who_api <- function(resource,
                            ver = "icd10",
@@ -212,14 +244,16 @@ get_icd10who2016 <- function() {
 #' @param ... further arguments passed to self recursively, or `.fetch_who_api`
 #' @keywords internal
 #' @noRd
-.fetch_icd10_who <- function(concept_id = NULL,
-                             year = 2016,
-                             lang = "en",
-                             verbose = FALSE,
-                             hier_code = character(),
-                             hier_desc = character(),
-                             debug = FALSE,
-                             ...) {
+.fetch_icd10_who <- function(
+  concept_id = NULL,
+  year = 2016,
+  lang = "en",
+  verbose = FALSE,
+  hier_code = character(),
+  hier_desc = character(),
+  debug = FALSE,
+  ...
+) {
   if (!requireNamespace("memoise", quietly = TRUE))
     message("Consider installing 'memoise' from CRAN using:\n",
             'install.packages("memoise")\n',
@@ -304,10 +338,10 @@ get_icd10who2016 <- function() {
 #' necessary because it is not permitted to write data back to the installed
 #' package location (and this may not be allowed on a multi-user system,
 #' anyway).
-#' @param do_save Logical, defaults to `TRUE`
+#' @param save_data Logical, defaults to `TRUE`
 #' @param ... Arguments passed to internal functions
 #' @export
-fetch_icd10who2016 <- function(do_save = TRUE, ...) {
+fetch_icd10who2016 <- function(save_data = TRUE, ...) {
   message("Downloading WHO ICD data. This will take a few minutes. ",
           "Data is cached, so if there is a download error, re-running the ",
           "command will pick up where it left off.")
@@ -321,7 +355,29 @@ fetch_icd10who2016 <- function(do_save = TRUE, ...) {
                      "major",
                      "desc"))
     icd10who2016[[col_name]] <- sub("[^ ]+ ", "", icd10who2016[[col_name]])
-  if (do_save)
+  if (save_data)
     saveRDS(icd10who2016, file.path(get_resource_path(), "icd10who2016.rds"))
   invisible(icd10who2016)
+}
+
+#' @rdname fetch_icd10who2016
+#' @export
+fetch_icd10who2008_fr <- function(save_data = FALSE, ...) {
+  message("Downloading French translations of WHO ICD data. ",
+          "This will take a few minutes. ",
+          "Data is cached, so if there is a download error, re-running the ",
+          "command will pick up where it left off.")
+  icd10who2008fr <- .fetch_icd10_who(year = "2008", lang = "fr")
+  rownames(icd10who2008fr) <- NULL
+  icd10who2008fr$code <-
+    sub(pattern = "\\.", replacement = "", x = icd10who2008fr$code)
+  for (col_name in c("chapter",
+                     "sub_chapter",
+                     "sub_sub_chapter",
+                     "major",
+                     "desc"))
+    icd10who2008fr[[col_name]] <- sub("[^ ]+ ", "", icd10who2008fr[[col_name]])
+  if (save_data)
+    saveRDS(icd10who2008fr, file.path(get_resource_path(), "icd10who2008fr.rds"))
+  invisible(icd10who2008fr)
 }

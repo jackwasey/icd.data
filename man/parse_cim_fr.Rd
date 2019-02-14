@@ -11,6 +11,6 @@ parse_cim_fr(save_data = FALSE, offline = TRUE)
 data}
 }
 \description{
-Read the definitions of the French edition of ICD-10
+The short descriptions are capitalized, with accented characters, so leaving as is.
 }
 \keyword{internal}

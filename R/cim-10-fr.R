@@ -1,4 +1,6 @@
 #' Read the definitions of the French edition of ICD-10
+#'
+#' The short descriptions are capitalized, with accented characters, so leaving as is.
 #' @template save_data
 #' @keywords internal
 parse_cim_fr <- function(save_data = FALSE, offline = TRUE) {
@@ -17,8 +19,8 @@ parse_cim_fr <- function(save_data = FALSE, offline = TRUE) {
     sep = "|",
     as.is = TRUE)
   icd10fr2019 <- cim_raw[c(1, 5, 6)]
-  names(icd10fr2019) <- c("code", "desc_short", "desc_long")
-  icd10fr2019$desc_short <- enc2utf8(icd10fr2019$desc_short)
+  names(icd10fr2019) <- c("code", "short_desc", "long_desc")
+  icd10fr2019$desc_short <- tools::toTitleCase(enc2utf8(icd10fr2019$desc_short))
   icd10fr2019$desc_long <- enc2utf8(icd10fr2019$desc_long)
   icd10fr2019[["code"]] <- trimws(icd10fr2019[["code"]])
   if (save_data)

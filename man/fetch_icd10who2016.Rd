@@ -2,12 +2,15 @@
 % Please edit documentation in R/who.R
 \name{fetch_icd10who2016}
 \alias{fetch_icd10who2016}
+\alias{fetch_icd10who2008_fr}
 \title{Fetch the WHO data from online source}
 \usage{
-fetch_icd10who2016(do_save = TRUE, ...)
+fetch_icd10who2016(save_data = TRUE, ...)
+
+fetch_icd10who2008_fr(save_data = FALSE, ...)
 }
 \arguments{
-\item{do_save}{Logical, defaults to \code{TRUE}}
+\item{save_data}{Logical, defaults to \code{TRUE}}
 
 \item{...}{Arguments passed to internal functions}
 }

@@ -2,9 +2,12 @@
 % Please edit documentation in R/who.R
 \name{get_icd10who2016}
 \alias{get_icd10who2016}
+\alias{get_icd10who2008fr}
 \title{Function to get the WHO ICD-10 2016 data}
 \usage{
 get_icd10who2016()
+
+get_icd10who2008fr()
 }
 \description{
 The user may use the active binding \code{icd10who2016} as if it is a
