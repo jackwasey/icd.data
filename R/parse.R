@@ -35,7 +35,7 @@ update_everything <- function() {
                        offline = FALSE,
                        verbose = FALSE)
   icd10_parse_cms_pcs_all(save_data = TRUE)
-  parse_cim_fr(save_data = TRUE)
+  parse_cim_fr(save_data = TRUE, offline = FALSE)
 }
 
 # quick sanity checks - full tests of x in test-parse.R

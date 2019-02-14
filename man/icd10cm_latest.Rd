@@ -10,4 +10,4 @@ The latest available version of ICD-10-CM in this package
 \details{
 This is an active binding.
 }
-\keyword{sysdata}
+\keyword{datasets}

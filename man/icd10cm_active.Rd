@@ -15,4 +15,4 @@ This is an active binding.
 set_icd10cm_active_ver("2016")
 }
 }
-\keyword{sysdata}
+\keyword{datasets}

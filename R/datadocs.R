@@ -151,7 +151,7 @@ NULL
 #' The latest available version of ICD-10-CM in this package
 #' @details This is an active binding.
 #' @docType data
-#' @keywords sysdata
+#' @keywords datasets
 #' @export
 #' @name icd10cm_latest
 NULL
@@ -165,9 +165,17 @@ NULL
 #' }
 #' @details This is an active binding.
 #' @docType data
-#' @keywords sysdata
+#' @keywords datasets
 #' @export
 #' @name icd10cm_active
+NULL
+
+#' French ICD-10-FR modification of WHO ICD-10
+#'
+#' The latest edition available on-line is from 2008
+#' @docType data
+#' @keywords datasets
+#' @name icd10fr2019
 NULL
 
 #' ICD-10-CM Procedure Codes
@@ -201,7 +209,7 @@ NULL
 NULL
 
 
-#' list of annual versions of billable leaf nodes of ICD-9-CM
+#' List of annual versions of billable leaf nodes of ICD-9-CM
 #'
 #' These are derived from the CMS published updates, with versions 23 to 32
 #' currently available going back to 2004/5. The source files back to version 27
