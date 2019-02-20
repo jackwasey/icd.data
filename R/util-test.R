@@ -1,7 +1,7 @@
 #nocov start
 
-rtf_year_ok <- function(year) {
-  !is.null(rtf_fetch_year(year, offline = TRUE))
+rtf_year_ok <- function(year, ...) {
+  !is.null(rtf_fetch_year(year, ...))
 }
 
 skip_on_no_rtf <- function(test_year) {
@@ -17,10 +17,8 @@ skip_flat_icd9_avail <- function(ver = "31") {
   fn_orig <- dat$short_filename
   if (is.na(fn_orig))
     fn_orig <- dat$other_filename
-  # don't try to download the file, just check it is there:
-  f_info_short <- unzip_to_data_raw(dat$url,
-                                    file_name = fn_orig,
-                                    offline = TRUE)
+  # download if offline option is false
+  f_info_short <- unzip_to_data_raw(dat$url, file_name = fn_orig)
   if (is.null(f_info_short)) testthat::skip(msg)
 }
 
@@ -32,13 +30,13 @@ skip_icd10cm_flat_avail <- function(
   year,
   msg = "skipping test because flat file ICD-10-CM source not available"
 ) {
-  if (is.null(icd10cm_get_flat_file(year = year, offline = TRUE)))
+  if (is.null(icd10cm_get_flat_file(year = year)))
     testthat::skip(msg)
 }
 
 skip_icd10cm_xml_avail <- function(
   msg = "skipping test because XML file ICD-10-CM source not available")
-  if (is.null(icd10cm_get_xml_file(offline = TRUE))) testthat::skip(msg)
+  if (is.null(icd10cm_get_xml_file())) testthat::skip(msg)
 
 skip_flat_icd9_avail_all <- function() {
   for (v in icd9cm_sources$version)

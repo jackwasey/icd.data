@@ -3,17 +3,11 @@
 \name{set_icd10cm_active_ver}
 \alias{set_icd10cm_active_ver}
 \alias{get_icd10cm_active_ver}
-\alias{set_icd10cm_active_lang}
-\alias{get_icd10cm_active_lang}
 \title{Get or set the annual version of ICD-10-CM to use}
 \usage{
 set_icd10cm_active_ver(ver, check_exists = TRUE)
 
 get_icd10cm_active_ver()
-
-set_icd10cm_active_lang(lang)
-
-get_icd10cm_active_lang()
 }
 \arguments{
 \item{ver}{Character version of ICD-10-CM to use, corresponding to the suffix
@@ -22,8 +16,6 @@ Dutch 2014 ICD-CM translations, use 'icd10cm2014_nl"}
 
 \item{check_exists}{\code{TRUE} by default, which forces a check that the
 requested version is actually available in this R session.}
-
-\item{lang}{Language string, e.g., "en", "fr", "nl" or others that may be supported in the future.}
 }
 \description{
 Get or set the annual version of ICD-10-CM to use

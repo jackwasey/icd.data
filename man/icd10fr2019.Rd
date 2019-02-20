@@ -22,7 +22,4 @@ Définitions CIM-10-FR de l'OMS (WHO ICD-10 definitions)
 \href{https://www.atih.sante.fr/nomenclatures-de-recueil-de-linformation/cim}{ATIH
 CIM-10-FR}
 }
-\seealso{
-\code{\link{icd10cm2014_fr}}
-}
 \keyword{datasets}

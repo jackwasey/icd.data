@@ -43,13 +43,11 @@ fetch_icd10cm_year <- function(
   year = 2019,
   dx = TRUE,
   verbose = FALSE,
-  offline = FALSE,
   ...
 ) {
   stopifnot(is.numeric(year) || is.character(year), length(year) == 1)
   stopifnot(is.logical(dx), length(dx) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
-  stopifnot(is.logical(offline), length(offline) == 1)
   stopifnot(as.character(year) %in% names(icd10cm_sources))
   if (verbose) message(ifelse(dx, "dx", "pcs"))
   s <- icd10cm_sources[[year]]
@@ -73,7 +71,6 @@ fetch_icd10cm_year <- function(
   unzip_to_data_raw(url = url,
                     file_name = file_name,
                     verbose = verbose,
-                    offline = offline,
                     save_name = get_annual_data_path(file_name, year),
                     ...)
 }

@@ -29,16 +29,21 @@ icd10_parse_cms_pcs_all <- function(save_data = FALSE) {
 }
 
 icd10_parse_cms_pcs_year <- function(year) {
-  year = as.character(year)
+  year <- as.character(year)
   pcs_file <- icd10cm_sources[[year]][["pcs_flat"]]
   pcs_path <- get_annual_data_path(pcs_file, year = year)
   out <- read.fwf(pcs_path, c(5, 8, 2, 62, 120), header = FALSE,
-                  col.names = c("count", "code", "leaf", "short_desc", "long_desc"))
+                  col.names = c("count",
+                                "code",
+                                "leaf",
+                                "short_desc",
+                                "long_desc"))
   out$count <- NULL
   out$code <- trimws(as.character(out$code))
   out$leaf <- as.logical(out$leaf)
   out$short_desc <- trimws(as.character(out$short_desc))
   out$long_desc <- trimws(as.character(out$long_desc))
+  out <- out[order(out$code), ]
   invisible(out)
 }
 # nocov end

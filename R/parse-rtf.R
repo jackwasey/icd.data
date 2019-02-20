@@ -20,12 +20,11 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #' @param offline single logical value
 #' @keywords internal datagen
 #' @noRd
-rtf_fetch_year <- function(year, offline = TRUE) {
+rtf_fetch_year <- function(year, ...) {
   year <- as.character(year)
-  stopifnot(is.logical(offline), length(offline) == 1)
   rtf_dat <- icd9cm_sources[icd9cm_sources$f_year == year, ]
   fn <- rtf_dat$rtf_filename
-  unzip_to_data_raw(rtf_dat$rtf_url, file_name = fn, offline = offline)
+  unzip_to_data_raw(rtf_dat$rtf_url, file_name = fn, ...)
 }
 
 #' parse RTF description of entire ICD-9-CM for a specific year
@@ -41,12 +40,16 @@ rtf_fetch_year <- function(year, offline = TRUE) {
 #'   implemented thus far
 #' @template save_data
 #' @template verbose
+#' @template offline
 #' @source \url{https://www.cdc.gov/nchs/icd/icd9cm.htm} Navigate to
 #' 'Dtab12.zip' in the 2011 data. and similar files run from 1996 to 2011.
 #' @keywords internal datagen
 #' @noRd
-rtf_parse_year <- function(year = "2011", ..., save_data = FALSE,
-                           verbose = FALSE, offline = TRUE) {
+rtf_parse_year <- function(year = "2011",
+                           ...,
+                           save_data = FALSE,
+                           verbose = FALSE,
+                           offline = getOption("icd.data.offline")) {
   year <- as.character(year)
   stopifnot(is.logical(save_data), length(save_data) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)

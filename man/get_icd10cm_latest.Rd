@@ -7,14 +7,6 @@
 get_icd10cm_latest()
 }
 \description{
-Language handling is incomplete for ICD-10-CM, as there is only data for 2014
-for French and Dutch. These functions are beta status, and will likely need
-updating as more national ICD versions, years, sub-versions, and languages
-are added. Note that \code{icd10fr2019} provides the ICD-10 codes used in France,
-in French, whereas \code{icd10cm2014_fr} gives the French translations of
-ICD-10-CM used in Belgium.
-}
-\details{
 Usually, the \code{icd.data} package should be attached, and therefore appear on
 the search list, using \code{library(icd.data)} or \code{require(icd.data)}. If it is
 not attached, the active binding \code{icd10cm_latest} cannot find the packages

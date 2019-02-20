@@ -6,11 +6,12 @@
 \title{Unzip file to raw data directory}
 \usage{
 unzip_to_data_raw(url, file_name, force = FALSE, verbose = FALSE,
-  offline = TRUE, data_raw_path = get_raw_data_dir(),
-  save_name = file_name)
+  offline = getOption("icd.data.offline"),
+  data_raw_path = get_raw_data_dir(), save_name = file_name)
 
 download_to_data_raw(url, file_name = regmatches(url, regexpr("[^/]*$",
-  url)), offline = TRUE, data_raw_path = get_raw_data_dir())
+  url)), offline = getOption("icd.data.offline"),
+  data_raw_path = get_raw_data_dir())
 }
 \arguments{
 \item{url}{URL of a zip file}
@@ -24,9 +25,17 @@ directory}
 
 \item{offline}{single logical, if \code{TRUE} then don't pull the file from
 internet, only return path and file name if the file already exists in the
-raw data directory. This is helpful for testing without using the internet.}
+raw data directory. This is helpful for testing without using the internet.
+Setting the option \code{icd.data.offline} will set this globally. For anyone
+with an unmetered internet connection, setting this to \code{TRUE} is a good
+idea, and the default. It may be set to \code{FALSE}, which is useful for
+automated testing when downloads are not desirable. N.b., most people do
+not need to download or parse any raw ICD data themselves, so really this
+is just for developers.}
 
 \item{data_raw_path}{path where the raw directory is}
+
+\item{save_name}{file name to save as, default is \code{file_name}}
 }
 \value{
 path of unzipped file in the raw data directory

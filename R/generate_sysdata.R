@@ -104,7 +104,7 @@ make_icd10cm_sources <- function() {
       base_url = "https://www.cms.gov/Medicare/Coding/ICD10/Downloads/",
       dx_zip = "2019-ICD-10-CM-Code-Descriptions.zip",
       dx_xml_zip = "2019-ICD-10-CM-Tables-and-Index.zip",
-      dx_xml = "Tabular.xml",
+      dx_xml = "icd10cm_tabular_2019.xml",
       dx_leaf = "icd10cm_codes_2019.txt",
       dx_hier = "icd10cm_order_2019.txt",
       pcs_zip = "2019-ICD-10-PCS-Order-File.zip",

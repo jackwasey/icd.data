@@ -8,4 +8,3 @@ old_opts <- options(warn = 2)
 on.exit(options(old_opts), add = TRUE)
 
 testthat::test_examples()
-

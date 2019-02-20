@@ -107,50 +107,35 @@ NULL
 #' @keywords datasets internal
 NULL
 
-#' United States ICD-10-CM
+#' United States and Belgium ICD-10-CM
 #'
 #' The public domain modified ICD-10 classification as published in the public
 #' domain by the US CDC. Currently this has a slightly different structure to
 #' \code{icd9cm_hierarchy} because the published data helpfully has a
 #' \emph{leaf} flag indicating whether a code is a \emph{billable} leaf node, or
 #' a code higher in the hierarchy which nevertheless will have a description.
-#' @section Editions:
-#' There are annual revisions to this data in the US. The Belgian authorities publish an exact replica of the 2014 ICD-10-CM codes with French and Dutch translations, and these are provided.
+#' @section Editions: There are annual revisions to this data in the US.
 #' @name icd10cm2019
 #' @aliases icd10cm2014 icd10cm2015 icd10cm2016 icd10cm2017 icd10cm2018
-#'   icd10cm2014_fr icd10cm2014_nl
 #' @source \url{http://www.cdc.gov/nchs/icd/icd10cm.htm}
 #' @docType data
 #' @keywords datasets
 #' @details Format:  data frame, with columns for code, leaf status (0 or 1),
 #'   short and long descriptions.
-#' @seealso \url{https://www.cms.gov/Medicare/Coding/ICD10/}
+#' @references \url{https://www.cms.gov/Medicare/Coding/ICD10/}
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2018-ICD-10-PCS-Tables-And-Index.zip}
-#'
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2018-ICD-10-PCS-Order-File.zip}
-#'
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2017-PCS-Code-Tables.zip}
-#'
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2017-PCS-Long-Abbrev-Titles.zip}
-#'
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2016-Code-Descriptions-in-Tabular-Order.zip}
-#'
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-code-descriptions.zip}
-#'
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-tables-index.zip}
-#'
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-Code_Tables-and-Index.zip}
-#'
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2015-PCS-long-and-abbreviated-titles.zip}
-#'
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-ICD10-Code-Descriptions.zip}
-#'
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-ICD10-Code-Tables-and-Index.zip}
-#'
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-Code-Tables-and-Index.zip}
-#'
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-PCS-long-and-abbreviated-titles.zip}
-#'
 NULL
 
 #' 2016 WHO ICD-10 data
@@ -213,7 +198,6 @@ NULL
 #' require accents. These were not converted to lower or sentence case to avoid
 #' introducing spellingn errors.
 #' Définitions CIM-10-FR de l'OMS (WHO ICD-10 definitions)
-#' @seealso \code{\link{icd10cm2014_fr}}
 #' @source \url{https://www.atih.sante.fr/cim-10-fr-2018-usage-pmsi}
 #' @references
 #'   \href{https://www.atih.sante.fr/nomenclatures-de-recueil-de-linformation/cim}{ATIH
@@ -221,6 +205,24 @@ NULL
 #' @docType data
 #' @keywords datasets
 #' @name icd10fr2019
+NULL
+
+#' Belgian ICD-10-BE
+#'
+#' This is based heavily on ICD-10-CM. 2014 is identical, with translations for
+#' most of the codes into Dutch and French. 2017 has about a hundred additional
+#' code definitions over ICD-10-CM 2017. The 2014 data also has the interesting
+#' fields for gender specificity of a given code, and whether it is permissible
+#' as Present-on-Arrival (POA).
+#' @source
+#' \url{https://www.health.belgium.be/en/node/30433}
+#' \url{https://www.health.belgium.be/sites/default/files/uploads/fields/fpshealth_theme_file/fy2017_reflist_icd-10-be.xlsx_last_updatet_28-07-2017_1.xlsx}
+#' \url{https://www.health.belgium.be/fr/sante/organisation-des-soins-de-sante/hopitaux/systemes-denregistrement/icd-10-be}
+#' \url{https://www.health.belgium.be/fr/fy2014reflisticd-10-bexlsx}
+#' @name icd10be2014
+#' @aliases icd10be2017 icd10be2014_pc icd10be2017_pc
+#' @docType data
+#' @keywords datasets
 NULL
 
 #' ICD-10-CM Procedure Codes

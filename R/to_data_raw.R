@@ -17,6 +17,7 @@
 #' @template verbose
 #' @template offline
 #' @param data_raw_path path where the raw directory is
+#' @param save_name file name to save as, default is \code{file_name}
 #' @return path of unzipped file in the raw data directory
 #' @keywords internal
 unzip_to_data_raw <- function(
@@ -24,7 +25,7 @@ unzip_to_data_raw <- function(
   file_name,
   force = FALSE,
   verbose = FALSE,
-  offline = TRUE,
+  offline = getOption("icd.data.offline"),
   data_raw_path = get_raw_data_dir(),
   save_name = file_name
 ) {
@@ -51,7 +52,7 @@ unzip_to_data_raw <- function(
 download_to_data_raw <- function(
   url,
   file_name = regmatches(url, regexpr("[^/]*$", url)),
-  offline = TRUE,
+  offline = getOption("icd.data.offline"),
   data_raw_path = get_raw_data_dir()
 ) {
   stopifnot(is.character(url), length(url) == 1)

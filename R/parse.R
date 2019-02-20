@@ -34,15 +34,15 @@ icd9cm_hierarchy_sanity <- function(x) {
 #'   # not included in installed package, run using the full source from github,
 #'   # e.g. using devtools::load_all()
 #'   \dontrun{
-#'   parse_leaf_descriptions_all(save_data = TRUE, offline = TRUE)
+#'   option("icd.data.offline" = FALSE)
+#'   parse_leaf_descriptions_all(save_data = TRUE)
 #'   }
 #' @source
 #' http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html
 #' @keywords internal datagen
 #' @noRd
-parse_leaf_descriptions_all <- function(save_data = TRUE, offline = TRUE) {
+parse_leaf_descriptions_all <- function(save_data = TRUE, ...) {
   stopifnot(is.logical(save_data), length(save_data) == 1)
-  stopifnot(is.logical(offline), length(offline) == 1)
   versions <- icd9cm_sources$version
   message("Available versions of sources are: ",
           paste(versions, collapse = ", "))
@@ -51,7 +51,7 @@ parse_leaf_descriptions_all <- function(save_data = TRUE, offline = TRUE) {
     message("working on version: ", v)
     icd9cm_billable[[v]] <- icd9_parse_leaf_desc_ver(version = v,
                                                      save_data = save_data,
-                                                     offline = offline)
+                                                     ...)
     icd9cm_billable[[v]][["short_desc"]] <-
       enc2utf8(icd9cm_billable[[v]][["short_desc"]])
     icd9cm_billable[[v]][["long_desc"]] <-
@@ -81,14 +81,12 @@ parse_leaf_descriptions_all <- function(save_data = TRUE, offline = TRUE) {
 #' @keywords internal datagen
 #' @noRd
 icd9_parse_leaf_desc_ver <- function(version = icd9cm_latest_edition(),
-                                     save_data = TRUE,
-                                     offline = TRUE) {
+                                     save_data = TRUE, ...) {
   stopifnot(is.character(version), length(version) == 1)
-  stopifnot(is.logical(offline), length(offline) == 1)
   stopifnot(is.logical(save_data), length(save_data) == 1)
   message("Fetching billable codes version: ", version)
   if (version == "27")
-    return(invisible(parse_leaf_desc_icd9cm_v27(offline = offline)))
+    return(invisible(parse_leaf_desc_icd9cm_v27(...)))
   stopifnot(version %in% icd9cm_sources$version)
   dat <- icd9cm_sources[icd9cm_sources$version == version, ]
   fn_short_orig <- dat$short_filename
@@ -96,11 +94,11 @@ icd9_parse_leaf_desc_ver <- function(version = icd9cm_latest_edition(),
 
   f_info_short <- unzip_to_data_raw(dat$url,
                                     file_name = fn_short_orig,
-                                    offline = offline)
+                                    ...)
   f_info_long <- NULL
   if (!is.na(fn_long_orig))
     f_info_long <- unzip_to_data_raw(dat$url, file_name = fn_long_orig,
-                                     offline = offline)
+                                     ...)
   message("short filename = ", f_info_short$file_name,
           "\n long filename = ", f_info_long$file_name)
   message("short path = ", f_info_short$file_path,
@@ -173,17 +171,15 @@ icd9_parse_leaf_desc_ver <- function(version = icd9cm_latest_edition(),
 #' Parse billable codes for ICD-9-CM version 27
 #'
 #' These have a quirk which needs a different approach
-#' @template offline
 #' @keywords internal datagen
 #' @noRd
-parse_leaf_desc_icd9cm_v27 <- function(offline = TRUE) {
+parse_leaf_desc_icd9cm_v27 <- function(...) {
   message("working on version 27 quirk")
-  stopifnot(is.logical(offline), length(offline) == 1)
   v27_dat <- icd9cm_sources[icd9cm_sources$version == "27", ]
   fn_orig <- v27_dat$other_filename
   url <- v27_dat$url
   message("original v27 file name = '", fn_orig, "'. URL = ", url)
-  f27_info <- unzip_to_data_raw(url, fn_orig, offline = offline)
+  f27_info <- unzip_to_data_raw(url, fn_orig, ...)
   f <- file(f27_info$file_path, encoding = "latin1")
   icd9cm_billable27 <-
     utils::read.csv(f27_info$file_path, stringsAsFactors = FALSE,
@@ -233,9 +229,13 @@ fix_sub_chap_na <- function(x, start, end) {
 #' @template offline
 #' @keywords internal datagen
 #' @noRd
-icd9cm_gen_chap_hier <- function(save_data = FALSE,
-                                 verbose = FALSE, offline = TRUE,
-                                 perl = TRUE, use_bytes = TRUE) {
+icd9cm_gen_chap_hier <- function(
+  save_data = FALSE,
+  verbose = FALSE,
+  offline = getOption("icd.data.offline"),
+  perl = TRUE,
+  use_bytes = TRUE
+) {
   # TODO: Someday add 'billable' column, and make consistent ICD-9 and ICD-10
   # lookup tables
   stopifnot(is.logical(save_data), length(save_data) == 1)
@@ -323,15 +323,15 @@ icd9_get_chapters <- function(x, short_code, verbose = FALSE) {
   )
   chap_lookup <- lapply(icd9_chapters, function(y)
     vec_to_env_true(
-      icd::icd_expand_range_major.icd9(icd::as.icd9cm(y[["start"]]),
-                                       y[["end"]], defined = FALSE)
+      icd::expand_range_major(icd::as.icd9cm(y[["start"]]),
+                              y[["end"]], defined = FALSE)
     )
   )
   subchap_lookup <- lapply(icd9_sub_chapters, function(y)
     vec_to_env_true(
-      icd::icd_expand_range_major.icd9(icd::as.icd9cm(y[["start"]]),
-                                       y[["end"]],
-                                       defined = FALSE)
+      icd::expand_range_major(icd::as.icd9cm(y[["start"]]),
+                              y[["end"]],
+                              defined = FALSE)
     )
   )
   for (i in seq_along(majors)) {

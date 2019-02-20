@@ -2,8 +2,7 @@ context("icd10 fixed width parse")
 
 test_icd10_most_majors <- outer(LETTERS, sprintf(0:99, fmt = "%02i"), paste0)
 
-test_that("icd10 2016 flat file details are okay", {
-  skip_icd10cm_flat_avail("2016")
+test_that("icd10 flat file details are okay", {
   # check cols at a time, so I get better error feedback:
   col_names <- c("code",
                  "billable",
@@ -13,10 +12,9 @@ test_that("icd10 2016 flat file details are okay", {
                  "major",
                  "sub_chapter",
                  "chapter")
-  expect_warning(
-    all_res <- icd10cm_parse_all_defined(save_data = FALSE),
-    regexp = NA)
+  all_res <- icd10cm_parse_all_defined(save_data = FALSE)
   for (v in as.character(2014:2019)) {
+    skip_icd10cm_flat_avail(v)
     res <- all_res[[v]]
     expect_identical(colnames(res), col_names)
     expect_is(res$code, "character")
@@ -79,13 +77,19 @@ test_that("Y09 got picked up in sub-chapter parsing", {
 })
 
 test_that("chapter parsing for ICD-10 went okay", {
-  chap_lookup <- icd10_generate_chap_lookup()
-  expect_false(any(duplicated(chap_lookup$chap_major)))
+  for (y in 2014:2019) {
+    chap_lookup <- icd10_generate_chap_lookup(year = y)
+    expect_false(any(duplicated(chap_lookup$chap_major)), info = y)
+  }
 })
 
 test_that("sub-chapter parsing for ICD-10 went okay", {
-  sc_lookup <- icd10_generate_subchap_lookup()
-  expect_false(any(duplicated(sc_lookup$sc_major)))
+  for (y in 2014:2019) {
+    sc_lookup <- icd10_generate_subchap_lookup(year = y)
+    expect_false(anyDuplicated(sc_lookup$sc_major), info = y)
+    # 2019 duplicated/parse errors?
+    sc_lookup[sc_lookup$sc_major %in% c("C7A", "C7B", "D3A"), ]
+  }
 })
 
 # github issue #116

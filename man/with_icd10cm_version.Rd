@@ -4,14 +4,12 @@
 \alias{with_icd10cm_version}
 \title{Evaluate code with a particular version of ICD-10-CM}
 \usage{
-with_icd10cm_version(ver, lang, code)
+with_icd10cm_version(ver, code)
 }
 \arguments{
 \item{ver}{Character version of ICD-10-CM to use, corresponding to the suffix
 of the \code{data.frame} name, e.g. for 2019 ICD-10-CM, use "icd10cm2019" for
 Dutch 2014 ICD-CM translations, use 'icd10cm2014_nl"}
-
-\item{lang}{Language string, e.g., "en", "fr", "nl" or others that may be supported in the future.}
 
 \item{code}{Code block to execute}
 }

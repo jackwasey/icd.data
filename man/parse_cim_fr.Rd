@@ -4,7 +4,7 @@
 \alias{parse_cim_fr}
 \title{Read the definitions of the French edition of ICD-10}
 \usage{
-parse_cim_fr(save_data = FALSE, offline = TRUE)
+parse_cim_fr(save_data = FALSE, ...)
 }
 \arguments{
 \item{save_data}{single logical value, if \code{TRUE} will save the generated

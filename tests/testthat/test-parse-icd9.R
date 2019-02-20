@@ -126,8 +126,7 @@ test_that("ICD-9-CM billable codes package data is recreated", {
   # ICD-9-CM code, otherwise we may have to skip
   skip_flat_icd9_all_avail()
 
-  check_billable <- parse_leaf_descriptions_all(save_data = FALSE,
-                                                offline = TRUE)
+  check_billable <- parse_leaf_descriptions_all(save_data = FALSE)
   # check this one thing known to be dodgy
   expect_identical(check_billable[["28"]][["long_desc"]],
                    icd9cm_billable[["28"]][["long_desc"]])

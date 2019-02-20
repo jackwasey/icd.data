@@ -4,12 +4,9 @@
 \alias{get_icd10cm_available}
 \title{Get the ICD-10-CM versions available in this package}
 \usage{
-get_icd10cm_available(lang = c("en", "fr", "nl"), pc = FALSE,
-  return_year = FALSE)
+get_icd10cm_available(pc = FALSE, return_year = FALSE)
 }
 \arguments{
-\item{lang}{Language string, e.g., "en", "fr", "nl" or others that may be supported in the future.}
-
 \item{pc}{Logical, if \code{TRUE}, will return names of procedure code data
 frames. Default is \code{FALSE} which will return the names of the diagnostic
 code data frames.}
@@ -21,13 +18,8 @@ vector of year (or year-like version) being returned.}
 Get the ICD-10-CM versions available in this package
 }
 \examples{
-  # English language diagnostic codes:
+  # Diagnostic codes:
   get_icd10cm_available()
-  # French procedure codes
-  get_icd10cm_available("fr", pc = TRUE)
-  # Dutch diagnostic and procedure codes
-  get_icd10cm_available("nl")
-  get_icd10cm_available("nl", TRUE)
   # Just get the years avaiable for English language procedure codes
   get_icd10cm_available(pc = TRUE, return_year = TRUE)
 }

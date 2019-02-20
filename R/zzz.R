@@ -8,6 +8,15 @@
       path <- tempdir()
     set_resource_path(path = path, verbose = FALSE)
     }
+  if (!("icd.data.offline" %in% names(options()))) {
+    options(
+      "icd.data.offline" =
+        tolower(Sys.getenv("ICD_DATA_OFFLINE")) %in% c("n",
+                                                       "no",
+                                                       "false",
+                                                       "0")
+    )
+  }
   makeActiveBinding(sym = "icd10who2016",
                     fun = .icd10who2016_binding,
                     env = parent.env(environment()))
@@ -19,9 +28,6 @@
   if (!("icd.data.icd10cm_active_ver" %in% names(options()))) {
     set_icd10cm_active_ver(2019, check_exists = FALSE)
   }
-  if (!("icd.data.icd10cm_active_lang" %in% names(options()))) {
-    set_icd10cm_active_lang("en")
-  }
   makeActiveBinding(sym = "icd10cm_latest",
                     fun = .icd10cm_latest_binding,
                     env = parent.env(environment()))
@@ -30,6 +36,9 @@
                     fun = .icd10cm_active_binding,
                     env = parent.env(environment()))
   lockBinding(sym = "icd10cm_active", env = parent.env(environment()))
+  makeActiveBinding(sym = "cim10fr2019",
+                    fun = .cim10fr_active_binding,
+                    env = parent.env(environment()))
   invisible()
 }
 
