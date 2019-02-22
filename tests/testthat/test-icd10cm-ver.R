@@ -42,7 +42,6 @@ test_that("detail Belgian", {
   # Is BE version is identical to ICD-10-CM for 2014?
   expect_equal(nrow(icd10cm2014), nrow(icd10be2014))
   expect_setequal(icd10cm2014$code, icd10be2014$code)
-  expect_identical(unclass(icd10cm2014$code), unclass(icd10be2014$code))
   # how different is Belgian 2017 set from ICD-10-CM in different years?
   length(setdiff(icd10be2017$code, icd10cm2018$code)) #334 Belgian only
   length(setdiff(icd10cm2018$code, icd10be2017$code)) # 751 CM only
@@ -58,13 +57,4 @@ test_that("detail Belgian", {
   #stopifnot(length(setdiff(icd10be2014_en$code, icd10cm2014$code)) == 0) # just in BE
   stopifnot(length(setdiff(icd10cm2014$code, icd10be2014$code)) == 0) # just in CM
   stopifnot(length(setdiff(icd10be2014$code, icd10cm2014$code)) == 0) # just in BE
-  stopifnot(nrow(icd10be2014_pc) == nrow(icd10be2014_pc_fr))
-  stopifnot(length(setdiff(as.character(trimws(icd10be2014_pc$pcs)),
-                           icd10be2014_pc_fr$code)) == 0) # just in CM
-  stopifnot(length(setdiff(icd10be2014_pc_fr$code,
-                           as.character(trimws(icd10be2014_pc$pcs)))) == 0) # just in BE
-  stopifnot(length(setdiff(as.character(trimws(icd10be2014_pc$pcs)),
-                           icd10be2014_pc_nl$code)) == 0) # just in CM
-  stopifnot(length(setdiff(icd10be2014_pc_nl$code,
-                           as.character(trimws(icd10be2014_pc$pcs)))) == 0) # just in BE
 })

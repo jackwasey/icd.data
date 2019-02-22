@@ -8,8 +8,14 @@ utils::globalVariables(c("icd9_sub_chapters",
 
 # quick sanity checks - full tests of x in test-parse.R
 icd9cm_hierarchy_sanity <- function(x) {
-  stopifnot(all(icd::is_valid(x[["code"]], short_code = TRUE)))
-  if (!any(vapply(x, is.na, logical(nrow(x))))) return()
+  stopifnot(
+    all(
+      icd::is_valid(x[["code"]], short_code = TRUE)))
+  if (!any(
+    vapply(x,
+           is.na,
+           logical(nrow(x)))))
+    return()
   print(colSums(vapply(x, is.na, logical(1))))
   print(x[which(is.na(x$major)), ])
   print(x[which(is.na(x$three_digit)), ])
@@ -35,13 +41,13 @@ icd9cm_hierarchy_sanity <- function(x) {
 #'   # e.g. using devtools::load_all()
 #'   \dontrun{
 #'   option("icd.data.offline" = FALSE)
-#'   parse_leaf_descriptions_all(save_data = TRUE)
+#'   parse_icd9cm_leaf_descriptions_all(save_data = TRUE)
 #'   }
 #' @source
 #' http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html
 #' @keywords internal datagen
 #' @noRd
-parse_leaf_descriptions_all <- function(save_data = TRUE, ...) {
+parse_icd9cm_leaf_descriptions_all <- function(save_data = TRUE, ...) {
   stopifnot(is.logical(save_data), length(save_data) == 1)
   versions <- icd9cm_sources$version
   message("Available versions of sources are: ",
@@ -49,9 +55,10 @@ parse_leaf_descriptions_all <- function(save_data = TRUE, ...) {
   icd9cm_billable <- list()
   for (v in versions) {
     message("working on version: ", v)
-    icd9cm_billable[[v]] <- icd9_parse_leaf_desc_ver(version = v,
-                                                     save_data = save_data,
-                                                     ...)
+    icd9cm_billable[[v]] <-
+      icd9_parse_leaf_desc_ver(version = v,
+                               save_data = save_data,
+                               ...)
     icd9cm_billable[[v]][["short_desc"]] <-
       enc2utf8(icd9cm_billable[[v]][["short_desc"]])
     icd9cm_billable[[v]][["long_desc"]] <-
@@ -80,8 +87,11 @@ parse_leaf_descriptions_all <- function(save_data = TRUE, ...) {
 #' @return invisibly return the result
 #' @keywords internal datagen
 #' @noRd
-icd9_parse_leaf_desc_ver <- function(version = icd9cm_latest_edition(),
-                                     save_data = TRUE, ...) {
+icd9_parse_leaf_desc_ver <- function(
+  version = icd9cm_latest_edition(),
+  save_data = TRUE,
+  ...
+) {
   stopifnot(is.character(version), length(version) == 1)
   stopifnot(is.logical(save_data), length(save_data) == 1)
   message("Fetching billable codes version: ", version)
@@ -265,7 +275,8 @@ icd9cm_gen_chap_hier <- function(
   # is no short description, e.g. for most Major codes, or intermediate codes,
   # just copy the long description over.
   bill32 <- icd9cm_billable[["32"]]
-  billable_codes <- icd::get_billable(out[["code"]], short_code = TRUE)
+  billable_codes <- icd::get_billable(icd::as.icd9cm(out[["code"]]),
+                                      short_code = TRUE)
   billable_rows <- which(out[["code"]] %in% billable_codes)
   title_rows <- which(out[["code"]] %nin% billable_codes)
   stopifnot(setdiff(c(billable_rows, title_rows),
@@ -284,18 +295,18 @@ icd9cm_gen_chap_hier <- function(
   out[["short_desc"]] <- enc2utf8(out[["short_desc"]])
   out[["long_desc"]] <- enc2utf8(out[["long_desc"]])
   icd9cm_hierarchy_sanity(out)
-  billable <- icd::is_billable(out$code)
+  billable <- icd::is_billable(icd::as.icd9cm(out$code))
   icd9cm_hierarchy <- cbind(out[1], billable, out[-1])
   if (save_data)
     save_in_data_dir(icd9cm_hierarchy)
   invisible(icd9cm_hierarchy)
 }
 
-#' get ICD-9 Chapters from vector of ICD-9 codes
+#' Get ICD-9 Chapters for vector of ICD-9 codes
 #'
-#' This runs quite slowly. Used too rarely to be worth optimizing
-#'   now. This is used to build a master list of ICD-9 codes with their
-#'   respective chapters, sub-chapters, etc..
+#' This runs quite slowly. Used too rarely to be worth optimizing now. This is
+#' used to build a master list of ICD-9 codes with their respective chapters,
+#' sub-chapters, etc..
 #' @param x vector of ICD-9 codes
 #' @template short_code
 #' @template verbose

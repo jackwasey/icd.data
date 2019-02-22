@@ -3,6 +3,7 @@ context("icd10 fixed width parse")
 test_icd10_most_majors <- outer(LETTERS, sprintf(0:99, fmt = "%02i"), paste0)
 
 test_that("icd10 flat file details are okay", {
+  skip("this test is very slow, but important to run manually")
   # check cols at a time, so I get better error feedback:
   col_names <- c("code",
                  "billable",
@@ -86,7 +87,7 @@ test_that("chapter parsing for ICD-10 went okay", {
 test_that("sub-chapter parsing for ICD-10 went okay", {
   for (y in 2014:2019) {
     sc_lookup <- icd10_generate_subchap_lookup(year = y)
-    expect_false(anyDuplicated(sc_lookup$sc_major), info = y)
+    expect_equal(anyDuplicated(sc_lookup$sc_major), 0, info = y)
     # 2019 duplicated/parse errors?
     sc_lookup[sc_lookup$sc_major %in% c("C7A", "C7B", "D3A"), ]
   }

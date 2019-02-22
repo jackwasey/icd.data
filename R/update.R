@@ -17,7 +17,7 @@ update_everything <- function(save_data = TRUE, offline = FALSE) {
   message("Parsing plain text billable codes to create icd9cm_billable list of
                        data frames with descriptions of billable codes only.
                        No dependencies on other data.")
-  parse_leaf_descriptions_all(save_data = save_data)
+  parse_icd9cm_leaf_descriptions_all(save_data = save_data)
   load(system.file("data", "icd9cm_billable.RData", package = "icd.data"))
   icd10cm_parse_all_defined(save_data = save_data)
   icd10cm_extract_sub_chapters(save_data = save_data)

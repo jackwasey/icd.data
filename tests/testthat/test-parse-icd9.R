@@ -13,7 +13,6 @@ test_that("some known sub vs chap confusion", {
     expect_icd9_only_chap(i)
   for (i in names(icd9_sub_chapters))
     expect_icd9_only_sub_chap(i, info = i)
-
 })
 
 test_that("sub_chapter parsing went okay, tricky cases", {
@@ -51,11 +50,9 @@ test_that("some majors are the same as sub-chapters", {
   # for E) codes to be present, even if this is also a sub-chapter. And it would
   # be more consistent to have every code being in a chapter, sub-chapter and
   # major, than some being exceptional.
-
   expect_icd9_major_is_sub_chap("Body mass index", "V85")
   expect_icd9_major_is_sub_chap("Multiple gestation placenta status", "V91")
   expect_icd9_major_is_sub_chap("External cause status", "E000")
-
 })
 
 test_that("Some known problem codes explained, github #126, #124, #123", {
@@ -118,19 +115,13 @@ test_that("some randomly chosen codes are correct", {
 })
 
 test_that("ICD-9-CM billable codes package data is recreated", {
-
   skip_on_os(c("windows", "mac", "solaris"))
   # Do encoding problems on Linux. It is unpredictable at the best of times.
-
-  # we can do this offline if we have all (currently available) versions of the
-  # ICD-9-CM code, otherwise we may have to skip
   skip_flat_icd9_all_avail()
-
-  check_billable <- parse_leaf_descriptions_all(save_data = FALSE)
+  check_billable <- parse_icd9cm_leaf_descriptions_all(save_data = FALSE)
   # check this one thing known to be dodgy
   expect_identical(check_billable[["28"]][["long_desc"]],
                    icd9cm_billable[["28"]][["long_desc"]])
-
   # make specific quick tests for previously known problems:
   b32 <- check_billable[["32"]]
   expect_true(nrow(b32) == 14567L)
@@ -143,7 +134,6 @@ test_that("ICD-9-CM billable codes package data is recreated", {
                    "Late effect, terrorism")
   expect_identical(b32[b32$code == "V9199", "short_desc"],
                    "Mult gest-plac/sac undet")
-
   for (ver in c("27", "28", "29", "30", "31", "32")) {
     v <- icd9cm_billable[[ver]][["long_desc"]]
     cb <- check_billable[[ver]][["long_desc"]]

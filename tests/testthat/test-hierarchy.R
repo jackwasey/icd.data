@@ -8,8 +8,13 @@ test_that("icd9cm_hierarchy as saved in data can be recreated as expected", {
   skip_on_os(c("windows", "mac", "solaris"))
   skip_flat_icd9_avail_all()
   skip_on_no_rtf("2011")
-  cmh_headings <- c("code", "short_desc", "long_desc", "three_digit",
-                    "major", "sub_chapter", "chapter")
+  cmh_headings <- c("code",
+                    "short_desc",
+                    "long_desc",
+                    "three_digit",
+                    "major",
+                    "sub_chapter",
+                    "chapter")
   cmh <- icd9cm_gen_chap_hier(save_data = FALSE,
                               verbose = FALSE)
   for (h in cmh_headings)
@@ -74,7 +79,8 @@ test_that("some sub-chapters are correct", {
   suicide_rows <- which(codes %in% (icd::expand_range("E950", "E959")))
   expect_equal(
     subchaps[suicide_rows[1] - 1],
-    "Drugs, Medicinal And Biological Substances Causing Adverse Effects In Therapeutic Use") #nolint
+    paste("Drugs, Medicinal And Biological Substances",
+          "Causing Adverse Effects In Therapeutic Use"))
   expect_equal(subchaps[suicide_rows[1]], "Suicide And Self-Inflicted Injury")
   expect_equal(subchaps[suicide_rows[length(suicide_rows)]],
                "Suicide And Self-Inflicted Injury")
