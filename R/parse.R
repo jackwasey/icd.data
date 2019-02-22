@@ -313,13 +313,7 @@ icd9cm_gen_chap_hier <- function(
 #' @noRd
 .icd9cm2011_active_binding <- function(x) {
   if (!missing(x)) stop("This active binding cannot be set")
-  if (exists("icd9cm2011", envir = .icd_data_env))
-    return(get("icd9cm2011", envir = .icd_data_env))
-  icd9cm2011 <- icd9cm_hierarchy
-  assign("icd9cm2011",
-         value = icd9cm2011,
-         envir = .icd_data_env)
-  icd9cm2011
+  icd.data::icd9cm_hierarchy
 }
 
 #' Get ICD-9 Chapters for vector of ICD-9 codes

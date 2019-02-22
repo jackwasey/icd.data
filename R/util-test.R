@@ -1,7 +1,7 @@
 #nocov start
 
 rtf_year_ok <- function(year, ...) {
-  !is.null(rtf_fetch_year(year, ...))
+  !is.null(rtf_fetch_year(year, offline = TRUE, ...))
 }
 
 skip_on_no_rtf <- function(test_year) {
@@ -17,8 +17,9 @@ skip_flat_icd9_avail <- function(ver = "31") {
   fn_orig <- dat$short_filename
   if (is.na(fn_orig))
     fn_orig <- dat$other_filename
-  # download if offline option is false
-  f_info_short <- unzip_to_data_raw(dat$url, file_name = fn_orig)
+  f_info_short <- unzip_to_data_raw(dat$url,
+                                    file_name = fn_orig,
+                                    offline = TRUE)
   if (is.null(f_info_short)) testthat::skip(msg)
 }
 
@@ -30,13 +31,13 @@ skip_icd10cm_flat_avail <- function(
   year,
   msg = "skipping test because flat file ICD-10-CM source not available"
 ) {
-  if (is.null(icd10cm_get_flat_file(year = year)))
+  if (is.null(icd10cm_get_flat_file(year = year, offline = TRUE)))
     testthat::skip(msg)
 }
 
 skip_icd10cm_xml_avail <- function(
   msg = "skipping test because XML file ICD-10-CM source not available")
-  if (is.null(icd10cm_get_xml_file())) testthat::skip(msg)
+  if (is.null(icd10cm_get_xml_file(offline = TRUE))) testthat::skip(msg)
 
 skip_flat_icd9_avail_all <- function() {
   for (v in icd9cm_sources$version)
@@ -213,11 +214,11 @@ expect_equal_no_icd <- function(object, expected, ...) {
 #' @export
 skip_missing_icd10who <- function(ver = "2016", lang = "en") {
   if (ver == "2016" && lang == "en") {
-    if (is.null(get_icd10who2016())) {
+    if (is.null(get_icd10who2016(offline = TRUE))) {
       testthat::skip("English WHO ICD-10 not loaded, or unavailable")
     }
   } else if (ver == "2008" && lang == "fr") {
-    if (is.null(get_icd10who2008fr())) {
+    if (is.null(get_icd10who2008fr(offline = TRUE))) {
       testthat::skip("French WHO ICD-10 not loaded, or unavailable")
     }
   } else

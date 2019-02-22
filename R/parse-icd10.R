@@ -109,7 +109,9 @@ icd10_generate_subchap_lookup <- function(year, verbose = FALSE) {
   )
 }
 
-erm <- memoise::memoise(icd::expand_range_major)
+get_erm <- function() {
+  memoise::memoise(icd::expand_range_major)
+}
 
 icd10_generate_chap_lookup <- function(
   year,
@@ -126,7 +128,7 @@ icd10_generate_chap_lookup <- function(
       out <- data.frame(
         # expand undefined to avoid circular dependency on the ICD-10-CM data we
         # are making now. This makes it much slower.
-        erm(
+        get_erm()(
           icd::as.icd10cm(chap["start"]),
           icd::as.icd10cm(chap["end"]),
           defined = FALSE),

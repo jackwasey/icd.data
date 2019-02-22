@@ -50,9 +50,13 @@ parse_cim_fr <- function(save_data = FALSE, ...) {
 #' @noRd
 .cim10fr_active_binding <- function(x) {
   if (!missing(x)) stop("This active binding cannot be set")
+  # if (!missing(x)) {
+  #   message("This active binding cannot be set")
+  #   return(x)
+  # }
   if (exists("cim10fr2019", envir = .icd_data_env))
     return(get("cim10fr2019", envir = .icd_data_env))
-  cim10fr2019 <- icd10fr2019
+  cim10fr2019 <- icd.data::icd10fr2019
   names(cim10fr2019) <- c("code",
                           "desc_courte",
                           "desc_longue",
