@@ -9,7 +9,7 @@
 }
 \usage{
 icd10cm_parse_all_defined(save_data = FALSE,
-  offline = getOption("icd.data.offline"))
+  offline = getOption("icd.data.offline"), verbose = TRUE, ...)
 }
 \description{
 Gets all ICD-10-CM codes from an archive on the CDC web site.

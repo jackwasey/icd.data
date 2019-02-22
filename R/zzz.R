@@ -39,6 +39,11 @@
   makeActiveBinding(sym = "cim10fr2019",
                     fun = .cim10fr_active_binding,
                     env = parent.env(environment()))
+  lockBinding(sym = "cim10fr2019", env = parent.env(environment()))
+  makeActiveBinding(sym = "icd9cm2011",
+                    fun = .icd9cm2011_active_binding,
+                    env = parent.env(environment()))
+  lockBinding(sym = "icd9cm2011", env = parent.env(environment()))
   invisible()
 }
 

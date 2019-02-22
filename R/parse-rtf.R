@@ -63,14 +63,13 @@ rtf_parse_year <- function(year = "2011",
   rtf_lines <- readLines(fp_conn, warn = FALSE, encoding = "ASCII")
   out <- rtf_parse_lines(rtf_lines, verbose = verbose,
                          ..., save_extras = save_data)
-  out <- swap_names_vals(out)
-  out <- icd::sort_icd(out, short_code = FALSE)
-  invisible(
-    data.frame(
-      code = icd::as.icd9cm(icd::decimal_to_short(unname(out))),
-      desc = names(out),
-      stringsAsFactors = FALSE)
-  )
+  out <- icd::as.icd9cm(swap_names_vals(out))
+  out_df <- data.frame(
+    code = icd::as.icd9cm(icd::decimal_to_short(unname(out))),
+    desc = names(out),
+    stringsAsFactors = FALSE)
+  out_df[icd::order.icd9(out), ]
+  invisible(out_df)
 }
 
 rtf_pre_filter <- function(filtered, ...) {
@@ -109,8 +108,8 @@ rtf_parse_lines <- function(rtf_lines, verbose = FALSE,
   stopifnot(is.logical(verbose), length(verbose) == 1)
   stopifnot(is.logical(save_extras), length(save_extras) == 1)
   filtered <- rtf_pre_filter(rtf_lines, ...)
-  rtf_make_majors(filtered, save = save_extras, ...)
-  rtf_make_sub_chapters(filtered, ..., save = save_extras)
+  majors <- rtf_make_majors(filtered, save = save_extras, ...)
+  sub_chaps <- rtf_make_sub_chapters(filtered, ..., save = save_extras)
   # this is so ghastly: find rows with sequare brackets containing definition of
   # subset of fourth or fifth digit codes. Need to pull code from previous row,
   # and create lookup, so we can exclude these when processing the fourth an

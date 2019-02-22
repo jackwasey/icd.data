@@ -19,11 +19,11 @@ update_everything <- function(save_data = TRUE, offline = FALSE) {
                        No dependencies on other data.")
   parse_icd9cm_leaf_descriptions_all(save_data = save_data)
   load(system.file("data", "icd9cm_billable.RData", package = "icd.data"))
-  icd10cm_parse_all_defined(save_data = save_data)
-  icd10cm_extract_sub_chapters(save_data = save_data)
   # reload the newly saved data before generating chapters.
   # The next step depends on icd9cm_billable
   icd9cm_gen_chap_hier(save_data = save_data, verbose = FALSE)
+  icd10cm_parse_all_defined(save_data = save_data)
+  icd10cm_extract_sub_chapters(save_data = save_data)
   icd10_parse_cms_pcs_all(save_data = save_data)
   parse_cim_fr(save_data = save_data)
   parse_icd10be2014(save_data = save_data)

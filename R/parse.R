@@ -16,9 +16,11 @@ icd9cm_hierarchy_sanity <- function(x) {
            is.na,
            logical(nrow(x)))))
     return()
-  print(colSums(vapply(x, is.na, logical(1))))
+  print(colSums(vapply(x, is.na, logical(nrow(x)))))
   print(x[which(is.na(x$major)), ])
   print(x[which(is.na(x$three_digit)), ])
+  print(sum(is.na(x$sub_chapter)))
+  print(unique(x[which(is.na(x$sub_chapter)), "three_digit"]))
   print(x[which(is.na(x$sub_chapter))[1:10], ]) # just top ten
   print(x[which(is.na(x$chapter)), ])
   stop("should not have any NA values in the ICD-9-CM flatten hierarchy")
@@ -151,17 +153,17 @@ icd9_parse_leaf_desc_ver <- function(
                     long_desc = long_descs,
                     stringsAsFactors = FALSE)
   message("now sort so that E is after V")
-  reorder <- get_icd34fun("order.icd9")(out[["code"]])
+  new_order <- get_icd34fun("order.icd9")(out[["code"]])
   stopifnot(!anyNA(out[["code"]]))
-  stopifnot(!anyNA(reorder))
+  stopifnot(!anyNA(new_order))
   stopifnot(!any(grepl(out[["code"]], pattern = "[[:space:]]")))
-  stopifnot(!anyDuplicated(reorder))
-  stopifnot(all(seq_len(nrow(out)) %in% reorder))
+  stopifnot(!anyDuplicated(new_order))
+  stopifnot(all(seq_len(nrow(out)) %in% new_order))
   # catches a mistaken zero-indexed reorder result
-  stopifnot(length(setdiff(seq_len(nrow(out)), reorder)) == 0)
-  stopifnot(length(setdiff(reorder, seq_len(nrow(out)))) == 0)
+  stopifnot(length(setdiff(seq_len(nrow(out)), new_order)) == 0)
+  stopifnot(length(setdiff(new_order, seq_len(nrow(out)))) == 0)
   message("order found")
-  out <- out[reorder, ]
+  out <- out[new_order, ]
   message("reordered")
   oldwarn <- options(warn = 1)
   on.exit(options(oldwarn))
@@ -207,12 +209,13 @@ parse_leaf_desc_icd9cm_v27 <- function(...) {
 #' @keywords internal datagen
 #' @noRd
 fix_sub_chap_na <- function(x, start, end) {
-  # 740 CONGENITAL ANOMALIES is a chapter with no sub-chapters defined. For
-  # consistency, assign the same name to sub-chapters
-  congenital <- x[["code"]] %in% icd::expand_range(start,
-                                                   end,
-                                                   short_code = TRUE,
-                                                   defined = FALSE)
+  # 280, 740 (CONGENITAL ANOMALIES) are chapters with no sub-chapters defined.
+  # For consistency, assign the same name to sub-chapters
+  rng <- icd::expand_range(icd::as.icd9cm(start),
+                           icd::as.icd9cm(end),
+                           short_code = TRUE,
+                           defined = FALSE)
+  congenital <- x[["code"]] %in% rng
   # assert all the same:
   stopifnot(all(x[congenital[1], "chapter"] == x[congenital[-1], "chapter"]))
   # insert a new level into the sub-chapter factor in the right place
@@ -246,20 +249,23 @@ icd9cm_gen_chap_hier <- function(
   perl = TRUE,
   use_bytes = TRUE
 ) {
-  # TODO: Someday add 'billable' column, and make consistent ICD-9 and ICD-10
+  # TODO: Someday change 'billable' to 'leaf', and make consistent ICD-9 and ICD-10, e.g. icd9cm2011 instead of icd9cm_hierarchy
   # lookup tables
   stopifnot(is.logical(save_data), length(save_data) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
   stopifnot(is.logical(offline), length(offline) == 1)
   stopifnot(is.logical(perl), length(perl) == 1)
   stopifnot(is.logical(use_bytes), length(use_bytes) == 1)
-  icd9_rtf <- rtf_parse_year(year = "2011", perl = perl, useBytes = use_bytes,
-                             save_data = FALSE, verbose = verbose,
+  icd9_rtf <- rtf_parse_year(year = "2011",
+                             perl = perl,
+                             useBytes = use_bytes,
+                             save_data = FALSE,
+                             verbose = verbose,
                              offline = offline)
   chaps <- icd9_get_chapters(x = icd9_rtf$code, short_code = TRUE,
                              verbose = verbose)
-  # could also get some long descs from more recent billable lists, but not
-  # older ones which only have short descs
+  chaps <- chaps[icd::order.icd9(as_char_no_warn(chaps$three_digit)),]
+  icd9_rtf <- icd9_rtf[icd::order.icd9(icd9_rtf$code), ]
   out <- cbind(
     data.frame("code" = icd9_rtf$code,
                "long_desc" = icd9_rtf$desc,
@@ -300,6 +306,20 @@ icd9cm_gen_chap_hier <- function(
   if (save_data)
     save_in_data_dir(icd9cm_hierarchy)
   invisible(icd9cm_hierarchy)
+}
+
+#' icd9cm_hierarchy binding to offer consistent name
+#' @keywords internal
+#' @noRd
+.icd9cm2011_active_binding <- function(x) {
+  if (!missing(x)) stop("This active binding cannot be set")
+  if (exists("icd9cm2011", envir = .icd_data_env))
+    return(get("icd9cm2011", envir = .icd_data_env))
+  icd9cm2011 <- icd9cm_hierarchy
+  assign("icd9cm2011",
+         value = icd9cm2011,
+         envir = .icd_data_env)
+  icd9cm2011
 }
 
 #' Get ICD-9 Chapters for vector of ICD-9 codes
@@ -363,12 +383,15 @@ icd9_get_chapters <- function(x, short_code, verbose = FALSE) {
   }
   whch <- match(majors, icd9_majors, nomatch = NA)
   out$major[] <- names(icd9_majors)[whch]
-  out$three_digit[] <- unlist(icd9_majors)[whch]
+  out$three_digit[] <- icd::as.icd9cm(unlist(icd9_majors)[whch])
   # out is based on unique majors of the input codes. Now merge with original
   # inputs to give output
   out <- merge(
     y = data.frame(three_digit = all_majors, stringsAsFactors = TRUE),
-    x = out, by = "three_digit", sort = FALSE, all.x = TRUE)
+    x = out,
+    by = "three_digit",
+    sort = TRUE,
+    all.x = TRUE)
   class(out[["three_digit"]]) <- c("icd9cm", "factor")
   # many possible three digit codes don't exist. We should return NA for the
   # whole row. Chapter is coded as a range, so picks up these non-existent codes

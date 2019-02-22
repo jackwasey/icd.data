@@ -9,6 +9,7 @@
 * Added capability for each user to download the WHO ICD-10 data on first use.
 * Moved data creation code from 'icd' package to 'icd.data'
 * Expand Vermont data from 1,000 to about 50,000 rows
+* Add variable icd9cm2011, which is an active binding to make naming of icd9cm_hierarchy consistent
 
 # icd.data 1.0
 
