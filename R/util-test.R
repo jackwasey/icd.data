@@ -214,11 +214,11 @@ expect_equal_no_icd <- function(object, expected, ...) {
 #' @export
 skip_missing_icd10who <- function(ver = "2016", lang = "en") {
   if (ver == "2016" && lang == "en") {
-    if (is.null(get_icd10who2016(offline = TRUE))) {
+    if (is.null(get_icd10who2016())) {
       testthat::skip("English WHO ICD-10 not loaded, or unavailable")
     }
   } else if (ver == "2008" && lang == "fr") {
-    if (is.null(get_icd10who2008fr(offline = TRUE))) {
+    if (is.null(get_icd10who2008fr())) {
       testthat::skip("French WHO ICD-10 not loaded, or unavailable")
     }
   } else
