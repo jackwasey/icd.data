@@ -28,7 +28,7 @@ r_github_packages:
 before_script:
  - sed -i'' '/.*[Dd]ata.*/d' .Rbuildignore # do include (raw) data for testing
 # - sed -i'' '/\.covrignore/d' .Rbuildignore
-# - sed -i'' '/\.lintr/d' .Rbuildignore
+ - sed -i'' '/\.lintr/d' .Rbuildignore
 
 after_success:
   - R CMD INSTALL $PKG_TARBALL

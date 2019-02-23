@@ -1,0 +1,3 @@
+linters: with_defaults(object_name_linter = NULL, object_usage_linter = NULL, line_length_linter(100), object_length_linter(length = 30L), undesirable_function_linter("sapply"))
+exclusions: c(list("R/datadocs.R"), list.files(path = "inst/doc", recursive = TRUE, full.names = TRUE))
+cache: TRUE

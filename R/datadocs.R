@@ -27,11 +27,11 @@
 #' @source
 #' \url{http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html}
 #'
-#' @details Format:  list with chapter/sub-chapter or major names stored in list names,
-#'   each with two element named character vector with start and end codes.
+#' @details Format: list with chapter/sub-chapter or major names stored in list
+#'   names, each with two element named character vector with start and end
+#'   codes.
 #' @name icd9_chapters
-#' @aliases icd9_sub_chapters
-#'   icd9_majors
+#' @aliases icd9_sub_chapters icd9_majors
 NULL
 
 #' ICD-10 chapters
@@ -45,8 +45,8 @@ NULL
 #' U00-U49 - Provisional assignment of new diseases of uncertain etiology or
 #' emergency use U82-U85 - Resistance to antimicrobial and anti-neoplastic drugs
 #' @source http://apps.who.int/classifications/icd10/browse/2016/en
-#' @details Format:  list with chapter names stored in list names, each with two element
-#'   named character vector with start and end codes.
+#' @details Format: list with chapter names stored in list names, each with two
+#'   element named character vector with start and end codes.
 #' @name icd10_chapters
 #' @aliases icd10_chapters_fr
 #' @seealso \code{\link{icd10_sub_chapters}}
@@ -63,8 +63,8 @@ NULL
 #' "Malignant neoplasms of lip, oral cavity and pharynx", not C00-C96 "Malignant
 #' neoplasms" which itself is a subset of the chapter C00-D49 "Neoplasms"
 #' @source http://apps.who.int/classifications/icd10/browse/2016/en
-#' @details Format:  list with sub-chapter or major names stored in list names, each with
-#'   two element named character vector with start and end codes.
+#' @details Format: list with sub-chapter or major names stored in list names,
+#'   each with two element named character vector with start and end codes.
 #' @seealso \code{\link{icd10_chapters}}
 #' @name icd10_sub_chapters
 #' @aliases icd10_sub_chapters_fr
@@ -174,7 +174,8 @@ NULL
 
 #' The currently active version of ICD-10-CM in this package.
 #'
-#' The default is the latest version, but it may be set using `set_icd10cm_ver()`
+#' The default is the latest version, but it may be set using
+#' `set_icd10cm_ver()`
 #' @examples
 #' \dontrun{
 #' set_icd10cm_active_ver("2016")
@@ -269,9 +270,9 @@ NULL
 #' correct, with some \code{UTF-8} encoded strings.
 #' @docType data
 #' @keywords datasets
-#' @details Format:  list of data frames. Each list item is named by the version as a
-#'   string, e.g. "32". The constituent data frames have columns \code{icd9},
-#'   \code{shortDesc}, and \code{longDesc}.
+#' @details Format:  list of data frames. Each list item is named by the version
+#'   as a string, e.g. "32". The constituent data frames have columns
+#'   \code{icd9}, \code{shortDesc}, and \code{longDesc}.
 #' @source
 #' \url{http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html}
 #'
@@ -312,8 +313,8 @@ NULL
 
 #' United States Transuranium & Uranium Registries
 #'
-#' This is an ICD-10 data set (not ICD-10-CM) with mortality from the United States
-#' Transuranium & Uranium Registries, published in the public domain.
+#' This is an ICD-10 data set (not ICD-10-CM) with mortality from the United
+#' States Transuranium & Uranium Registries, published in the public domain.
 #' @name uranium_pathology
 #' @source \url{https://ustur.wsu.edu/about-us/}
 #' @docType data
