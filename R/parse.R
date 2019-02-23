@@ -264,8 +264,9 @@ icd9cm_gen_chap_hier <- function(
                              offline = offline)
   chaps <- icd9_get_chapters(x = icd9_rtf$code, short_code = TRUE,
                              verbose = verbose)
-  chaps <- chaps[icd::order.icd9(as_char_no_warn(chaps$three_digit)), ]
-  icd9_rtf <- icd9_rtf[icd::order.icd9(icd9_rtf$code), ]
+  icd9_order <- get_icd34fun("order.icd9")
+  chaps <- chaps[icd9_order(as_char_no_warn(chaps$three_digit)), ]
+  icd9_rtf <- icd9_rtf[icd9_order(icd9_rtf$code), ]
   out <- cbind(
     data.frame("code" = icd9_rtf$code,
                "long_desc" = icd9_rtf$desc,

@@ -68,7 +68,7 @@ rtf_parse_year <- function(year = "2011",
     code = icd::as.icd9cm(icd::decimal_to_short(unname(out))),
     desc = names(out),
     stringsAsFactors = FALSE)
-  out_df[icd::order.icd9(out), ]
+  out_df[get_icd34fun("order.icd9")(out), ]
   invisible(out_df)
 }
 
