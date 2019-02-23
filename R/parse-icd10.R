@@ -133,7 +133,8 @@ icd10_generate_chap_lookup <- function(
           icd::as.icd10cm(chap["end"]),
           defined = FALSE),
         nm)
-      # ICD-10 is not in leixcographic order. C7A is not in the same group as C76-C80
+      # ICD-10 is not in leixcographic order. E.g., C7A is not in the same group
+      # as C76-C80
     }
   )
   chap_lookup <- do.call(rbind, df_rows)

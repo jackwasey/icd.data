@@ -53,8 +53,8 @@ test_that("detail Belgian", {
   # the following demonstrates that ICD-10-BE has same codes as ICD-10-CM 2016
   # with 1973 cherry-pickede from 2017.
   expect_length(setdiff(j, icd10cm2017$code), 0)
-  #stopifnot(length(setdiff(icd10cm2014$code, icd10be2014_en$code)) == 0) # just in CM
-  #stopifnot(length(setdiff(icd10be2014_en$code, icd10cm2014$code)) == 0) # just in BE
-  stopifnot(length(setdiff(icd10cm2014$code, icd10be2014$code)) == 0) # just in CM
-  stopifnot(length(setdiff(icd10be2014$code, icd10cm2014$code)) == 0) # just in BE
+  # just in CM
+  stopifnot(length(setdiff(icd10cm2014$code, icd10be2014$code)) == 0)
+  # just in BE
+  stopifnot(length(setdiff(icd10be2014$code, icd10cm2014$code)) == 0)
 })

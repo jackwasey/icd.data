@@ -61,7 +61,8 @@ icd10cm_extract_sub_chapters <- function(save_data = FALSE, ...) {
       icd10_sub_chapters <- append(icd10_sub_chapters, new_sub_chap_range)
     } #subchaps
   } #chapters
-  # reorder quirk C7A, C7B, D3A) which are actually subchapters. We should already have included num-alpha-num codes which are within ranges.
+  # reorder quirk C7A, C7B, D3A) which are actually subchapters. We should
+  # already have included num-alpha-num codes which are within ranges.
   c7ab <- icd10_sub_chapters[35:36]
   icd10_sub_chapters[35:36] <- NULL
   icd10_sub_chapters <- append(icd10_sub_chapters, c7ab, after = 35)

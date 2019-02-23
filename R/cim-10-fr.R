@@ -50,10 +50,6 @@ parse_cim_fr <- function(save_data = FALSE, ...) {
 #' @noRd
 .cim10fr_active_binding <- function(x) {
   if (!missing(x)) stop("This active binding cannot be set")
-  # if (!missing(x)) {
-  #   message("This active binding cannot be set")
-  #   return(x)
-  # }
   if (exists("cim10fr2019", envir = .icd_data_env))
     return(get("cim10fr2019", envir = .icd_data_env))
   cim10fr2019 <- icd.data::icd10fr2019
@@ -114,7 +110,7 @@ parse_icd10be2017 <- function(save_data = FALSE, ...) {
                        "SHORT_TXTFR",
                        "SHORT_TXTNL",
                        "SHORT_TXTEN")]
-  raw_dat$ICDPREC <- raw_dat$ICDPREC != "*"
+  raw_dat[["ICDPREC"]] <- raw_dat[["ICDPREC"]] != "*"
   icd10be2017 <- as.data.frame(raw_dat[raw_dat$ICDDORO == "D", -2])
   icd10be2017_pc <- as.data.frame(raw_dat[raw_dat$ICDDORO == "O", -2])
   names <- c("code",
@@ -174,7 +170,7 @@ parse_icd10be2014 <- function(save_data = FALSE, ...) {
                        "SHORT_TXTFR",
                        "SHORT_TXTNL",
                        "SHORT_TXTEN")]
-  raw_dat$ICDPREC <- raw_dat$ICDPREC != "*"
+  raw_dat[["ICDPREC"]] <- raw_dat[["ICDPREC"]] != "*"
   icd10be2014 <- as.data.frame(raw_dat[raw_dat$ICDDORO == "D", -2])
   icd10be2014_pc <- as.data.frame(raw_dat[raw_dat$ICDDORO == "O", -2])
   names <- c("code",

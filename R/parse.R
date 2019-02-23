@@ -43,13 +43,13 @@ icd9cm_hierarchy_sanity <- function(x) {
 #'   # e.g. using devtools::load_all()
 #'   \dontrun{
 #'   option("icd.data.offline" = FALSE)
-#'   parse_icd9cm_leaf_descriptions_all(save_data = TRUE)
+#'   parse_icd9cm_leaf_desc_all(save_data = TRUE)
 #'   }
 #' @source
 #' http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html
 #' @keywords internal datagen
 #' @noRd
-parse_icd9cm_leaf_descriptions_all <- function(save_data = TRUE, ...) {
+parse_icd9cm_leaf_desc_all <- function(save_data = TRUE, ...) {
   stopifnot(is.logical(save_data), length(save_data) == 1)
   versions <- icd9cm_sources$version
   message("Available versions of sources are: ",
@@ -249,8 +249,8 @@ icd9cm_gen_chap_hier <- function(
   perl = TRUE,
   use_bytes = TRUE
 ) {
-  # TODO: Someday change 'billable' to 'leaf', and make consistent ICD-9 and ICD-10, e.g. icd9cm2011 instead of icd9cm_hierarchy
-  # lookup tables
+  # TODO: Someday change 'billable' to 'leaf', and make consistent ICD-9 and
+  # ICD-10, e.g. icd9cm2011 instead of icd9cm_hierarchy lookup tables
   stopifnot(is.logical(save_data), length(save_data) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
   stopifnot(is.logical(offline), length(offline) == 1)
@@ -264,7 +264,7 @@ icd9cm_gen_chap_hier <- function(
                              offline = offline)
   chaps <- icd9_get_chapters(x = icd9_rtf$code, short_code = TRUE,
                              verbose = verbose)
-  chaps <- chaps[icd::order.icd9(as_char_no_warn(chaps$three_digit)),]
+  chaps <- chaps[icd::order.icd9(as_char_no_warn(chaps$three_digit)), ]
   icd9_rtf <- icd9_rtf[icd::order.icd9(icd9_rtf$code), ]
   out <- cbind(
     data.frame("code" = icd9_rtf$code,

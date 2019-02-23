@@ -148,12 +148,12 @@ get_chapter_ranges_from_flat <- function(
   lapply(
     setNames(u, u),
     function(chap) {
-      three_digits <- sort(
+      td <- sort(
         unique(three_digits[flat_hier[[field]] == chap])
       )
       c(
-        start = three_digits[1],
-        end = three_digits[length(three_digits)]
+        start = td[1],
+        end = td[length(td)]
       )
     })
 }

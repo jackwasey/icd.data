@@ -110,6 +110,10 @@ rtf_parse_lines <- function(rtf_lines, verbose = FALSE,
   filtered <- rtf_pre_filter(rtf_lines, ...)
   majors <- rtf_make_majors(filtered, save = save_extras, ...)
   sub_chaps <- rtf_make_sub_chapters(filtered, ..., save = save_extras)
+  if (verbose) {
+    message("Have ", length(majors), " majors.")
+    message("Have ", length(sub_chaps), " sub_chapters")
+  }
   # this is so ghastly: find rows with sequare brackets containing definition of
   # subset of fourth or fifth digit codes. Need to pull code from previous row,
   # and create lookup, so we can exclude these when processing the fourth an
