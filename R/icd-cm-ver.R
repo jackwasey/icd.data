@@ -4,13 +4,17 @@
 #'   requested version is actually available in this R session.
 #' @export
 set_icd10cm_active_ver <- function(ver, check_exists = TRUE) {
+  old_v <- get_icd10cm_active_ver()
   v <- as.character(ver)
   stopifnot(grepl("^[[:digit:]]{4}$", as.character(v)))
   stopifnot(v %in% names(icd10cm_sources))
-  if (check_exists)
-    stopifnot(exists_in_ns(paste0("icd10cm", v)))
+  v_name <- paste0("icd10cm", v)
+  if (check_exists &&
+      !exists(v_name, envir = asNamespace("icd.data"))) {
+    stopifnot(exists_in_ns(v_name))
+  }
   options("icd.data.icd10cm_active_ver" = v)
-  invisible(v)
+  invisible(old_v)
 }
 
 #' @rdname set_icd10cm_active_ver
