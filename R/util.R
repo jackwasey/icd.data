@@ -199,3 +199,9 @@ get_icd34fun <- function(f) {
   else
     stop("Function ", f, " is not exported with icd < 3.4")
 }
+
+exists_in_ns <- function(name, ns = "icd.data") {
+  if (!isNamespace(ns)) ns <- asNamespace(ns)
+  e <- try(getExportedValue(ns = ns, name = name))
+  inherits(e, "try-error")
+}

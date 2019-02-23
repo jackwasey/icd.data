@@ -8,7 +8,7 @@ set_icd10cm_active_ver <- function(ver, check_exists = TRUE) {
   stopifnot(grepl("^[[:digit:]]{4}$", as.character(v)))
   stopifnot(v %in% names(icd10cm_sources))
   if (check_exists)
-    stopifnot(exists(paste0("icd10cm", v), inherits = TRUE))
+    stopifnot(exists_in_ns(paste0("icd10cm", v)))
   options("icd.data.icd10cm_active_ver" = v)
   invisible(v)
 }
