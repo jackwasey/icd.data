@@ -115,6 +115,7 @@ test_that("some randomly chosen codes are correct", {
 })
 
 test_that("ICD-9-CM billable codes package data is recreated", {
+  skip_if_not_installed("icd", "3.4")
   skip_on_os(c("windows", "mac", "solaris"))
   # Do encoding problems on Linux. It is unpredictable at the best of times.
   skip_flat_icd9_all_avail()

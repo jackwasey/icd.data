@@ -78,6 +78,7 @@ test_that("Y09 got picked up in sub-chapter parsing", {
 })
 
 test_that("chapter parsing for ICD-10 went okay", {
+  skip_if_not_installed("icd", "3.4")
   for (y in 2014:2019) {
     chap_lookup <- icd10_generate_chap_lookup(year = y)
     expect_false(any(duplicated(chap_lookup$chap_major)), info = y)
@@ -85,6 +86,7 @@ test_that("chapter parsing for ICD-10 went okay", {
 })
 
 test_that("sub-chapter parsing for ICD-10 went okay", {
+  skip_if_not_installed("icd", "3.4")
   for (y in 2014:2019) {
     sc_lookup <- icd10_generate_subchap_lookup(year = y)
     expect_equal(anyDuplicated(sc_lookup$sc_major), 0, info = y)
@@ -99,6 +101,7 @@ test_that("W02 is correctly parsed", {
 })
 
 test_that("explain icd9GetChapters simple input", {
+  skip_if_not_installed("icd", "3.4")
   chaps1 <- icd9_get_chapters(c("410", "411", "412"), short_code = TRUE)
   expect_equal(nrow(chaps1), 3)
 

@@ -110,7 +110,7 @@ icd10_generate_subchap_lookup <- function(year, verbose = FALSE) {
 }
 
 get_erm <- function() {
-  memoise::memoise(icd::expand_range_major)
+  memoise::memoise(get_icd34fun("expand_range_major"))
 }
 
 icd10_generate_chap_lookup <- function(

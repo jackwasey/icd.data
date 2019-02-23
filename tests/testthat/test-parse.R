@@ -160,6 +160,7 @@ if (rtf_year_ok(test_year)) {
   test_that("all leaf codes from TXT are in flat file extract", {
     test_ver <- "32"
     skip_flat_icd9_avail(test_ver)
+    skip_if_not_installed("icd", "3.4")
     v32 <- icd9_parse_leaf_desc_ver(version = test_ver,
                                     save_data = FALSE)
     leaves <- icd::short_to_decimal(v32$code)
