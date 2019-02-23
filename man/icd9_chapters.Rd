@@ -34,8 +34,9 @@ Factors Influencing Health Status And Contact With Health Services \item
 E000-E999 Supplementary Classification Of External Causes Of Injury And
 Poisoning }
 
-Format:  list with chapter/sub-chapter or major names stored in list names,
-each with two element named character vector with start and end codes.
+Format: list with chapter/sub-chapter or major names stored in list
+names, each with two element named character vector with start and end
+codes.
 }
 \keyword{category}
 \keyword{datasets}
