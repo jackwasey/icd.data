@@ -17,6 +17,9 @@
                                                        "0")
     )
   }
+  if (!("icd.data.icd10cm_active_ver" %in% names(options()))) {
+    set_icd10cm_active_ver(2019, check_exists = FALSE)
+  }
   makeActiveBinding(sym = "icd10who2016",
                     fun = .icd10who2016_binding,
                     env = parent.env(environment()))
@@ -25,9 +28,6 @@
                     fun = .icd10who2008fr_binding,
                     env = parent.env(environment()))
   lockBinding(sym = "icd10who2008fr", env = parent.env(environment()))
-  if (!("icd.data.icd10cm_active_ver" %in% names(options()))) {
-    set_icd10cm_active_ver(2019, check_exists = FALSE)
-  }
   makeActiveBinding(sym = "icd10cm_latest",
                     fun = .icd10cm_latest_binding,
                     env = parent.env(environment()))
