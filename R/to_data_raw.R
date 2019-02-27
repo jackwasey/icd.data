@@ -71,13 +71,24 @@ download_to_data_raw <- function(
                  file_name = file_name)
   if (file.exists(save_path)) return(f_info)
   if (offline) return()
-  if (utils::download.file(url = url,
-                           destfile = save_path,
-                           quiet = TRUE,
-                           method = "libcurl",
-                           extras = "--insecure",
-                           ...) != 0)
-    stop(paste(url, " not downloaded successfully."))
+  curl_res <- try(
+    utils::download.file(url = url,
+                         destfile = save_path,
+                         quiet = TRUE,
+                         method = "curl",
+                         extras = "--insecure --silent",
+                         ...)
+  )
+  if (curl_res != 0) {
+    # Windows, maybe some users, do no have curl, maybe not even libcurl. Cannot
+    # set libcurl to avoid certificate verification without using RCurl, and I
+    # want to avoid another dependency.
+    curl_res <- utils::download.file(url = url,
+                                     destfile = save_path,
+                                     quiet = TRUE,
+                                     ...)
+  }
+  if (curl_res != 0) stop(paste(url, " not downloaded successfully."))
   f_info
 }
 #nocov end
