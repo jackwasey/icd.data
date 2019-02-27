@@ -18,6 +18,7 @@
 #' @template offline
 #' @param data_raw_path path where the raw directory is
 #' @param save_name file name to save as, default is \code{file_name}
+#' @param ... additional arguments passed to \code{utils::download.file}
 #' @return path of unzipped file in the raw data directory
 #' @keywords internal
 unzip_to_data_raw <- function(
@@ -27,7 +28,8 @@ unzip_to_data_raw <- function(
   verbose = FALSE,
   offline = getOption("icd.data.offline"),
   data_raw_path = get_raw_data_dir(),
-  save_name = file_name
+  save_name = file_name,
+  ...
 ) {
   stopifnot(is.character(url), length(url) == 1)
   stopifnot(is.character(file_name), length(file_name) == 1)
@@ -41,7 +43,10 @@ unzip_to_data_raw <- function(
   if (force || !file.exists(file_path)) {
     if (offline) return()
     stopifnot(
-      unzip_single(url = url, file_name = file_name, save_path = file_path)
+      unzip_single(url = url,
+                   file_name = file_name,
+                   save_path = file_path,
+                   ...)
     )
   }
   list(file_path = file_path, save_name = make.names(save_name))
@@ -53,17 +58,25 @@ download_to_data_raw <- function(
   url,
   file_name = regmatches(url, regexpr("[^/]*$", url)),
   offline = getOption("icd.data.offline"),
-  data_raw_path = get_raw_data_dir()
+  data_raw_path = get_raw_data_dir(),
+  ...
 ) {
   stopifnot(is.character(url), length(url) == 1)
   stopifnot(is.character(file_name), length(file_name) == 1)
   stopifnot(is.logical(offline), length(offline) == 1)
   if (!dir.exists(data_raw_path)) data_raw_path <- tempdir()
-  save_path <- file.path(data_raw_path, file_name)
-  f_info <- list(file_path = save_path, file_name = file_name)
+  save_path <- file.path(data_raw_path,
+                         file_name)
+  f_info <- list(file_path = save_path,
+                 file_name = file_name)
   if (file.exists(save_path)) return(f_info)
   if (offline) return()
-  if (utils::download.file(url = url, destfile = save_path, quiet = TRUE) != 0)
+  if (utils::download.file(url = url,
+                           destfile = save_path,
+                           quiet = TRUE,
+                           method = "libcurl",
+                           extras = "--insecure",
+                           ...) != 0)
     stop(paste(url, " not downloaded successfully."))
   f_info
 }

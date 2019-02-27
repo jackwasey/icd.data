@@ -1,6 +1,6 @@
 Package: icd.data
 Title: International Classification of Diseases (ICD) Data
-Version: 1.1.1
+Version: 1.1.2
 Authors@R:
     person(given = "Jack O. Wasey",
            role = c("aut", "cre", "cph"),

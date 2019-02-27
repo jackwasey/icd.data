@@ -10,7 +10,7 @@ get_icd10who2016(verbose = FALSE)
 get_icd10who2008fr()
 }
 \arguments{
-\item{verbose}{logical, default is \code{FALSE}}
+\item{verbose}{single logical value, defaults to \code{FALSE} in most functions.}
 }
 \description{
 This is likely to be removed in the future, as it is designed for the

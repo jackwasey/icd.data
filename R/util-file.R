@@ -135,6 +135,7 @@ save_in_data_dir <- function(
 #' @param url URL of a zip file
 #' @param file_name file name of the resource within the zip file
 #' @param save_path file path to save the first file from the zip
+#' @param ... additional arguments passed to \code{utils::download.file}
 #' @keywords internal
 #' @noRd
 unzip_single <- function(url, file_name, save_path) {
@@ -146,7 +147,8 @@ unzip_single <- function(url, file_name, save_path) {
                                   destfile = zipfile,
                                   quiet = TRUE,
                                   method = "libcurl",
-                                  mode = "wb")
+                                  mode = "wb",
+                                  ...)
   stopifnot(dl_code == 0)
   # I do want tempfile, so I get an empty new directory
   zipdir <- tempfile()

@@ -7,11 +7,11 @@
 \usage{
 unzip_to_data_raw(url, file_name, force = FALSE, verbose = FALSE,
   offline = getOption("icd.data.offline"),
-  data_raw_path = get_raw_data_dir(), save_name = file_name)
+  data_raw_path = get_raw_data_dir(), save_name = file_name, ...)
 
 download_to_data_raw(url, file_name = regmatches(url, regexpr("[^/]*$",
   url)), offline = getOption("icd.data.offline"),
-  data_raw_path = get_raw_data_dir())
+  data_raw_path = get_raw_data_dir(), ...)
 }
 \arguments{
 \item{url}{URL of a zip file}
@@ -36,6 +36,8 @@ is just for developers.}
 \item{data_raw_path}{path where the raw directory is}
 
 \item{save_name}{file name to save as, default is \code{file_name}}
+
+\item{...}{additional arguments passed to \code{utils::download.file}}
 }
 \value{
 path of unzipped file in the raw data directory
