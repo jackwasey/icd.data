@@ -29,7 +29,7 @@ generate_sysdata <- function() {
 make_icd9cm_sources <- function() {
   cms_base <-
     "http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/"
-  cdc_base <- "http://ftp.cdc.gov/pub/Health_Statistics/NCHS/Publications/"
+  cdc_base <- "ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Publications/"
   data.frame(
     version = as.character(c(32, 31, 30, 29, 28, 27, 26, 25, 24, 23)),
     f_year = c(as.character(seq(2014, 2005))),

@@ -20,11 +20,12 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #' @param offline single logical value
 #' @keywords internal datagen
 #' @noRd
-rtf_fetch_year <- function(year, ...) {
+rtf_fetch_year <- function(year, verbose = FALSE, ...) {
   year <- as.character(year)
   rtf_dat <- icd9cm_sources[icd9cm_sources$f_year == year, ]
   fn <- rtf_dat$rtf_filename
-  unzip_to_data_raw(rtf_dat$rtf_url, file_name = fn, ...)
+  url <- rtf_dat$rtf_url
+  unzip_to_data_raw(url, file_name = fn, verbose = verbose, ...)
 }
 
 #' parse RTF description of entire ICD-9-CM for a specific year
@@ -45,11 +46,13 @@ rtf_fetch_year <- function(year, ...) {
 #' 'Dtab12.zip' in the 2011 data. and similar files run from 1996 to 2011.
 #' @keywords internal datagen
 #' @noRd
-rtf_parse_year <- function(year = "2011",
-                           ...,
-                           save_data = FALSE,
-                           verbose = FALSE,
-                           offline = getOption("icd.data.offline")) {
+rtf_parse_year <- function(
+  year = "2011",
+  ...,
+  save_data = FALSE,
+  verbose = FALSE,
+  offline = getOption("icd.data.offline")
+) {
   year <- as.character(year)
   stopifnot(is.logical(save_data), length(save_data) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
@@ -61,8 +64,10 @@ rtf_parse_year <- function(year = "2011",
   fp_conn <- file(fp, encoding = "ASCII")
   on.exit(close(fp_conn))
   rtf_lines <- readLines(fp_conn, warn = FALSE, encoding = "ASCII")
-  out <- rtf_parse_lines(rtf_lines, verbose = verbose,
-                         ..., save_extras = save_data)
+  out <- rtf_parse_lines(rtf_lines,
+                         verbose = verbose,
+                         ...,
+                         save_extras = save_data)
   out <- icd::as.icd9cm(swap_names_vals(out))
   out_df <- data.frame(
     code = icd::as.icd9cm(icd::decimal_to_short(unname(out))),
