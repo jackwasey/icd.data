@@ -152,14 +152,12 @@ unzip_single <- function(
   stopifnot(is.character(file_name))
   stopifnot(is.character(save_path))
   zipfile <- tempfile()
-  old_env = Sys.getenv("CURLOPT_SSL_VERIFYPEER")
-  on.exit(Sys.setenv("CURLOPT_SSL_VERIFYPEER" = old_env))
-  Sys.setenv("CURLOPT_SSL_VERIFYPEER" = !insecure)
   dl_code <- utils::download.file(url = url,
                                   destfile = zipfile,
                                   quiet = TRUE,
-                                  method = "libcurl",
+                                  method = "curl",
                                   mode = "wb",
+                                  extras = ifelse(insecure, "-k", NULL),
                                   ...)
   stopifnot(dl_code == 0)
   # I do want tempfile, so I get an empty new directory
