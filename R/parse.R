@@ -34,6 +34,7 @@ icd9cm_hierarchy_sanity <- function(x) {
 #' @param save_data single logical value, if \code{TRUE} the source text or CSV
 #'   file will be saved in the raw data directory, otherwise (the default) the
 #'   data is simply returned invisibly.
+#' @template verbose
 #' @template offline
 #' @return data frame with \code{icd9}, \code{short_desc} and \code{long_desc}
 #'   columns. \code{NA} is placed in \code{long_desc} when not available.
@@ -49,14 +50,18 @@ icd9cm_hierarchy_sanity <- function(x) {
 #' http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html
 #' @keywords internal datagen
 #' @noRd
-parse_icd9cm_leaf_desc_all <- function(save_data = TRUE, ...) {
+parse_icd9cm_leaf_desc_all <- function(
+  save_data = TRUE,
+  verbose = TRUE,
+  ...
+) {
   stopifnot(is.logical(save_data), length(save_data) == 1)
   versions <- icd9cm_sources$version
-  message("Available versions of sources are: ",
-          paste(versions, collapse = ", "))
+  if (verbose) message("Available versions of sources are: ",
+                       paste(versions, collapse = ", "))
   icd9cm_billable <- list()
   for (v in versions) {
-    message("working on version: ", v)
+    if (verbose) message("working on version: ", v)
     icd9cm_billable[[v]] <-
       icd9_parse_leaf_desc_ver(version = v,
                                save_data = save_data,
@@ -350,14 +355,14 @@ icd9_get_chapters <- function(x, short_code, verbose = FALSE) {
   chap_lookup <- lapply(icd9_chapters, function(y)
     vec_to_env_true(
       get_icd34fun("expand_range_major")(icd::as.icd9cm(y[["start"]]),
-                              y[["end"]], defined = FALSE)
+                                         y[["end"]], defined = FALSE)
     )
   )
   subchap_lookup <- lapply(icd9_sub_chapters, function(y)
     vec_to_env_true(
       get_icd34fun("expand_range_major")(icd::as.icd9cm(y[["start"]]),
-                              y[["end"]],
-                              defined = FALSE)
+                                         y[["end"]],
+                                         defined = FALSE)
     )
   )
   for (i in seq_along(majors)) {
