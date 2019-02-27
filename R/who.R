@@ -14,12 +14,30 @@
 #' CRAN compatible way in the 'icd' package, so this function is just for that
 #' purpose, since we can check whether this function exists and call it without
 #' using ::, whereas this is not possible with lazy data or active bindings.
+#' @template verbose
 #' @export
 #' @keywords datasets
-get_icd10who2016 <- function() {
-  icd10who2016_path <- file.path(get_resource_path(), "icd10who2016.rds")
-  if (.icd10who2016_in_env())
+get_icd10who2016 <- function(verbose = FALSE) {
+  if (.icd10who2016_in_env()) {
+    if (verbose) message("Found in .icd_data_env")
     return(get("icd10who2016", envir = .icd_data_env))
+  }
+  if (verbose) {
+    message(".icd_data_env contains:")
+    print(ls(envir = .icd_data_env, all.names = TRUE))
+  }
+  icd10who2016_path <- file.path(get_resource_path(), "icd10who2016.rds")
+  if (verbose) {
+    message("WHO ICD-10 2016 path:")
+    print(icd10who2016_path)
+  }
+  tmp <- grepl("tmp", icd10who2016_path)
+  if (tmp && !interactive())
+    message("Looks like we have temporary directory for icd10who2016_path")
+  if (tmp && interactive()) {
+    message_who()
+    stop("Using a temporary data directory, not, e.g., ~/.icd.data")
+  }
   if (file.exists(icd10who2016_path)) {
     icd10who2016 <- readRDS(icd10who2016_path)
     assign("icd10who2016", icd10who2016, envir = .icd_data_env)

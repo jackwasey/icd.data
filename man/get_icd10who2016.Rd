@@ -5,9 +5,12 @@
 \alias{get_icd10who2008fr}
 \title{Function to get the WHO ICD-10 2016 data}
 \usage{
-get_icd10who2016()
+get_icd10who2016(verbose = FALSE)
 
 get_icd10who2008fr()
+}
+\arguments{
+\item{verbose}{logical, default is \code{FALSE}}
 }
 \description{
 This is likely to be removed in the future, as it is designed for the

@@ -48,7 +48,7 @@ parse_cim_fr <- function(save_data = FALSE, ...) {
 #' Localised synonym for icd10fr2019, with French column names
 #' @keywords internal
 #' @noRd
-.cim10fr_active_binding <- function(x) {
+.cim10fr2019_active_binding <- function(x) {
   if (!missing(x)) stop("This active binding cannot be set")
   if (exists("cim10fr2019", envir = .icd_data_env))
     return(get("cim10fr2019", envir = .icd_data_env))

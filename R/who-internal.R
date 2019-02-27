@@ -109,29 +109,29 @@ message_who <- function() {
     "The data has to be saved somewhere accessible. The ",
     "location is given by:\n\n",
     "get_resource_path()\nwhich defaults to:\n\n",
-    "file.path(Sys.getenv(\"HOME\"), \".icd.data\")\n\n",
+    "file.path(Sys.getenv(\"HOME\"), \".icd.data\")\n",
+    "It is currently set to:\n",
+    get_resource_path(),
+    "\n",
     "set_resource_path(\"new/path/to/dir\") can be used to change this.")
 }
 
 # see zzz.R
 .icd10who2016_binding <- function(x) {
-  if (missing(x)) {
-    dat <- get_icd10who2016()
-    if (!is.null(dat)) return(dat)
-    if (interactive())
-      message_who()
-  } else {
+  if (!missing(x))
     stop("This binding is read-only. Use fetch_icd10who2016() to populate.")
-  }
+  dat <- get_icd10who2016()
+  if (!is.null(dat)) return(dat)
+  message_who()
+  stop("WHO ICD-10 2016 not available.")
 }
 
 .icd10who2008fr_binding <- function(x) {
-  if (missing(x)) {
-    dat <- get_icd10who2008fr()
-    if (!is.null(dat)) return(dat)
-    if (interactive())
-      message_who()
-  } else {
+  if (!missing(x))
     stop("This binding is read-only. Use fetch_icd10who2008fr() to populate.")
-  }
+  dat <- get_icd10who2008fr()
+  if (!is.null(dat)) return(dat)
+  message_who()
+  stop("ICD-10 2008 France not available.
+       CIM-10 2008 n'est pas disponible")
 }
