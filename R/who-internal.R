@@ -104,8 +104,9 @@ set_resource_path <- function(
 message_who <- function() {
   message(
     "WHO ICD data must be downloaded by each user due to copyright ",
-    "concerns. This may be achieved by running the command:\n\n",
-    "fetch_icd10who2016()\n\n",
+    "concerns. This may be achieved by running either of the commands:\n\n",
+    "fetch_icd10who2016()\n",
+    "fetch_icd10who2008_fr()\n\n",
     "The data has to be saved somewhere accessible. The ",
     "location is given by:\n\n",
     "get_resource_path()\nwhich defaults to:\n\n",
