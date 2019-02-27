@@ -95,23 +95,26 @@ parse_icd9cm_leaf_desc_all <- function(
 #' @keywords internal datagen
 #' @noRd
 icd9_parse_leaf_desc_ver <- function(
-  version = icd9cm_latest_edition(),
+  ver = icd9cm_latest_edition(),
   save_data = TRUE,
   ...
 ) {
-  stopifnot(is.character(version), length(version) == 1)
+  stopifnot(is.character(ver), length(ver) == 1)
   stopifnot(is.logical(save_data), length(save_data) == 1)
-  message("Fetching billable codes version: ", version)
-  if (version == "27")
+  message("Fetching billable codes version: ", ver)
+  if (ver == "27")
     return(invisible(parse_leaf_desc_icd9cm_v27(...)))
-  stopifnot(version %in% icd9cm_sources$version)
-  dat <- icd9cm_sources[icd9cm_sources$version == version, ]
+  stopifnot(ver %in% icd9cm_sources$version)
+  dat <- icd9cm_sources[icd9cm_sources$version == ver, ]
   fn_short_orig <- dat$short_filename
   fn_long_orig <- dat$long_filename
-
-  f_info_short <- unzip_to_data_raw(dat$url,
-                                    file_name = fn_short_orig,
-                                    ...)
+  f_info_short <- unzip_to_data_raw(
+    dat$url,
+    file_name = fn_short_orig,
+    save_name = get_annual_data_path(fn_short_orig,
+                                     year = ver,
+                                     full_path = FALSE),
+    ...)
   f_info_long <- NULL
   if (!is.na(fn_long_orig))
     f_info_long <- unzip_to_data_raw(dat$url, file_name = fn_long_orig,
