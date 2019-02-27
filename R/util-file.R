@@ -145,6 +145,7 @@ save_in_data_dir <- function(
 #' @param insecure Logical value, wil disable certificate check which fails on
 #'   some platforms for some ICD data from CDC and CMS, probably because of TLS
 #'   version or certificate key length issues. Default is \code{TRUE}.
+#' @template verbose
 #' @param ... additional arguments passed to \code{utils::download.file}
 #' @keywords internal
 #' @noRd
@@ -153,25 +154,31 @@ unzip_single <- function(
   file_name,
   save_path,
   insecure = TRUE,
+  verbose = FALSE,
   ...
 ) {
   stopifnot(is.character(url))
   stopifnot(is.character(file_name))
   stopifnot(is.character(save_path))
-  zipfile <- tempfile()
+  zipfile <- tempfile(fileext = ".zip")
+  on.exit(unlink(zipfile), add = TRUE)
+  extra <- ifelse(insecure, "--insecure --silent", NULL)
   dl_code <- utils::download.file(url = url,
                                   destfile = zipfile,
-                                  quiet = TRUE,
+                                  quiet = !verbose,
                                   method = "curl",
-                                  mode = "wb",
-                                  extras = ifelse(insecure, "-k", NULL),
+                                  #mode = "wb", # not used for method curl
+                                  extra = extra,
                                   ...)
   stopifnot(dl_code == 0)
   # I do want tempfile, so I get an empty new directory
   zipdir <- tempfile()
+  on.exit(unlink(zipdir), add = TRUE)
   dir.create(zipdir)
-  utils::unzip(zipfile, exdir = zipdir)  # files="" so extract all
+  file_paths <- utils::unzip(zipfile, exdir = zipdir)
+  if (length(file_paths) == 0) stop("No files found in zip")
   files <- list.files(zipdir)
+  if (length(files) == 0) stop("No files in unzipped directory")
   if (missing(file_name)) {
     if (length(files) == 1) {
       file_name <- files
@@ -181,7 +188,10 @@ unzip_single <- function(
     }
   } else {
     if (!file_name %in% files) {
-      message(files, file_name)
+      message("files")
+      print(files)
+      message("file_name")
+      print(file_name)
       stop(paste(file_name, " not found in ", paste(files, collapse = ", ")))
     }
   }

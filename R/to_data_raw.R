@@ -46,14 +46,13 @@ unzip_to_data_raw <- function(
                        file_path, file_name, save_name)
   if (force || !file.exists(file_path)) {
     if (offline) return()
-    stopifnot(
-      unzip_single(url = url,
-                   file_name = file_name,
-                   save_path = file_path,
-                   ...)
-    )
+    ok <- unzip_single(url = url,
+                        file_name = file_name,
+                        save_path = file_path,
+                        ...)
+    stopifnot(ok)
   }
-  list(file_path = file_path, save_name = make.names(save_name))
+  list(file_path = file_path, save_name = save_name)
 }
 
 #' @rdname unzip_to_data_raw
