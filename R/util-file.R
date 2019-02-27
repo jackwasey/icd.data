@@ -135,14 +135,26 @@ save_in_data_dir <- function(
 #' @param url URL of a zip file
 #' @param file_name file name of the resource within the zip file
 #' @param save_path file path to save the first file from the zip
+#' @param insecure Logical value, wil disable certificate check which fails on
+#'   some platforms for some ICD data from CDC and CMS, probably because of TLS
+#'   version or certificate key length issues. Default is \code{TRUE}.
 #' @param ... additional arguments passed to \code{utils::download.file}
 #' @keywords internal
 #' @noRd
-unzip_single <- function(url, file_name, save_path) {
+unzip_single <- function(
+  url,
+  file_name,
+  save_path,
+  insecure = TRUE,
+  ...
+) {
   stopifnot(is.character(url))
   stopifnot(is.character(file_name))
   stopifnot(is.character(save_path))
   zipfile <- tempfile()
+  old_env = Sys.getenv("CURLOPT_SSL_VERIFYPEER")
+  on.exit(Sys.setenv("CURLOPT_SSL_VERIFYPEER" = old_env))
+  Sys.setenv("CURLOPT_SSL_VERIFYPEER" = !insecure)
   dl_code <- utils::download.file(url = url,
                                   destfile = zipfile,
                                   quiet = TRUE,
