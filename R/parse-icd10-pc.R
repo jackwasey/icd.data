@@ -28,8 +28,9 @@ icd10_parse_cms_pcs_all <- function(save_data = FALSE) {
   invisible()
 }
 
-icd10_parse_cms_pcs_year <- function(year) {
+icd10_parse_cms_pcs_year <- function(year, verbose = FALSE) {
   year <- as.character(year)
+  fp <- fetch_icd10cm_year(year = year, dx = FALSE, verbose = verbose)
   pcs_file <- icd10cm_sources[[year]][["pcs_flat"]]
   pcs_path <- get_annual_data_path(pcs_file, year = year)
   out <- read.fwf(pcs_path, c(5, 8, 2, 62, 120), header = FALSE,

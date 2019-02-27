@@ -41,7 +41,7 @@ unzip_to_data_raw <- function(
     if (verbose) message("Setting download path to a new temporary directory")
       data_raw_path <- tempdir()
   }
-  file_path <- file.path(data_raw_path, make.names(save_name))
+  file_path <- file.path(data_raw_path, save_name)
   if (verbose) sprintf("file path = %s\nfile name = %s\nsave name = %s",
                        file_path, file_name, save_name)
   if (force || !file.exists(file_path)) {
