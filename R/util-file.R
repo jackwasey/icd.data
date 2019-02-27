@@ -46,6 +46,7 @@ fetch_icd10cm_year <- function(
   ...
 ) {
   stopifnot(is.numeric(year) || is.character(year), length(year) == 1)
+  year <- as.character(year)
   stopifnot(is.logical(dx), length(dx) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
   stopifnot(as.character(year) %in% names(icd10cm_sources))
@@ -71,7 +72,9 @@ fetch_icd10cm_year <- function(
   unzip_to_data_raw(url = url,
                     file_name = file_name,
                     verbose = verbose,
-                    save_name = get_annual_data_path(file_name, year),
+                    save_name = get_annual_data_path(file_name,
+                                                     year,
+                                                     full_path = FALSE),
                     ...)
 }
 
@@ -85,8 +88,12 @@ get_raw_data_dir <- function() {
   system.file("data-raw", package = "icd.data")
 }
 
-get_annual_data_path <- function(base_name, year) {
-  file.path(get_raw_data_dir(), paste0("yr", year, "_", base_name))
+get_annual_data_path <- function(base_name, year, full_path = TRUE) {
+  if (full_path)
+    file.path(get_raw_data_dir(),
+              paste0("yr", year, "_", base_name))
+  else
+    file.path(paste0("yr", year, "_", base_name))
 }
 
 #' Save given variable in package data directory
