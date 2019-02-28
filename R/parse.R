@@ -312,6 +312,7 @@ icd9cm_gen_chap_hier <- function(
   icd9cm_hierarchy_sanity(out)
   billable <- icd::is_billable(icd::as.icd9cm(out$code))
   icd9cm_hierarchy <- cbind(out[1], billable, out[-1])
+  row.names(icd9cm_hierarchy) <- NULL
   if (save_data)
     save_in_data_dir(icd9cm_hierarchy)
   invisible(icd9cm_hierarchy)

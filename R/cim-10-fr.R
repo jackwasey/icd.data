@@ -58,6 +58,7 @@ parse_cim_fr <- function(save_data = FALSE, ...) {
                           "desc_longue",
                           "majeure",
                           "trois_chiffres")
+  rownames(cim10fr2019) <- NULL
   assign("cim10fr2019",
          value = cim10fr2019,
          envir = .icd_data_env)
@@ -127,6 +128,8 @@ parse_icd10be2017 <- function(save_data = FALSE, ...) {
   icd10be2017_pc <- icd10be2017_pc[order(icd10be2017_pc$code), ]
   class(icd10be2017$code) <- c("icd10be", "icd10", "character")
   class(icd10be2017_pc$code) <- c("icd10be_pc", "character")
+  row.names(icd10be2017) <- NULL
+  row.names(icd10be2017_pc) <- NULL
   if (save_data) {
     save_in_data_dir(icd10be2017)
     save_in_data_dir(icd10be2017_pc)
@@ -190,6 +193,8 @@ parse_icd10be2014 <- function(save_data = FALSE, ...) {
   icd10be2014_pc <- icd10be2014_pc[order(icd10be2014_pc$code), ]
   class(icd10be2014$code) <- c("icd10be", "icd10", "character")
   class(icd10be2014_pc$code) <- c("icd10be_pc", "character")
+  row.names(icd10be2014) <- NULL
+  row.names(icd10be2014_pc) <- NULL
   if (save_data) {
     save_in_data_dir(icd10be2014)
     save_in_data_dir(icd10be2014_pc)

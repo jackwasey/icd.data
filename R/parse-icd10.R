@@ -40,6 +40,7 @@ icd10cm_parse_all_defined_year <- function(
   ...
 ) {
   stopifnot(is.numeric(year) || is.character(year))
+  year <- as.character(year)
   stopifnot(is.logical(save_data) && length(save_data) == 1L)
   stopifnot(is.logical(verbose) && length(verbose) == 1L)
   stopifnot(as.character(year) %in% names(icd10cm_sources))
@@ -84,8 +85,11 @@ icd10cm_parse_all_defined_year <- function(
     ) == 0L
   )
   dat[["sub_chapter"]] <-
-    merge(x = dat["three_digit"], y = sc_lookup,
-          by.x = "three_digit", by.y = "sc_major", all.x = TRUE)[["sc_desc"]]
+    merge(x = dat["three_digit"],
+          y = sc_lookup,
+          by.x = "three_digit",
+          by.y = "sc_major",
+          all.x = TRUE)[["sc_desc"]]
   if (verbose) message("Generating chap lookup for year: ", year)
   chap_lookup <- icd10_generate_chap_lookup(year = year, verbose = verbose)
   dat[["chapter"]] <-
@@ -94,6 +98,7 @@ icd10cm_parse_all_defined_year <- function(
           all.x = TRUE)[["chap_desc"]]
   dat <- dat[get_icd34fun("order.icd10cm")(dat$code), ]
   class(dat$code) <- c("icd10cm", "icd10", "character")
+  row.names(dat) <- NULL
   assign(paste0("icd10cm", year), value = dat)
   if (save_data)
     save_in_data_dir(paste0("icd10cm", year))
