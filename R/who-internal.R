@@ -102,19 +102,27 @@ set_resource_path <- function(
 }
 
 message_who <- function() {
-  message(
-    "WHO ICD data must be downloaded by each user due to copyright ",
-    "concerns. This may be achieved by running either of the commands:\n\n",
-    "fetch_icd10who2016()\n",
-    "fetch_icd10who2008_fr()\n\n",
-    "The data has to be saved somewhere accessible. The ",
-    "location is given by:\n\n",
-    "get_resource_path()\nwhich defaults to:\n\n",
-    "file.path(Sys.getenv(\"HOME\"), \".icd.data\")\n",
-    "It is currently set to:\n",
+  o <- getOption("icd.data_absent_action")
+  if (!is.null(o) && o %nin% c("stop", "message"))
+    message(
+    "WHO ICD data must be downloaded by each user due to copyright
+    concerns. This may be achieved by running either of the commands
+
+    fetch_icd10who2016()
+    fetch_icd10who2008_fr()
+
+    The data has to be saved somewhere accessible. The
+    location is given by:
+
+    get_resource_path()
+
+    which defaults to:
+
+    file.path(Sys.getenv(\"HOME\"), \".icd.data\")
+
+    See:
     get_resource_path(),
-    "\n",
-    "set_resource_path(\"new/path/to/dir\") can be used to change this.")
+    set_resource_path(\"new/path/to/dir\")")
 }
 
 # see zzz.R
@@ -124,7 +132,7 @@ message_who <- function() {
   dat <- get_icd10who2016()
   if (!is.null(dat)) return(dat)
   message_who()
-  stop("WHO ICD-10 2016 not available.")
+  .stop_on_absent("WHO ICD-10 2016 not available.")
 }
 
 .icd10who2008fr_binding <- function(x) {
@@ -133,6 +141,6 @@ message_who <- function() {
   dat <- get_icd10who2008fr()
   if (!is.null(dat)) return(dat)
   message_who()
-  stop("ICD-10 2008 France not available.
-       CIM-10 2008 n'est pas disponible")
+  .stop_on_absent("ICD-10 2008 France not available.",
+                  "CIM-10 2008 n'est pas disponible")
 }

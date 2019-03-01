@@ -203,3 +203,13 @@ get_icd34fun <- function(f) {
 exists_in_ns <- function(name) {
   name %in% names(asNamespace("icd.data")[[".__NAMESPACE__."]][["lazydata"]])
 }
+
+# Cannot 'stop' in an active binding for R CMD check because tools::checkS3methods ends up sourcing the bindings, because they are considered to be code. This is an escape hatch, really just for R CMD check.
+.stop_on_absent <- function(...) {
+  msg <- paste(unlist(unname(list(...))))
+  o <- getOption("icd.data.absent_action")
+  if (o == "stop" && !interactive())
+    stop(msg, call. = FALSE)
+  if (o == "message") message(msg)
+  invisible()
+}

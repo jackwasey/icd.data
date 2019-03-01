@@ -14,21 +14,25 @@
         }
       }
     }
-    if (!dir.exists(path)) {
-      message("icd.data resource directory not set, and not in interactive mode.
-              Using a temporary directory.")
-      path <- tempdir()
-    }
+    if (!dir.exists(path)) path <- tempdir()
     set_resource_path(path = path, verbose = FALSE)
   }
   if (!("icd.data.offline" %in% names(options()))) {
+    ev <- Sys.getenv("ICD_DATA_OFFLINE")
     options(
       "icd.data.offline" =
-        tolower(Sys.getenv("ICD_DATA_OFFLINE")) %in% c("n",
-                                                       "no",
-                                                       "false",
-                                                       "0")
+        tolower(ev) %nin% c("n",
+                            "no",
+                            "false",
+                            "0")
     )
+  }
+  # stop or message, anything else will silently continue
+  if ("icd.data.absent_action" %nin% names(options())) {
+    ev <- tolower(Sys.getenv("ICD_DATA_ABSENT_ACTION"))
+    stopifnot(ev %in% c("stop", "message", ""))
+    if (ev == "" && interactive()) ev <- "stop"
+    options("icd.data.absent_action" = ev)
   }
   if (!("icd.data.icd10cm_active_ver" %in% names(options()))) {
     set_icd10cm_active_ver(2019, check_exists = FALSE)
@@ -64,6 +68,18 @@
   invisible()
 }
 
+.onAttach <- function(libname, pkgname) {
+  if (Sys.getenv("ICD_DATA_PATH") == "" &&
+      is.null(getOption("icd.data.resource")))
+    packageStartupMessage(
+      "icd.data is using a temporary folder for downloading data when needed.
+      Use 'icd.data::set_resource_path(\"/path/you/want\")'.
+      Or set: options(\"icd.data.resource\" = \"/path/you/want\")
+      or
+      Sys.setenv(\"ICD_DATA_RESOURCE\" = \"/path/you/want\")
+      before loading the package.
+      ")
+}
 release_questions <- function() {
   c("codetools::checkUsagePackage('icd.data', all = TRUE)")
 }
