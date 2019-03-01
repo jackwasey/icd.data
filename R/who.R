@@ -32,8 +32,6 @@ get_icd10who2016 <- function(verbose = FALSE) {
     print(icd10who2016_path)
   }
   tmp <- grepl("tmp", icd10who2016_path)
-  # if (tmp && !interactive())
-  #   message("Looks like we have temporary directory for icd10who2016_path")
   if (tmp && interactive()) {
     message_who()
     message("Using a temporary data directory, not, e.g., ~/.icd.data")
