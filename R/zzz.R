@@ -15,7 +15,7 @@
       }
     }
     if (!dir.exists(path)) {
-      stop("icd.data resource directory not set, and not in interactive mode.
+      message("icd.data resource directory not set, and not in interactive mode.
               Using a temporary directory.")
       path <- tempdir()
     }
