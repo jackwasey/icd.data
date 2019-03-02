@@ -23,7 +23,7 @@ icd10_parse_cms_pcs_all <- function(save_data = FALSE) {
   for (year in names(icd10cm_sources)) {
     var_name <- paste0("icd10cm", year, "_pc")
     assign(var_name, icd10_parse_cms_pcs_year(year))
-    save_in_data_dir(var_name)
+    save_in_resource_dir(var_name)
   }
   invisible()
 }
@@ -31,6 +31,7 @@ icd10_parse_cms_pcs_all <- function(save_data = FALSE) {
 icd10_parse_cms_pcs_year <- function(year, verbose = FALSE) {
   year <- as.character(year)
   fp <- fetch_icd10cm_year(year = year, dx = FALSE, verbose = verbose)
+  if (verbose) print(fp)
   pcs_file <- icd10cm_sources[[year]][["pcs_flat"]]
   pcs_path <- get_annual_data_path(pcs_file, year = year)
   out <- read.fwf(pcs_path, c(5, 8, 2, 62, 120), header = FALSE,

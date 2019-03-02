@@ -192,6 +192,27 @@ to_title_case <- function(x) {
   x
 }
 
+#' Get data from the icd.data package, without relying on it being attached
+#' Some data is hidden in active bindings, so it may be downloaded on demand, and some is lazy-loaded. This will work for regular package members, active bindings, and lazy data, whether or not the package is attached or loaded.
+#' @param alt If the data cannot be found, this value is returned. Default is \code{NULL}.
+#' @export
+get_icd_data <- function(data_name, alt = NULL) {
+  if (!is.character(data_name))
+    data_name <- deparse(substitute(data_name))
+  ns <- asNamespace("icd.data")
+  out <- try(silent = TRUE,
+             base::getExportedValue(ns, data_name)
+  )
+  if (!inherits(out, "try-error")) return(out)
+  out <- try(silent = TRUE,
+             as.environment(ns)[[data_name]]
+  )
+  if (!inherits(out, "try-error"))
+    out
+  else
+    alt
+}
+
 # two functions are not exported in icd < 3.4
 get_icd34fun <- function(f) {
   if (exists(f, where = asNamespace("icd"), mode = "function"))

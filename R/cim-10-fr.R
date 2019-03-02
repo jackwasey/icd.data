@@ -41,28 +41,8 @@ parse_cim_fr <- function(save_data = FALSE, ...) {
   class(icd10fr2019$code) <- c("icd10fr", "icd10", "character")
   class(icd10fr2019$three_digit) <- c("icd10fr", "icd10", "character")
   if (save_data)
-    save_in_data_dir(icd10fr2019)
+    save_in_resource_dir(icd10fr2019)
   invisible(icd10fr2019)
-}
-
-#' Localised synonym for icd10fr2019, with French column names
-#' @keywords internal
-#' @noRd
-.cim10fr2019_active_binding <- function(x) {
-  if (!missing(x)) stop("This active binding cannot be set")
-  if (exists("cim10fr2019", envir = .icd_data_env))
-    return(get("cim10fr2019", envir = .icd_data_env))
-  cim10fr2019 <- icd.data::icd10fr2019
-  names(cim10fr2019) <- c("code",
-                          "desc_courte",
-                          "desc_longue",
-                          "majeure",
-                          "trois_chiffres")
-  rownames(cim10fr2019) <- NULL
-  assign("cim10fr2019",
-         value = cim10fr2019,
-         envir = .icd_data_env)
-  cim10fr2019
 }
 
 #' Get French and Dutch translations of ICD-10-CM for Beglian coding
@@ -131,8 +111,8 @@ parse_icd10be2017 <- function(save_data = FALSE, ...) {
   row.names(icd10be2017) <- NULL
   row.names(icd10be2017_pc) <- NULL
   if (save_data) {
-    save_in_data_dir(icd10be2017)
-    save_in_data_dir(icd10be2017_pc)
+    save_in_resource_dir(icd10be2017)
+    save_in_resource_dir(icd10be2017_pc)
   }
   invisible(list(icd10be2017, icd10be2017_pc))
 }
@@ -196,8 +176,8 @@ parse_icd10be2014 <- function(save_data = FALSE, ...) {
   row.names(icd10be2014) <- NULL
   row.names(icd10be2014_pc) <- NULL
   if (save_data) {
-    save_in_data_dir(icd10be2014)
-    save_in_data_dir(icd10be2014_pc)
+    save_in_resource_dir(icd10be2014)
+    save_in_resource_dir(icd10be2014_pc)
   }
   invisible(list(icd10be2014, icd10be2014_pc))
 }

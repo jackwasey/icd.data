@@ -152,9 +152,9 @@
 }
 
 downloading_message <- function() {
-  message("Downloading WHO ICD data. This will take a few minutes. ",
-          "Data is cached, so if there is a download error, re-running the ",
-          "command will pick up where it left off.")
+  message("Downloading WHO ICD data. This will take a few minutes.
+          Data is cached, so if there is a download error, re-running
+          the command will pick up where it left off.")
 }
 
 #' Fetch the WHO data from online source
@@ -180,8 +180,7 @@ fetch_icd10who2016 <- function(save_data = TRUE, ...) {
                      "major",
                      "desc"))
     icd10who2016[[col_name]] <- sub("[^ ]+ ", "", icd10who2016[[col_name]])
-  if (save_data)
-    saveRDS(icd10who2016, file.path(get_resource_path(), "icd10who2016.rds"))
+  if (save_data) save_in_resource_dir(icd10who2016)
   invisible(icd10who2016)
 }
 
@@ -199,8 +198,6 @@ fetch_icd10who2008_fr <- function(save_data = FALSE, ...) {
                      "major",
                      "desc"))
     icd10who2008fr[[col_name]] <- sub("[^ ]+ ", "", icd10who2008fr[[col_name]])
-  if (save_data)
-    saveRDS(icd10who2008fr,
-            file.path(get_resource_path(), "icd10who2008fr.rds"))
+  if (save_data) if (save_data) save_in_resource_dir(icd10who2008fr)
   invisible(icd10who2008fr)
 }

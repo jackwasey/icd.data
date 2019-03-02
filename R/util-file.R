@@ -120,10 +120,10 @@ save_in_data_dir <- function(
   package_dir = getwd(),
   envir = parent.frame()
 ) {
+  warning("Saving to data dir: save to user's resource directory instead?")
   stopifnot(is.character("suffix"))
   if (!is.character(var_name))
     var_name <- as.character(substitute(var_name))
-  stopifnot(exists(var_name, envir = envir))
   stopifnot(is.character(var_name))
   stopifnot(exists(var_name, envir = envir))
   save(list = var_name,
@@ -132,6 +132,21 @@ save_in_data_dir <- function(
                         strip(paste0(var_name, suffix, ".RData"))),
        compress = "xz")
   message("Now reload package to enable updated/new data: ", var_name)
+  invisible(get(var_name, envir = envir))
+}
+
+save_in_resource_dir <- function(
+  var_name,
+  envir = parent.frame()
+) {
+  if (!is.character(var_name))
+    var_name <- as.character(substitute(var_name))
+  stopifnot(is.character(var_name))
+  stopifnot(exists(var_name, envir = envir))
+  saveRDS(get(var_name, envir = envir),
+          file.path(get_resource_path(),
+                    paste0(var_name, ".rds")),
+          compress = "gzip")
   invisible(get(var_name, envir = envir))
 }
 

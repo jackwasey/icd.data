@@ -1,7 +1,6 @@
 #nocov start
 utils::globalVariables(c("icd9_sub_chapters",
                          "icd9_chapters",
-                         "icd9cm_latest_edition",
                          "icd9cm_billable",
                          "icd9cm_sources",
                          "icd9_majors"))
@@ -51,10 +50,11 @@ icd9cm_hierarchy_sanity <- function(x) {
 #' @keywords internal datagen
 #' @noRd
 parse_icd9cm_leaf_desc_all <- function(
-  save_data = TRUE,
+  save_data = FALSE,
   verbose = TRUE,
   ...
 ) {
+  .Deprecated("icd9cm_billable is deprecated")
   stopifnot(is.logical(save_data), length(save_data) == 1)
   versions <- icd9cm_sources$version
   if (verbose) message("Available versions of sources are: ",
@@ -87,7 +87,7 @@ parse_icd9cm_leaf_desc_all <- function(
 #' The file can be pulled from the zip files on the CMS web site or from within
 #' the package.
 #' @param version character vector of length one containing the ICD-9 version,
-#'   e.g. \code{"32"} which is the default.
+#'   e.g. \code{"32"}.
 #' @template save_data
 #' @param path Absolute path in which to save parsed data
 #' @template offline
@@ -95,7 +95,7 @@ parse_icd9cm_leaf_desc_all <- function(
 #' @keywords internal datagen
 #' @noRd
 icd9_parse_leaf_desc_ver <- function(
-  ver = icd9cm_latest_edition(),
+  ver,
   save_data = TRUE,
   ...
 ) {
@@ -316,14 +316,6 @@ icd9cm_gen_chap_hier <- function(
   if (save_data)
     save_in_data_dir(icd9cm_hierarchy)
   invisible(icd9cm_hierarchy)
-}
-
-#' icd9cm_hierarchy binding to offer consistent name
-#' @keywords internal
-#' @noRd
-.icd9cm2011_active_binding <- function(x) {
-  if (!missing(x)) stop("This active binding cannot be set")
-  icd.data::icd9cm_hierarchy
 }
 
 #' Get ICD-9 Chapters for vector of ICD-9 codes

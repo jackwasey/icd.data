@@ -20,10 +20,16 @@ icd10cm_parse_all_defined <- function(
   save_data = FALSE,
   offline = getOption("icd.data.offline"),
   verbose = TRUE,
+  twentysixteen = FALSE,
   ...
 ) {
+  yrs <- names(icd10cm_sources)
+  if (twentysixteen)
+    yrs <- "2016"
+  else
+    yrs <- yrs[yrs %nin% "2016"]
   out <- lapply(
-    names(icd10cm_sources),
+    yrs,
     icd10cm_parse_all_defined_year,
     save_data = save_data,
     offline = offline,
@@ -100,8 +106,12 @@ icd10cm_parse_all_defined_year <- function(
   class(dat$code) <- c("icd10cm", "icd10", "character")
   row.names(dat) <- NULL
   assign(paste0("icd10cm", year), value = dat)
-  if (save_data)
-    save_in_data_dir(paste0("icd10cm", year))
+  if (save_data) {
+    if (year == "2016")
+      save_in_data_dir("icd10cm2016")
+    else
+      save_in_resource_dir(paste0("icd10cm", year))
+  }
   invisible(dat)
 }
 

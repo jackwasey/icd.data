@@ -98,27 +98,6 @@ get_icd10cm_latest <- function() {
   eval(parse(text = paste0("icd.data::", var_name)))
 }
 
-.icd10cm_active_binding <- function(x) {
-  if (!missing(x)) stop("This binding returns the active ICD-10-CM data.\n",
-                        "Use `set_icd10cm_active_ver(\"2019\") instead.")
-  get_icd10cm_version()
-}
-
-.icd10cm_latest_binding <- function(x) {
-  if (!missing(x)) stop("This binding returns the latest ICD-10-CM data.\n")
-  icd.data::icd10cm2019
-}
-
-#' Latest ICD-9-CM edition
-#'
-#' Returns a single character value with the number of the latest edition,
-#' currently \strong{32}.
-#'
-#' Implemented as a function to give flexibility to calculate this, or use an
-#' option override. Duplicated in \code{icd.data} package.
-#' @keywords internal
-icd9cm_latest_edition <- function() "32"
-
 #' Evaluate code with a particular version of ICD-10-CM
 #' @template ver
 #' @param code Code block to execute

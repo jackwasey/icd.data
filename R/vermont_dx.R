@@ -41,6 +41,7 @@ generate_vermont_dx <- function(save_data) {
     class(vermont_dx[[dc]])  <- c("icd9cm", "icd9", "character")
     attr(vermont_dx[[dc]], "icd_short_diag") <- TRUE
   }
+  vermont_dx <- vermont_dx[1:1000, ]
   if (save_data) save(vermont_dx,
                       file = file.path("data", "vermont_dx.rda"),
                       compress = "bzip2", compression_level = 9)
