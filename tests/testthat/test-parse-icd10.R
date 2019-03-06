@@ -5,15 +5,17 @@ test_icd10_most_majors <- outer(LETTERS, sprintf(0:99, fmt = "%02i"), paste0)
 test_that("icd10 flat file details are okay", {
   skip("this test is very slow, but important to run manually")
   # check cols at a time, so I get better error feedback:
-  col_names <- c("code",
-                 "billable",
-                 "short_desc",
-                 "long_desc",
-                 "three_digit",
-                 "major",
-                 "sub_chapter",
-                 "chapter")
-  all_res <- icd10cm_parse_all_defined(save_data = FALSE)
+  col_names <- c(
+    "code",
+    "billable",
+    "short_desc",
+    "long_desc",
+    "three_digit",
+    "major",
+    "sub_chapter",
+    "chapter"
+  )
+  all_res <- icd10cm_parse_all(save_data = FALSE)
   for (v in as.character(2014:2019)) {
     skip_icd10cm_flat_avail(v)
     res <- all_res[[v]]
@@ -22,10 +24,12 @@ test_that("icd10 flat file details are okay", {
     expect_is(res$billable, "logical")
     expect_is(res$short_desc, "character")
     expect_is(res$long_desc, "character")
-    for (n in c("three_digit",
-                "major",
-                "sub_chapter",
-                "chapter")) {
+    for (n in c(
+      "three_digit",
+      "major",
+      "sub_chapter",
+      "chapter"
+    )) {
       expect_true(is.factor(res[[n]]))
       expect_identical(res, get_icd10cm_version(v))
     }
@@ -44,20 +48,27 @@ test_that("icd10 sub-chapters are recreated exactly", {
 
 test_that("icd10 sub_chapters were parsed correctly", {
   expect_icd10_sub_chap_equal(
-    paste("Persons with potential health hazards related",
-          "to family and personal history and certain",
-          "conditions influencing health status"),
-    start = "Z77", end = "Z99")
+    paste(
+      "Persons with potential health hazards related",
+      "to family and personal history and certain",
+      "conditions influencing health status"
+    ),
+    start = "Z77", end = "Z99"
+  )
   expect_icd10_sub_chap_equal(
     "Persons encountering health services for examinations",
-    "Z00", "Z13")
+    "Z00", "Z13"
+  )
   expect_icd10_sub_chap_equal(
     "Occupant of three-wheeled motor vehicle injured in transport accident",
-    "V30", "V39")
+    "V30", "V39"
+  )
   expect_icd10_sub_chap_equal(
-    "Malignant neuroendocrine tumors", "C7A", "C7A")
+    "Malignant neuroendocrine tumors", "C7A", "C7A"
+  )
   expect_icd10_sub_chap_equal(
-    "Other human herpesviruses", "B10", "B10")
+    "Other human herpesviruses", "B10", "B10"
+  )
 })
 
 test_that("ICD-10 chapters and sub-chapters are distinct", {
@@ -118,12 +129,18 @@ test_that("explain icd9GetChapters simple input", {
 
   chaps3 <- icd9_get_chapters("417", short_code = FALSE)
   expect_equal(as_char_no_warn(chaps3$three_digit), "417")
-  expect_equal(as_char_no_warn(chaps3$major),
-               "Other diseases of pulmonary circulation")
-  expect_equal(as_char_no_warn(chaps3$sub_chapter),
-               "Diseases Of Pulmonary Circulation")
-  expect_equal(as_char_no_warn(chaps3$chapter),
-               "Diseases Of The Circulatory System")
+  expect_equal(
+    as_char_no_warn(chaps3$major),
+    "Other diseases of pulmonary circulation"
+  )
+  expect_equal(
+    as_char_no_warn(chaps3$sub_chapter),
+    "Diseases Of Pulmonary Circulation"
+  )
+  expect_equal(
+    as_char_no_warn(chaps3$chapter),
+    "Diseases Of The Circulatory System"
+  )
 
   chaps4 <- icd9_get_chapters("417", short_code = TRUE)
   chaps5 <- icd9_get_chapters("417.1", short_code = FALSE)

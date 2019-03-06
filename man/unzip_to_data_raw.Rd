@@ -2,16 +2,16 @@
 % Please edit documentation in R/to_data_raw.R
 \name{unzip_to_data_raw}
 \alias{unzip_to_data_raw}
-\alias{download_to_data_raw}
+\alias{.download_to_data_raw}
 \title{Unzip file to raw data directory}
 \usage{
 unzip_to_data_raw(url, file_name, force = FALSE, verbose = FALSE,
   offline = getOption("icd.data.offline"),
-  data_raw_path = get_raw_data_dir(), save_name = file_name, ...)
+  data_raw_path = .get_raw_data_dir(), save_name = file_name, ...)
 
-download_to_data_raw(url, file_name = regmatches(url, regexpr("[^/]*$",
+.download_to_data_raw(url, file_name = regmatches(url, regexpr("[^/]*$",
   url)), offline = getOption("icd.data.offline"),
-  data_raw_path = get_raw_data_dir(), ...)
+  data_raw_path = .get_raw_data_dir(), ...)
 }
 \arguments{
 \item{url}{URL of a zip file}

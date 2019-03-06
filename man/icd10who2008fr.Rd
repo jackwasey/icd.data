@@ -11,7 +11,4 @@
 This data must be downloaded on a per-user basis. A prompt is given when the
 data is first attempted to be accessed.
 }
-\details{
-Unlike other data, it is exported, because it is an active binding.
-}
 \keyword{datasets}

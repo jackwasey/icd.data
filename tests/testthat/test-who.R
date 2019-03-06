@@ -8,8 +8,9 @@ test_that("No ranges or NA in code section of WHO data", {
   # assign somehow forces binding to work when doing R CMD check, otherwise it
   # tries to subset the function
   i <- icd10who2016
-  if (!is.data.frame(i))
+  if (!is.data.frame(i)) {
     skip("icd10who2016 binding is not usable during check")
+  }
   expect_false(any(grepl("-", i$code)))
   expect_false(any(is.na(i$code)))
   expect_false(any(is.na(i$leaf)))
@@ -27,7 +28,8 @@ test_that("no duplicated codes or descriptions", {
   skip_on_appveyor()
   skip_missing_icd10who("2016")
   i <- icd10who2016
-  if (!is.data.frame(i))
+  if (!is.data.frame(i)) {
     skip("icd10who2016 binding is not usable during check")
+  }
   expect_true(!anyDuplicated(i$code))
 })

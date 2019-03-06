@@ -115,7 +115,6 @@ NULL
 #' \emph{leaf} flag indicating whether a code is a \emph{billable} leaf node, or
 #' a code higher in the hierarchy which nevertheless will have a description.
 #' @section Editions: There are annual revisions to this data in the US.
-#' @name icd10cm2019
 #' @aliases icd10cm2014 icd10cm2015 icd10cm2016 icd10cm2017 icd10cm2018
 #' @source \url{http://www.cdc.gov/nchs/icd/icd10cm.htm}
 #' @docType data
@@ -136,39 +135,36 @@ NULL
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-ICD10-Code-Tables-and-Index.zip}
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-Code-Tables-and-Index.zip}
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-PCS-long-and-abbreviated-titles.zip}
+#' @name icd10cm2019
+#' @aliases icd10cm2014 icd10cm2015 icd10cm2016 icd10cm2017 icd10cm2018
 NULL
+# active binding so must be exported (in NAMESPACE, as roxygen screws this up)
+
 
 #' 2016 WHO ICD-10 data
 #'
 #' This data must be downloaded on a per-user basis. A prompt is given when the
 #' data is first attempted to be accessed.
-#'
-#' Unlike other data, it is exported, because it is an active binding.
 #' @name icd10who2016
 #' @source \url{http://www.who.int}
 #' @docType data
 #' @keywords datasets
-#' @export
 NULL
 
 #' 2008 WHO ICD-10 data in French
 #'
 #' This data must be downloaded on a per-user basis. A prompt is given when the
 #' data is first attempted to be accessed.
-#'
-#' Unlike other data, it is exported, because it is an active binding.
 #' @name icd10who2008fr
 #' @source \url{http://www.who.int}
 #' @docType data
 #' @keywords datasets
-#' @export
 NULL
 
 #' The latest available version of ICD-10-CM in this package
 #' @details This is an active binding.
 #' @docType data
 #' @keywords datasets
-#' @export
 #' @name icd10cm_latest
 NULL
 
@@ -183,7 +179,6 @@ NULL
 #' @details This is an active binding.
 #' @docType data
 #' @keywords datasets
-#' @export
 #' @name icd10cm_active
 NULL
 
@@ -194,7 +189,7 @@ NULL
 #' version 10, French edition.) Comme la version américaine, l'édition française
 #' a beaucoup de changéements par rapport à l'édition de l'OMS. Juste l'année
 #' 2018 est présentée pour le moment.
-#"
+# "
 #' The short descriptions are capitalized, and, as is correct in French, do not
 #' require accents. These were not converted to lower or sentence case to avoid
 #' introducing spellingn errors.
@@ -226,6 +221,7 @@ NULL
 #' @keywords datasets
 NULL
 
+
 #' ICD-10-CM Procedure Codes
 #'
 #' ICD-10-PCS is the annually-updated set of procedure codes designed by 3M for
@@ -256,28 +252,24 @@ NULL
 #' @keywords datasets
 NULL
 
-
-#' List of annual versions of billable leaf nodes of ICD-9-CM
+#' Final version ICD-9-CM, just billable/leaf codes
 #'
-#' These are derived from the CMS published updates, with versions 23 to 32
-#' currently available going back to 2004/5. The source files back to version 27
-#' have short and long descriptions. The short descriptions are in ASCII with no
-#' special characters, whereas the long descriptions contain accented characters
-#' which seem to be interpreted as Unicode, \code{latin-1} or \code{cp1252}.
+#' These are derived from the final CMS published version 32 for 2014, which was
+#' unchanged since 2011. The short descriptions are in ASCII with no special
+#' characters, whereas the long descriptions contain accented characters which
+#' are stored as Unicode, \code{latin-1} or \code{cp1252}.
+#'
 #' This all done during package creation, but can be repeated by package users,
 #' including pulling the data from the web pages directly. Despite my best
 #' efforts, current locale can give different results, but this packaged data is
 #' correct, with some \code{UTF-8} encoded strings.
 #' @docType data
 #' @keywords datasets
-#' @details Format:  list of data frames. Each list item is named by the version
-#'   as a string, e.g. "32". The constituent data frames have columns
-#'   \code{icd9}, \code{shortDesc}, and \code{longDesc}.
+#' @format data frames with columns \code{code}, \code{short_desc}, and
+#'   \code{long_desc}.
 #' @source
 #' \url{http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html}
-#'
-#' @name icd9cm_billable
-#' @aliases icd9Billable
+#' @name icd9cm_leaf_v32
 NULL
 
 #' Hospital discharge data from Vermont

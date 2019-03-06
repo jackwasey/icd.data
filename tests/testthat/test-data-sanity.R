@@ -18,10 +18,12 @@ test_that("row numbers sequential for data frames", {
     )
     for (col in names(d)) {
       if (inherits(d[[col]], "icd9") ||
-          inherits(d[[col]], "icd9")) {
+        inherits(d[[col]], "icd9")) {
         expect_is(d[[col]], "character",
-                  info = paste("Data = ", data_name,
-                               ", Column = ", col)
+          info = paste(
+            "Data = ", data_name,
+            ", Column = ", col
+          )
         )
       }
     }

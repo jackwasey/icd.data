@@ -1,14 +1,15 @@
 # nocov start
 
 # TODO: don't default to one particular year unless I have to.
-icd10cm_get_xml_file <- function(ver = "2019", ...) {
+.icd10cm_get_xml_file <- function(ver = "2019", ...) {
   # http://www.cdc.gov/nchs/data/icd/icd10cm/2016/ICD10CM_FY2016_Full_XML.ZIP
   s <- icd10cm_sources[[ver]]
   unzip_to_data_raw(
     url = paste0(s$base_url, s$dx_xml_zip),
     file_name = s$dx_xml,
-    save_name = paste0("yr", ver, s$dx_xml),
-    ...)
+    save_name = .get_versioned_raw_file_name(s$dx_xml, ver),
+    ...
+  )
 }
 
 #' Get sub-chapters from the 2016 XML for ICD-10-CM
@@ -24,7 +25,7 @@ icd10cm_get_xml_file <- function(ver = "2019", ...) {
 #' @template save_data
 #' @keywords internal datagen
 #' @noRd
-icd10cm_extract_sub_chapters <- function(save_data = FALSE, ...) {
+.icd10cm_extract_sub_chapters <- function(save_data = FALSE, ...) {
   stopifnot(is.logical(save_data))
   f_info <- icd10cm_get_xml_file(...)
   stopifnot(!is.null(f_info))
@@ -56,11 +57,12 @@ icd10cm_extract_sub_chapters <- function(save_data = FALSE, ...) {
       }
       # there is a defined Y09 in both ICD-10 WHO and CM, but the range is
       # incorrectly specified (in 2016 version of XML, at least)
-      if (new_sub_chap_range[[1]]["end"] == "Y08")
+      if (new_sub_chap_range[[1]]["end"] == "Y08") {
         new_sub_chap_range[[1]]["end"] <- "Y09"
+      }
       icd10_sub_chapters <- append(icd10_sub_chapters, new_sub_chap_range)
-    } #subchaps
-  } #chapters
+    } # subchaps
+  } # chapters
   # reorder quirk C7A, C7B, D3A) which are actually subchapters. We should
   # already have included num-alpha-num codes which are within ranges.
   c7ab <- icd10_sub_chapters[35:36]

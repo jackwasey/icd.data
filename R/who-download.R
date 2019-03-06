@@ -5,16 +5,19 @@
                            lang = "en",
                            verbose = FALSE) {
   httr_get <- httr::GET
-  if (requireNamespace("memoise", quietly = TRUE))
+  if (requireNamespace("memoise", quietly = TRUE)) {
     httr_get <- memoise::memoise(
       httr::GET,
       cache = memoise::cache_filesystem(
         file.path(
           getOption("icd.data.resource",
-                    default = stop("Option icd.data.resource not set")),
-          "memoise")
+            default = stop("Option icd.data.resource not set")
+          ),
+          "memoise"
+        )
       )
     )
+  }
   ver <- match.arg(ver)
   who_base <- "https://apps.who.int/classifications"
   json_url <- paste(who_base, ver, "browse", year, lang, resource, sep = "/")
@@ -37,18 +40,24 @@
 .fetch_who_api_chapter_names <- function(ver = "icd10",
                                          year = 2016,
                                          lang = "en", verbose = TRUE) {
-  .fetch_who_api_children(ver = ver, year = year, lang = lang,
-                          verbose = verbose)[["label"]]
+  .fetch_who_api_children(
+    ver = ver, year = year, lang = lang,
+    verbose = verbose
+  )[["label"]]
 }
 
 .fetch_who_api_children <- function(concept_id = NULL, ...) {
-  if (is.null(concept_id))
+  if (is.null(concept_id)) {
     .fetch_who_api(resource = "JsonGetRootConcepts?useHtml=false", ...)
-  else
+  } else {
     .fetch_who_api(
-      resource = paste0("JsonGetChildrenConcepts?ConceptId=",
-                        concept_id,
-                        "&useHtml=false"), ...)
+      resource = paste0(
+        "JsonGetChildrenConcepts?ConceptId=",
+        concept_id,
+        "&useHtml=false"
+      ), ...
+    )
+  }
 }
 
 #' Use public interface to fetch ICD-10 WHO version
@@ -66,37 +75,45 @@
 #' @keywords internal
 #' @noRd
 .fetch_icd10_who <- function(
-  concept_id = NULL,
-  year = 2016,
-  lang = "en",
-  verbose = FALSE,
-  hier_code = character(),
-  hier_desc = character(),
-  debug = FALSE,
-  ...
-) {
-  if (!requireNamespace("memoise", quietly = TRUE))
-    message("Consider installing 'memoise' from CRAN using:\n",
-            'install.packages("memoise")\n',
-            "This will allow the WHO data download to resume if interrupted.")
+                             concept_id = NULL,
+                             year = 2016,
+                             lang = "en",
+                             verbose = FALSE,
+                             hier_code = character(),
+                             hier_desc = character(),
+                             debug = FALSE,
+                             ...) {
+  if (!requireNamespace("memoise", quietly = TRUE)) {
+    message(
+      "Consider installing 'memoise' from CRAN using:\n",
+      'install.packages("memoise")\n',
+      "This will allow the WHO data download to resume if interrupted."
+    )
+  }
   if (verbose) print(hier_code)
-  new_rows <- data.frame(code = character(),
-                         leaf = logical(),
-                         desc = character(),
-                         three_digit = character(),
-                         major = character(),
-                         sub_sub_chapter = character(),
-                         sub_chapter = character(),
-                         chapter = character())
+  new_rows <- data.frame(
+    code = character(),
+    leaf = logical(),
+    desc = character(),
+    three_digit = character(),
+    major = character(),
+    sub_sub_chapter = character(),
+    sub_chapter = character(),
+    chapter = character()
+  )
   if (verbose) message(".fetch_who_api_tree with concept_id = ", concept_id)
-  tree_json <- .fetch_who_api_children(concept_id = concept_id,
-                                       year = year,
-                                       lang = lang,
-                                       verbose = verbose,
-                                       ...)
+  tree_json <- .fetch_who_api_children(
+    concept_id = concept_id,
+    year = year,
+    lang = lang,
+    verbose = verbose,
+    ...
+  )
   if (is.null(tree_json)) {
-    warning("Unable to get results for concept_id: ", concept_id,
-            ". Returning NULL. Try re-running the command.")
+    warning(
+      "Unable to get results for concept_id: ", concept_id,
+      ". Returning NULL. Try re-running the command."
+    )
     return()
   }
   if (verbose) message("hier level = ", length(hier_code))
@@ -111,43 +128,50 @@
     hier_desc[new_hier] <- child_desc
     sub_sub_chapter <- NA
     hier_three_digit_idx <- which(nchar(hier_code) == 3 &
-                                    !grepl("[XVI-]", hier_code))
-    if (length(hier_code) >= 3 && nchar(hier_code[3]) > 3)
+      !grepl("[XVI-]", hier_code))
+    if (length(hier_code) >= 3 && nchar(hier_code[3]) > 3) {
       sub_sub_chapter <- hier_desc[3]
+    }
     this_child_up_hier <- grepl("[XVI-]", child_code)
     three_digit <- hier_code[hier_three_digit_idx]
     major <- hier_desc[hier_three_digit_idx]
     if (!this_child_up_hier && !is.na(three_digit)) {
       # TODO: consider add the chapter, subchapter codes
-      new_item <- data.frame(code = child_code,
-                             leaf = is_leaf,
-                             desc = child_desc,
-                             three_digit = three_digit,
-                             major = major,
-                             sub_sub_chapter = sub_sub_chapter,
-                             sub_chapter = hier_desc[2],
-                             chapter = hier_desc[1],
-                             stringsAsFactors = FALSE
+      new_item <- data.frame(
+        code = child_code,
+        leaf = is_leaf,
+        desc = child_desc,
+        three_digit = three_digit,
+        major = major,
+        sub_sub_chapter = sub_sub_chapter,
+        sub_chapter = hier_desc[2],
+        chapter = hier_desc[1],
+        stringsAsFactors = FALSE
       )
       if (debug && child_code %in% new_rows$code) browser()
       new_rows <- rbind(new_rows, new_item)
     }
     if (!is_leaf) {
       if (verbose) message("Not a leaf, so recursing")
-      recursed_rows <- .fetch_icd10_who(concept_id = child_code,
-                                        year = year,
-                                        lang = lang,
-                                        verbose = verbose,
-                                        hier_code = hier_code,
-                                        hier_desc = hier_desc,
-                                        ...
+      recursed_rows <- .fetch_icd10_who(
+        concept_id = child_code,
+        year = year,
+        lang = lang,
+        verbose = verbose,
+        hier_code = hier_code,
+        hier_desc = hier_desc,
+        ...
       ) # recurse
       if (debug && any(recursed_rows$code %in% new_rows$code)) browser()
       new_rows <- rbind(new_rows, recursed_rows)
     } # not leaf
   } # for
-  if (verbose) message("leaving recursion with nrow(new_rows) = ",
-                       nrow(new_rows))
+  if (verbose) {
+    message(
+      "leaving recursion with nrow(new_rows) = ",
+      nrow(new_rows)
+    )
+  }
   new_rows
 }
 
@@ -160,44 +184,46 @@ downloading_message <- function() {
 #' Fetch the WHO data from online source
 #'
 #' This will download the latest ICD-10 codes and descriptions from the WHO, and
-#' save the results in a directory given by `icd.data:::get_resource_path()`.
+#' save the results in a directory given by `icd.data:::get_resource_dir()`.
 #' This defaults to a subdirectory `.icd.data` of the home directory. This is
 #' necessary because it is not permitted to write data back to the installed
 #' package location (and this may not be allowed on a multi-user system,
 #' anyway).
 #' @param save_data Logical, defaults to `TRUE`
 #' @param ... Arguments passed to internal functions
-#' @export
 fetch_icd10who2016 <- function(save_data = TRUE, ...) {
   downloading_message()
   icd10who2016 <- .fetch_icd10_who(year = "2016", lang = "en", ...)
   rownames(icd10who2016) <- NULL
   icd10who2016$code <-
     sub(pattern = "\\.", replacement = "", x = icd10who2016$code)
-  for (col_name in c("chapter",
-                     "sub_chapter",
-                     "sub_sub_chapter",
-                     "major",
-                     "desc"))
+  for (col_name in c(
+    "chapter",
+    "sub_chapter",
+    "sub_sub_chapter",
+    "major",
+    "desc"
+  ))
     icd10who2016[[col_name]] <- sub("[^ ]+ ", "", icd10who2016[[col_name]])
-  if (save_data) save_in_resource_dir(icd10who2016)
+  if (save_data) .save_in_resource_dir(icd10who2016)
   invisible(icd10who2016)
 }
 
 #' @rdname fetch_icd10who2016
-#' @export
 fetch_icd10who2008_fr <- function(save_data = FALSE, ...) {
   downloading_message()
   icd10who2008fr <- .fetch_icd10_who(year = "2008", lang = "fr", ...)
   rownames(icd10who2008fr) <- NULL
   icd10who2008fr$code <-
     sub(pattern = "\\.", replacement = "", x = icd10who2008fr$code)
-  for (col_name in c("chapter",
-                     "sub_chapter",
-                     "sub_sub_chapter",
-                     "major",
-                     "desc"))
+  for (col_name in c(
+    "chapter",
+    "sub_chapter",
+    "sub_sub_chapter",
+    "major",
+    "desc"
+  ))
     icd10who2008fr[[col_name]] <- sub("[^ ]+ ", "", icd10who2008fr[[col_name]])
-  if (save_data) if (save_data) save_in_resource_dir(icd10who2008fr)
+  if (save_data) if (save_data) .save_in_resource_dir(icd10who2008fr)
   invisible(icd10who2008fr)
 }

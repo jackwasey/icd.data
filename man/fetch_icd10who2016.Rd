@@ -16,7 +16,7 @@ fetch_icd10who2008_fr(save_data = FALSE, ...)
 }
 \description{
 This will download the latest ICD-10 codes and descriptions from the WHO, and
-save the results in a directory given by \code{icd.data:::get_resource_path()}.
+save the results in a directory given by \code{icd.data:::get_resource_dir()}.
 This defaults to a subdirectory \code{.icd.data} of the home directory. This is
 necessary because it is not permitted to write data back to the installed
 package location (and this may not be allowed on a multi-user system,

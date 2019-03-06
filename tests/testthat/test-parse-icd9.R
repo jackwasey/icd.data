@@ -4,9 +4,11 @@ test_that("some known sub vs chap confusion", {
   # some things shouldn't have been called sub-chapters, just chapters. Known
   # troublemakers:
   expect_icd9_only_chap(
-    "Supplementary Classification Of External Causes Of Injury And Poisoning")
+    "Supplementary Classification Of External Causes Of Injury And Poisoning"
+  )
   expect_icd9_only_chap(
-    "Supplementary Classification Of Factors Influencing Health Status And Contact With Health Services") # nolint
+    "Supplementary Classification Of Factors Influencing Health Status And Contact With Health Services"
+  ) # nolint
   # and scan all, noting each is tested twice and half the test is circular,
   # since it looks up with the looped group.
   for (i in names(icd9_chapters))
@@ -34,8 +36,10 @@ test_that("majors okay", {
   expect_icd9_major_equals("Gastrointestinal mucositis (ulcerative)", "538")
   expect_icd9_major_equals("Perinatal disorders of digestive system", "777")
   expect_icd9_major_equals("Iron deficiency anemias", "280")
-  expect_icd9_major_equals("Other diseases of blood and blood-forming organs",
-                           "289")
+  expect_icd9_major_equals(
+    "Other diseases of blood and blood-forming organs",
+    "289"
+  )
   expect_icd9_major_equals("Anencephalus and similar anomalies", "740")
   expect_icd9_major_equals("Other and unspecified congenital anomalies", "759")
 
@@ -59,15 +63,19 @@ test_that("Some known problem codes explained, github #126, #124, #123", {
   eee("0381", "Staphylococcal septicemia")
   eee("291", "Alcohol-induced mental disorders")
   eee("361", "Retinal detachments and defects")
-  eee("294",
-      "Persistent mental disorders due to conditions classified elsewhere")
+  eee(
+    "294",
+    "Persistent mental disorders due to conditions classified elsewhere"
+  )
   eee("6811", "Toe") # Cellulitis and abscess of toe
   eee("7865", "Chest pain")
 })
 
 test_that("7806 is correctly explained, github #116", {
-  eee("7806",
-      "Fever and other physiologic disturbances of temperature regulation")
+  eee(
+    "7806",
+    "Fever and other physiologic disturbances of temperature regulation"
+  )
 })
 
 test_that("737 is correctly explained, github #111", {
@@ -87,8 +95,10 @@ test_that("414, 4140 and 4141 are parsed correctly, github #99", {
 })
 
 test_that("some randomly chosen codes are correct", {
-  eee("674.54",
-      "Peripartum cardiomyopathy, postpartum condition or complication")
+  eee(
+    "674.54",
+    "Peripartum cardiomyopathy, postpartum condition or complication"
+  )
   eee("E992.8", "Injury due to war operations by other marine weapons")
   eee("E870.5", "Accidental cut, puncture, perforation or hemorrhage during aspiration of fluid or tissue, puncture, and catheterization") # nolint
   eee("V53.0", "Devices related to nervous system and special senses")
@@ -108,8 +118,10 @@ test_that("some randomly chosen codes are correct", {
   # cases which were special in parsing:
   eee("V30", "Single liveborn")
   eee("V300", "Single liveborn, Born in hospital")
-  eee("V3001",
-      "Single liveborn, born in hospital, delivered by cesarean section")
+  eee(
+    "V3001",
+    "Single liveborn, born in hospital, delivered by cesarean section"
+  )
   eee("V302", "Single liveborn, born outside hospital and not hospitalized")
   eee("345.01", "Generalized nonconvulsive epilepsy, with intractable epilepsy")
 })
@@ -120,21 +132,26 @@ test_that("ICD-9-CM billable codes package data is recreated", {
   # Do encoding problems on Linux. It is unpredictable at the best of times.
   skip_flat_icd9_all_avail()
   check_billable <- parse_icd9cm_leaf_desc_all(save_data = FALSE)
-  # check this one thing known to be dodgy
-  expect_identical(check_billable[["28"]][["long_desc"]],
-                   icd9cm_billable[["28"]][["long_desc"]])
   # make specific quick tests for previously known problems:
-  b32 <- check_billable[["32"]]
+  b32 <- icd9cm_parse_leaf_desc_ver("32", save_data = FALSE)
   expect_true(nrow(b32) == 14567L)
   expect_true(ncol(b32) == 3L)
-  expect_identical(b32[b32$code == "9999", "short_desc"],
-                   "Complic med care NEC/NOS")
-  expect_identical(b32[b32$code == "E0000", "short_desc"],
-                   "Civilian activity-income")
-  expect_identical(b32[b32$code == "E9991", "short_desc"],
-                   "Late effect, terrorism")
-  expect_identical(b32[b32$code == "V9199", "short_desc"],
-                   "Mult gest-plac/sac undet")
+  expect_identical(
+    b32[b32$code == "9999", "short_desc"],
+    "Complic med care NEC/NOS"
+  )
+  expect_identical(
+    b32[b32$code == "E0000", "short_desc"],
+    "Civilian activity-income"
+  )
+  expect_identical(
+    b32[b32$code == "E9991", "short_desc"],
+    "Late effect, terrorism"
+  )
+  expect_identical(
+    b32[b32$code == "V9199", "short_desc"],
+    "Mult gest-plac/sac undet"
+  )
   for (ver in c("27", "28", "29", "30", "31", "32")) {
     v <- icd9cm_billable[[ver]][["long_desc"]]
     cb <- check_billable[[ver]][["long_desc"]]
@@ -142,9 +159,11 @@ test_that("ICD-9-CM billable codes package data is recreated", {
     expect_identical(
       check_billable[[ver]],
       icd9cm_billable[[ver]],
-      info = paste("long_desc differences for version", ver,
-                   "\noriginal: ", paste(v[diff][1:5], collapse = ", "),
-                   "\nprocess:", paste(cb[diff][1:5], collapse = ", ")
-      ))
+      info = paste(
+        "long_desc differences for version", ver,
+        "\noriginal: ", paste(v[diff][1:5], collapse = ", "),
+        "\nprocess:", paste(cb[diff][1:5], collapse = ", ")
+      )
+    )
   }
 })

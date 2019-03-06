@@ -7,7 +7,7 @@
 parse_icd10be2014(save_data = FALSE, ...)
 }
 \arguments{
-\item{...}{passed to \code{download_to_data_raw}, e.g., \code{offline = FALSE}.}
+\item{...}{passed to \code{.download_to_data_raw}, e.g., \code{offline = FALSE}.}
 }
 \description{
 Get 2014 French and Dutch translations of ICD-10-CM for Beglian coding

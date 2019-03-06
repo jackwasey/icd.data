@@ -6,24 +6,25 @@
 #' @examples
 #' \dontrun{
 #' assign_icd_data()
-#'
+#' 
 #' # but most users just need to:
 #' library(icd.data)
 #' # then refer to the data in the package in the normal way:
 #' print(icd10_chapters)
-#'
+#' 
 #' # or even simpler:
 #' library(icd)
 #' # which will attach icd.data
 #' }
-#' @export
 #' @keywords internal
 assign_icd_data <- function(env = parent.frame()) {
   data_names <- ls_icd_data()
-  lapply(data_names,
-         function(x) {
-           assign(x, get(x), envir = env)
-         })
+  lapply(
+    data_names,
+    function(x) {
+      assign(x, get(x), envir = env)
+    }
+  )
 }
 
 #' List the data in this package
@@ -32,6 +33,5 @@ assign_icd_data <- function(env = parent.frame()) {
 #' ls_icd_data()
 #' }
 #' @keywords datasets
-#' @export
 ls_icd_data <- function()
   utils::data(package = "icd.data")$results[, "Item"]

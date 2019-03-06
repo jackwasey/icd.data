@@ -4,7 +4,7 @@
 \alias{icd10cm_get_flat_file}
 \title{Get annual version of ICD-10-CM}
 \usage{
-icd10cm_get_flat_file(year, ...)
+icd10cm_get_flat_file(year, verbose = TRUE, ...)
 }
 \arguments{
 \item{year}{four-digit}

@@ -21,24 +21,29 @@ str_pair_match <- function(string, pattern, pos, swap = FALSE, ...) {
   stopifnot(is.character(pattern))
   stopifnot(is.logical(swap))
   pos_missing <- missing(pos)
-  if (pos_missing)
+  if (pos_missing) {
     pos <- c(1L, 2L)
-  else
+  } else {
     stopifnot(is.numeric(pos), length(pos) == 2, !any(is.na(pos)))
-  res <- lapply(string,
-                function(x) unlist(
-                  regmatches(x, m = regexec(pattern = pattern, text = x, ...))
-                )[-1]
+  }
+  res <- lapply(
+    string,
+    function(x) unlist(
+        regmatches(x, m = regexec(pattern = pattern, text = x, ...))
+      )[-1]
   )
   res <- res[vapply(res, function(x) length(x) != 0, logical(1))]
   res <- do.call(rbind, res)
-  if (pos_missing && ncol(res) > max(pos))
+  if (pos_missing && ncol(res) > max(pos)) {
     stop("the pair matching has three or more ress but needed two.
           Use (?: to have a non-grouping regular expression parenthesis")
+  }
   out_names <- res[, ifelse(swap, 2L, 1L)]
-  if (any(is.na(out_names)))
+  if (any(is.na(out_names))) {
     stop("didn't match some rows:", string[is.na(out_names)],
-         call. = FALSE)
+      call. = FALSE
+    )
+  }
   out <- res[, ifelse(swap, 1L, 2L)]
   stopifnot(all(!is.na(out)))
   setNames(out, out_names)
@@ -63,5 +68,7 @@ str_match_all <- function(string, pattern, ...) {
 #' @return character vector of same length as input
 #' @keywords internal
 strip <- function(x, pattern = " ", use_bytes = TRUE)
-  gsub(pattern = pattern, replacement = "", x = x,
-       fixed = TRUE, useBytes = use_bytes)
+  gsub(
+    pattern = pattern, replacement = "", x = x,
+    fixed = TRUE, useBytes = use_bytes
+  )

@@ -2,7 +2,6 @@
 #' @template ver
 #' @param check_exists \code{TRUE} by default, which forces a check that the
 #'   requested version is actually available in this R session.
-#' @export
 set_icd10cm_active_ver <- function(ver, check_exists = TRUE) {
   old_v <- get_icd10cm_active_ver()
   v <- as.character(ver)
@@ -10,21 +9,23 @@ set_icd10cm_active_ver <- function(ver, check_exists = TRUE) {
   stopifnot(v %in% names(icd10cm_sources))
   v_name <- paste0("icd10cm", v)
   if (check_exists &&
-      !exists(v_name, envir = asNamespace("icd.data"))) {
-    stopifnot(exists_in_ns(v_name))
+    !exists(v_name, envir = asNamespace("icd.data"))) {
+    stopifnot(.exists_in_ns(v_name))
   }
   options("icd.data.icd10cm_active_ver" = v)
   invisible(old_v)
 }
 
 #' @rdname set_icd10cm_active_ver
-#' @export
 get_icd10cm_active_ver <- function() {
   ver <- getOption("icd.data.icd10cm_active_ver")
-  if (!is.character(ver) && length(ver) == 1)
-    stop("Option \"icd.data.icd10cm_active_ver\" is not valid.\n",
-         "Reset it with set_icd10cm_active_ver(\"2019\") ",
-         "or other year version.")
+  if (!is.character(ver) && length(ver) == 1) {
+    stop(
+      "Option \"icd.data.icd10cm_active_ver\" is not valid.\n",
+      "Reset it with set_icd10cm_active_ver(\"2019\") ",
+      "or other year version."
+    )
+  }
   ver
 }
 
@@ -37,18 +38,15 @@ get_icd10cm_active_ver <- function() {
 #' \dontrun{
 #' get_icd10cm_version("2018")
 #' }
-#' @export
 get_icd10cm_version <- function(ver = get_icd10cm_active_ver()) {
   ver <- as.character(ver)
   stopifnot(grepl("^[[:digit:]]{4}$", ver))
-  switch(ver,
-         "2014" = icd.data::icd10cm2014,
-         "2015" = icd.data::icd10cm2015,
-         "2016" = icd.data::icd10cm2016,
-         "2017" = icd.data::icd10cm2017,
-         "2018" = icd.data::icd10cm2018,
-         "2019" = icd.data::icd10cm2019
-  )
+  # don't use :: so we don't trigger every active binding at once!
+  var_name <- paste0("icd10cm", ver)
+  if (exists(var_name, envir = .icd_data_env)) {
+    return(get(var_name, envir = .icd_data_env))
+  }
+  getExportedValue("icd.data", var_name)
 }
 
 #' Get the ICD-10-CM versions available in this package
@@ -56,22 +54,21 @@ get_icd10cm_version <- function(ver = get_icd10cm_active_ver()) {
 #' @param return_year Logical, which, if `TRUE`, will result in only a character
 #'   vector of year (or year-like version) being returned.
 #' @examples
-#'   # Diagnostic codes:
-#'   get_icd10cm_available()
-#'   # Just get the years avaiable for English language procedure codes
-#'   get_icd10cm_available(pc = TRUE, return_year = TRUE)
-#' @export
+#' # Diagnostic codes:
+#' get_icd10cm_available()
+#' # Just get the years avaiable for English language procedure codes
+#' get_icd10cm_available(pc = TRUE, return_year = TRUE)
 get_icd10cm_available <- function(
-  pc = FALSE,
-  return_year = FALSE
-) {
+                                  pc = FALSE,
+                                  return_year = FALSE) {
   stopifnot(is.logical(pc), length(pc) == 1)
   pc_str <- ifelse(pc, "_pc", "")
   res <- as.character(2014:2019)
-  if (return_year)
+  if (return_year) {
     res
-  else
+  } else {
     paste0("icd10cm", res, pc_str)
+  }
 }
 
 #' Get the data for the latest ICD-10-CM version in this package.
@@ -85,26 +82,84 @@ get_icd10cm_available <- function(
 #' \dontrun{
 #' # if icd.data not attached:
 #' get_icd10cm_latest()
+#' icd.data::icd10cm_latest
 #' # preferred:
 #' library(icd.data)
 #' head(icd10cm_latest)
-#'
 #' }
 #' @keywords internal datasets
+#' @noRd
 get_icd10cm_latest <- function() {
   var_name <- "icd10cm2019"
   if (exists(var_name)) return(get(var_name))
   getExportedValue(asNamespace("icd.data"), var_name)
-  eval(parse(text = paste0("icd.data::", var_name)))
+  # needed?
+  # eval(parse(text = paste0("icd.data::", var_name)))
 }
 
 #' Evaluate code with a particular version of ICD-10-CM
 #' @template ver
 #' @param code Code block to execute
-#' @export
 with_icd10cm_version <- function(ver, code) {
   stopifnot(is.character(ver), length(ver) == 1)
   old <- options("icd.data.icd10cm_active_ver" = ver)
   on.exit(options(old))
   force(code)
+}
+
+#' Internal function used to search and maybe prompt when active binding used.
+#'
+#' Tries to get from the local environment first, then from resource directory,
+#' and failing that, if interactive, prompts user to download and parse.
+#' @param interact Control whether functions thinks it is in interactive mode,
+#'   for testing.
+#' @keywords internal
+#' @noRd
+.get_icd10cm_ver <- function(
+                             ver,
+                             dx,
+                             must_work = FALSE,
+                             interact = interactive()) {
+  ver <- as.character(ver)
+  stopifnot(grepl("^[[:digit:]]{4}$", ver))
+  var_name <- paste0("icd10cm", ver)
+  dat_path <- .rds_path(var_name)
+  if (exists(var_name, envir = .icd_data_env)) {
+    return(get(var_name, envir = .icd_data_env))
+  }
+  if (file.exists(dat_path)) {
+    dat <- readRDS(dat_path)
+    assign(var_name, dat, envir = .icd_data_env)
+    return(dat)
+  }
+  can_download <- .confirm_download()
+  if (!can_download) {
+    if (must_work) {
+      stop("No consent to download data. Declined, or not interactive mode.
+You may wish to use:
+set_resource_path(\"/path/you/desire/\")
+to control where data is downloaded.")
+    } else {
+      return(invisible())
+    }
+  }
+  # .fetch_icd10cm_ver(ver = ver,
+  #                    dx = dx,
+  #                    save_data = TRUE,
+  #                    verbose = FALSE,
+  #                    offline = confirm_download(must_work = TRUE),
+  #                    data_raw_path = get_resource_dir())
+  if (dx) {
+    dat <- .icd10cm_parse_year(
+      year = ver,
+      save_data = TRUE,
+      verbose = FALSE,
+      offline = !.confirm_download(must_work = TRUE),
+      data_raw_path = get_resource_dir()
+    )
+  } else {
+    dat <- icd10cm_parse_cms_pcs_year(ver, verbose = FALSE)
+  }
+  assign(var_name, dat, envir = .icd_data_env)
+  return(dat)
 }

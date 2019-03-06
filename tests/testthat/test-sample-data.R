@@ -3,9 +3,12 @@ test_that("ICD-10 codes in uranium data are okay", {
   expect_true(all(icd::is_valid(uranium_pathology$icd10, short_code = FALSE)))
   skip("not sure whether there are errors in this data yet.")
   expect_equal(
-    setdiff(levels(icd::decimal_to_short(uranium_pathology$icd10)),
-            icd10cm2016$code),
-    character(0))
+    setdiff(
+      levels(icd::decimal_to_short(uranium_pathology$icd10)),
+      icd10cm2016$code
+    ),
+    character(0)
+  )
 })
 
 test_that("sample data frames have correct class", {
@@ -14,7 +17,8 @@ test_that("sample data frames have correct class", {
   # should not have vector classes on the data frames themselves
   expect_false(any(c("icd9", "icd9cm", "icd9who") %in% class(vermont_dx)))
   expect_false(
-    any(c("icd10", "icd10cm", "icd10who") %in% class(uranium_pathology)))
+    any(c("icd10", "icd10cm", "icd10who") %in% class(uranium_pathology))
+  )
 })
 
 test_that("uranium data looks okay", {
@@ -32,8 +36,13 @@ test_that("vermont data looks okay", {
   expect_true(
     all(
       icd::is_valid(
-        icd::wide_to_long(vermont_dx)$icd_code)))
+        icd::wide_to_long(vermont_dx)$icd_code
+      )
+    )
+  )
   expect_true(
     all(
-      icd::wide_to_long(vermont_dx)$icd_code %in% icd9cm_hierarchy$code))
+      icd::wide_to_long(vermont_dx)$icd_code %in% icd9cm_hierarchy$code
+    )
+  )
 })

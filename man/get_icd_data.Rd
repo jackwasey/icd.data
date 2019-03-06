@@ -2,15 +2,16 @@
 % Please edit documentation in R/util.R
 \name{get_icd_data}
 \alias{get_icd_data}
-\title{Get data from the icd.data package, without relying on it being attached
-Some data is hidden in active bindings, so it may be downloaded on demand, and some is lazy-loaded.}
+\title{Get data from the icd.data package, without relying on it being attached}
 \usage{
 get_icd_data(data_name, alt = NULL)
 }
 \arguments{
-\item{alt}{If the data cannot be found, this value is returned. Default is \code{NULL}.}
+\item{alt}{If the data cannot be found, this value is returned. Default is
+\code{NULL}.}
 }
 \description{
-Get data from the icd.data package, without relying on it being attached
-Some data is hidden in active bindings, so it may be downloaded on demand, and some is lazy-loaded.
+Some data is hidden in active bindings, so it may be downloaded on demand,
+and some is lazy-loaded. This will work for regular package members, active
+bindings, and lazy data, whether or not the package is attached or loaded.
 }

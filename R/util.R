@@ -2,12 +2,13 @@
 #' @param x vector, typically numeric or a factor
 #' @return character vector
 #' @keywords internal
-as_char_no_warn <- function(x) {
+.as_char_no_warn <- function(x) {
   if (is.character(x)) return(x)
   old <- options(warn = -1)
   on.exit(options(old))
-  if (is.factor(x))
+  if (is.factor(x)) {
     return(levels(x)[x])
+  }
   as.character(x)
 }
 
@@ -17,8 +18,8 @@ as_char_no_warn <- function(x) {
 #' \code{x}
 #' @noRd
 #' @keywords internal
-vec_to_env_true <- function(x, val = TRUE,
-                            env = new.env(hash = TRUE, parent = baseenv())) {
+.vec_to_env_true <- function(x, val = TRUE,
+                             env = new.env(hash = TRUE, parent = baseenv())) {
   lapply(x, function(y) env[[y]] <- val)
   env
 }
@@ -31,9 +32,10 @@ vec_to_env_true <- function(x, val = TRUE,
 #' @keywords internal
 "%eine%" <- function(x, table) {
   vapply(ls(name = x),
-         function(y) !is.null(table[[y]]),
-         FUN.VALUE = logical(1L),
-         USE.NAMES = FALSE)
+    function(y) !is.null(table[[y]]),
+    FUN.VALUE = logical(1L),
+    USE.NAMES = FALSE
+  )
 }
 
 "%ine%" <- function(x, table) {
@@ -41,7 +43,7 @@ vec_to_env_true <- function(x, val = TRUE,
 }
 
 # alt version to replace 'icd' version which uses C++
-get_icd9_major <- function(y) {
+.get_icd9_major <- function(y) {
   if (startsWith(y, "E")) {
     substr(trimws(y), 1L, 4L)
   } else {
@@ -49,7 +51,7 @@ get_icd9_major <- function(y) {
   }
 }
 
-get_icd10_major <- function(x) {
+.get_icd10_major <- function(x) {
   substr(trimws(x), 1L, 3L)
 }
 
@@ -62,7 +64,7 @@ get_icd10_major <- function(x) {
 #' being the previous values.
 #' @noRd
 #' @keywords internal
-swap_names_vals <- function(x) {
+.swap_names_vals <- function(x) {
   stopifnot(is.atomic(x))
   stopifnot(!is.null(names(x)))
   new_names <- unname(x)
@@ -79,26 +81,28 @@ swap_names_vals <- function(x) {
 #' \dontrun{
 #' sapply(icd9cm_hierarchy, get_non_ascii)
 #' get_encodings(icd9cm_hierarchy)
-#' sapply(icd9cm_billable, get_non_ascii)
-#' sapply(icd9cm_billable, get_encodings)
+#' sapply(icd9cm_leaf_v32, get_non_ascii)
+#' sapply(icd9cm_leaf_v32, get_encodings)
 #' }
 #' @noRd
 #' @keywords internal
 get_non_ascii <- function(x)
-  x[is_non_ascii(as_char_no_warn(x))]
+  x[is_non_ascii(.as_char_no_warn(x))]
 
 #' @rdname get_non_ascii
 #' @noRd
 #' @keywords internal
 is_non_ascii <- function(x)
-  is.na(iconv(as_char_no_warn(x), from = "latin1", to = "ASCII"))
+  is.na(iconv(.as_char_no_warn(x), from = "latin1", to = "ASCII"))
 
 #' @rdname get_non_ascii
 #' @noRd
 #' @keywords internal
-get_encodings <- function(x) {
-  vapply(x, FUN = function(y) unique(Encoding(as_char_no_warn(y))),
-         FUN.VALUE = character(1))
+.get_encodings <- function(x) {
+  vapply(x,
+    FUN = function(y) unique(Encoding(.as_char_no_warn(y))),
+    FUN.VALUE = character(1)
+  )
 }
 
 #' Parse a (sub)chapter text description with parenthesised range
@@ -110,40 +114,43 @@ get_encodings <- function(x) {
 #' @keywords internal manip
 .chapter_to_desc_range <- function(x, re_major) {
   stopifnot(is.character(x), is.character(re_major))
-  re_code_range <- paste0("(.*)[[:space:]]?\\((",
-                          re_major, ")-(",
-                          re_major, ")\\)"
+  re_code_range <- paste0(
+    "(.*)[[:space:]]?\\((",
+    re_major, ")-(",
+    re_major, ")\\)"
   )
   re_code_single <- paste0("(.*)[[:space:]]?\\((", re_major, ")\\)")
   mr <- str_match_all(x, re_code_range)
   ms <- str_match_all(x, re_code_single)
   okr <- vapply(mr, length, integer(1)) == 4L
   oks <- vapply(ms, length, integer(1)) == 3L
-  if (!all(okr || oks))
+  if (!all(okr || oks)) {
     stop("Problem matching\n", x[!(okr || oks)], call. = FALSE)
+  }
   m <- ifelse(okr, mr, ms)
   out <- lapply(m, function(y) c(start = y[[3]], end = y[[length(y)]]))
   names(out) <- vapply(m, function(y) trimws(to_title_case(y[[2]])),
-                       FUN.VALUE = character(1))
+    FUN.VALUE = character(1)
+  )
   out
 }
 
-chapter_to_desc_range.icd9 <- function(x) { #nolint
+.chapter_to_desc_range.icd9 <- function(x) { # nolint
   .chapter_to_desc_range(x, re_major = re_icd9_major_bare)
 }
 
-chapter_to_desc_range.icd10 <- function(x) { #nolint
+.chapter_to_desc_range.icd10 <- function(x) { # nolint
   .chapter_to_desc_range(x, re_major = re_icd10_major_bare)
 }
 
-get_chapter_ranges_from_flat <- function(
-  flat_hier = icd10cm2019,
-  field = "chapter"
-) {
-  u <- if (is.factor(flat_hier[[field]]))
+.get_chapter_ranges_from_flat <- function(
+                                          flat_hier = icd10cm2019,
+                                          field = "chapter") {
+  u <- if (is.factor(flat_hier[[field]])) {
     levels(flat_hier[[field]])
-  else
+  } else {
     as.character(unique(flat_hier[[field]]))
+  }
   three_digits <- as.character(flat_hier[["three_digit"]])
   lapply(
     setNames(u, u),
@@ -155,7 +162,8 @@ get_chapter_ranges_from_flat <- function(
         start = td[1],
         end = td[length(td)]
       )
-    })
+    }
+  )
 }
 
 #' Use the WHO ICD-10 French 'hierarchy' flat file to infer chapter ranges
@@ -165,72 +173,101 @@ get_chapter_ranges_from_flat <- function(
 #' directly, which is what \code{.fetch_who_api_chapters()} does, but this is
 #' at least as good.
 #' @keywords internal
-get_chapters_fr <- function(save_data = FALSE) {
+.get_chapters_fr <- function(save_data = FALSE) {
   icd10_chapters_fr <- get_chapter_ranges_from_flat(
     flat_hier = icd10who2008fr,
-    field = "chapter")
-  save_in_data_dir(icd10_chapters_fr)
+    field = "chapter"
+  )
+  .save_in_data_dir(icd10_chapters_fr)
   invisible(icd10_chapters_fr)
 }
 
 #' @rdname get_chapters_fr
 #' @keywords internal
-get_sub_chapters_fr <- function(save_data = FALSE) {
+.get_sub_chapters_fr <- function(save_data = FALSE) {
   icd10_sub_chapters_fr <- get_chapter_ranges_from_flat(
     flat_hier = icd10who2008fr,
-    field = "sub_chapter")
-  save_in_data_dir(icd10_sub_chapters_fr)
+    field = "sub_chapter"
+  )
+  .save_in_data_dir(icd10_sub_chapters_fr)
   invisible(icd10_sub_chapters_fr)
 }
 
-to_title_case <- function(x) {
+.to_title_case <- function(x) {
   for (split_char in c(" ", "-", "[")) {
     s <- strsplit(x, split_char, fixed = TRUE)[[1]]
     x <- paste(toupper(substring(s, 1L, 1L)), substring(s, 2L),
-               sep = "", collapse = split_char)
+      sep = "", collapse = split_char
+    )
   }
   x
 }
 
 #' Get data from the icd.data package, without relying on it being attached
-#' Some data is hidden in active bindings, so it may be downloaded on demand, and some is lazy-loaded. This will work for regular package members, active bindings, and lazy data, whether or not the package is attached or loaded.
-#' @param alt If the data cannot be found, this value is returned. Default is \code{NULL}.
-#' @export
+#'
+#' Some data is hidden in active bindings, so it may be downloaded on demand,
+#' and some is lazy-loaded. This will work for regular package members, active
+#' bindings, and lazy data, whether or not the package is attached or loaded.
+#' @param alt If the data cannot be found, this value is returned. Default is
+#'   \code{NULL}.
 get_icd_data <- function(data_name, alt = NULL) {
-  if (!is.character(data_name))
+  if (!is.character(data_name)) {
     data_name <- deparse(substitute(data_name))
+  }
   ns <- asNamespace("icd.data")
-  out <- try(silent = TRUE,
-             base::getExportedValue(ns, data_name)
+  out <- try(
+    silent = TRUE,
+    base::getExportedValue(ns, data_name)
   )
   if (!inherits(out, "try-error")) return(out)
-  out <- try(silent = TRUE,
-             as.environment(ns)[[data_name]]
+  out <- try(
+    silent = TRUE,
+    as.environment(ns)[[data_name]]
   )
-  if (!inherits(out, "try-error"))
+  if (!inherits(out, "try-error")) {
     out
-  else
+  } else {
     alt
+  }
 }
 
 # two functions are not exported in icd < 3.4
-get_icd34fun <- function(f) {
-  if (exists(f, where = asNamespace("icd"), mode = "function"))
+.get_icd34fun <- function(f) {
+  if (exists(f, where = asNamespace("icd"), mode = "function")) {
     get(f, envir = asNamespace("icd"), mode = "function")
-  else
+  } else {
     stop("Function ", f, " is not exported with icd < 3.4")
+  }
 }
 
-exists_in_ns <- function(name) {
+.exists_in_ns <- function(name) {
   name %in% names(asNamespace("icd.data")[[".__NAMESPACE__."]][["lazydata"]])
 }
 
-# Cannot 'stop' in an active binding for R CMD check because tools::checkS3methods ends up sourcing the bindings, because they are considered to be code. This is an escape hatch, really just for R CMD check.
+# Cannot 'stop' in an active binding for R CMD check because
+# tools::checkS3methods ends up sourcing the bindings, because they are
+# considered to be code. This is an escape hatch, really just for R CMD check.
 .stop_on_absent <- function(...) {
   msg <- paste(unlist(unname(list(...))))
   o <- getOption("icd.data.absent_action")
-  if (o == "stop" && !interactive())
+  if (o == "stop" && !interactive()) {
     stop(msg, call. = FALSE)
+  }
   if (o == "message") message(msg)
   invisible()
+}
+
+.show_options <- function() {
+  o <- options()
+  o[grepl("^icd\\.data", names(o))]
+}
+
+.clear_options <- function() {
+  icd_data_opts <- .show_options()
+  icd_data_opts <- sapply(
+    icd_data_opts,
+    simplify = FALSE, USE.NAMES = TRUE,
+    FUN = function(x) NULL
+  )
+  options(icd_data_opts)
 }

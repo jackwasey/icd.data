@@ -22,11 +22,11 @@ Rstudio is unfortunately considered still to be interactive, so these
 messages may appear prematurely.
 }
 \details{
-This is needed (in addition to icd.data::icd10who2016 active binding),
+This may be needed (in addition to icd.data::icd10who2016 active binding),
 because lazy data and apparently active bindings are not available until the
 package is on the search path. This is difficult or impossible to do in a
 CRAN compatible way in the 'icd' package, so this function is just for that
 purpose, since we can check whether this function exists and call it without
-using ::, whereas this is not possible with lazy data or active bindings.
+using ::, whereas this is not possible with lazy data or active bindings?
 }
 \keyword{datasets}

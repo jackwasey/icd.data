@@ -14,15 +14,15 @@
 #' @keywords internal datagen
 #' @noRd
 generate_uranium_pathology <- function(
-  save_data = TRUE,
-  offline = getOption("icd.data.offline")
-) {
+                                       save_data = TRUE,
+                                       offline = getOption("icd.data.offline")) {
   stopifnot(length(utils::find("odbcConnectAccess2007")) > 0)
   stopifnot(is.logical(save_data), length(save_data) == 1)
   stopifnot(is.logical(offline), length(offline) == 1)
   file_path <- file.path("data-raw",
-                         "Pathology_Office2007.accdb",
-                         package = "icd.data")
+    "Pathology_Office2007.accdb",
+    package = "icd.data"
+  )
   # odbcConnectAccess2007 is only in the Windows version of RODBC
   channel <- RODBC::odbcConnectAccess2007(file_path)
   uranium_pathology <- RODBC::sqlFetch(channel, "qry_ICD-10")
@@ -33,7 +33,10 @@ generate_uranium_pathology <- function(
   attr(uranium_pathology, "icd_short_diag") <- FALSE
   row.names(uranium_pathology) <- seq_len(uranium_pathology)
   class(uranium_pathology) <- c("icd_long_data", "data.frame")
-  if (save_data) save(uranium_pathology,
-                      file = file.path("data", "uranium_pathology.rda"))
+  if (save_data) {
+    save(uranium_pathology,
+      file = file.path("data", "uranium_pathology.rda")
+    )
+  }
   invisible(uranium_pathology)
 }
