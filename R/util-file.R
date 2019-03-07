@@ -1,101 +1,3 @@
-# Prefer CMS? NCHS actually generates the ICD-10-CM codes, at least the
-# diagnostic ones. http://www.cdc.gov/nchs/data/icd/icd10cm/
-
-icd10cm_get_flat_file_cdc <- function(...) {
-  icd10_url_cdc <- "http://www.cdc.gov/nchs/data/icd/icd10cm/"
-  unzip_to_data_raw(
-    url = paste0(icd10_url_cdc, "2016/ICD10CM_FY2016_code_descriptions.zip"),
-    file_name = "icd10cm_order_2016.txt", ...
-  )
-}
-
-#' Get annual version of ICD-10-CM
-#' @param year four-digit
-#' @param ... passed through, e.g., `offline = FALSE`
-icd10cm_get_flat_file <- function(year, verbose = TRUE, ...) {
-  if (verbose) message("Getting flat file for year: ", year)
-  y <- icd10cm_sources[[as.character(year)]]
-  unzip_to_data_raw(
-    paste0(y$base_url, y$dx_zip),
-    # dx_leaf is same, just leaves
-    file_name = y$dx_hier,
-    ...
-  )
-}
-
-#' Fetch ICD-10-CM data from the CMS web site
-#'
-#' YEAR-ICD10-Code-Descriptions has flat files, YEAR-ICD10-Code-Tables-Index has
-#' XML
-#' @keywords internal
-.fetch_icd10cm_all <- function(verbose = FALSE, ...) {
-  for (year in as.character(2014:2019)) {
-    for (dx in c(TRUE, FALSE)) {
-      if (verbose) message("Working on year: ", year, " and dx is ", dx)
-      .fetch_icd10cm_ver(year, dx = dx, verbose = verbose, ...)
-    }
-  }
-}
-
-#' @rdname .fetch_icd10cm_all
-#' @keywords internal
-#' @noRd
-.fetch_icd10cm_ver <- function(
-  ver,
-  dx,
-  save_data = FALSE,
-  verbose = FALSE,
-  ...
-) {
-  message("Please wait a moment to download (or use cached) ~10MB of data...")
-  stopifnot(is.numeric(ver) || is.character(ver), length(ver) == 1)
-  ver <- as.character(ver)
-  stopifnot(is.logical(dx), length(dx) == 1)
-  stopifnot(is.logical(verbose), length(verbose) == 1)
-  stopifnot(as.character(ver) %in% names(icd10cm_sources))
-  if (verbose) message(ifelse(dx, "dx", "pcs"))
-  s <- icd10cm_sources[[ver]]
-  url <- paste0(s$base_url, s$dx_zip)
-  # fox dx codes, get either the hier or just leaf flat file here:
-  file_name <- s$dx_hier
-  if (!dx) {
-    if ("pcs_zip" %nin% names(s) || is.na(s$pcs_zip)) {
-      if (verbose) message("No PCS flat file zip name.")
-      return()
-    }
-    url <- paste0(s$base_url, s$pcs_zip)
-    file_name <- s$pcs_flat
-  }
-  stopifnot(!is.null(file_name))
-  if (is.na(file_name)) {
-    if (verbose) message("No PCS file name.")
-    return()
-  }
-  if (verbose) message("url = ", url, " and file_name = ", file_name)
-  save_name <- .get_versioned_raw_file_name(file_name, ver)
-  unzip_to_data_raw(
-    url = url,
-    file_name = file_name,
-    verbose = verbose,
-    save_name = save_name,
-    raw_data_dir = ifelse(ver == "2016",
-                          .get_raw_data_dir(),
-                          get_resource_dir()
-    ),
-    ...
-  )
-}
-
-# make function to fetch each at a time:
-for (year in as.character(2014:2019)) {
-  for (dx in c(TRUE, FALSE)) {
-
-    f <- .fetch_icd10cm_ver(year = year, dx = dx)
-    fn <- paste0(".fetch_icd10cm", year, ifelse(dx, "", "_pc"))
-    assign(fn, f, parent.frame())
-  }
-}
-
 #' Get the raw data directory
 #'
 #' Following Hadley Wickham recommendations in R Packages, this should be in
@@ -103,6 +5,7 @@ for (year in as.character(2014:2019)) {
 #' @noRd
 #' @keywords internal
 .get_raw_data_dir <- function() {
+  message("Using package raw data path, not resource directory.")
   system.file("data-raw", package = "icd.data")
 }
 
@@ -125,11 +28,10 @@ for (year in as.character(2014:2019)) {
 #' @return invisibly returns the data
 #' @keywords internal
 #' @noRd
-.save_in_data_dir <- function(
-  var_name,
-  suffix = "",
-  compress = "gzip",
-  envir = parent.frame()) {
+.save_in_data_dir <- function(var_name,
+                              suffix = "",
+                              compress = "gzip",
+                              envir = parent.frame()) {
   warning("Saving to data dir: save to user's resource directory instead?")
   package_dir <- getwd()
   data_path <- "data"
@@ -153,17 +55,16 @@ for (year in as.character(2014:2019)) {
   invisible(get(var_name, envir = envir))
 }
 
-.save_in_resource_dir <- function(
-  var_name,
-  envir = parent.frame()) {
+.save_in_resource_dir <- function(var_name,
+                                  envir = parent.frame()) {
   if (!is.character(var_name)) {
     var_name <- as.character(substitute(var_name))
   }
   stopifnot(is.character(var_name))
   stopifnot(exists(var_name, envir = envir))
   saveRDS(get(var_name, envir = envir),
-          .resource_rds_path(var_name),
-          compress = "gzip"
+    .rds_path(var_name),
+    compress = "gzip"
   )
   invisible(get(var_name, envir = envir))
 }
@@ -183,12 +84,12 @@ for (year in as.character(2014:2019)) {
 #' @keywords internal
 #' @noRd
 .unzip_single <- function(
-  url,
-  file_name,
-  save_path,
-  insecure = TRUE,
-  verbose = FALSE,
-  ...) {
+                          url,
+                          file_name,
+                          save_path,
+                          insecure = TRUE,
+                          verbose = FALSE,
+                          ...) {
   stopifnot(is.character(url))
   stopifnot(is.character(file_name))
   stopifnot(is.character(save_path))

@@ -23,7 +23,7 @@ skip_flat_icd9_avail <- function(ver = "31") {
   if (is.na(fn_orig)) {
     fn_orig <- dat$other_filename
   }
-  f_info_short <- unzip_to_data_raw(dat$url,
+  f_info_short <- .unzip_to_data_raw(dat$url,
     file_name = fn_orig,
     offline = TRUE
   )
@@ -34,16 +34,14 @@ skip_flat_icd9_all_avail <- function() {
   for (v in icd9cm_sources$version) skip_flat_icd9_avail(v)
 }
 
-skip_icd10cm_flat_avail <- function(
-                                    year,
+skip_icd10cm_flat_avail <- function(year,
                                     msg = "skipping test because flat file ICD-10-CM source not available") {
   if (is.null(icd10cm_get_flat_file(year = year, offline = TRUE))) {
     testthat::skip(msg)
   }
 }
 
-skip_icd10cm_xml_avail <- function(
-                                   msg = "skipping test because XML file ICD-10-CM source not available")
+skip_icd10cm_xml_avail <- function(msg = "skipping test because XML file ICD-10-CM source not available")
   if (is.null(icd10cm_get_xml_file(offline = TRUE))) testthat::skip(msg)
 
 skip_flat_icd9_avail_all <- function() {

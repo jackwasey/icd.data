@@ -13,8 +13,7 @@
 #'   \href{https://www.cms.gov/Medicare/Coding/ICD10/downloads/icd-10quickrefer.pdf}{CMS ICD-10 Quick Reference}
 #'   \href{https://www.cdc.gov/nchs/icd/icd10cm.htm#FY\%202019\%20release\%20of\%20ICD-10-CM}{CDC copy of ICD-10-CM for 2019}
 #' @keywords internal
-.icd10cm_parse_all <- function(
-                               save_data = FALSE,
+.icd10cm_parse_all <- function(save_data = FALSE,
                                offline = getOption("icd.data.offline"),
                                verbose = TRUE,
                                twentysixteen = FALSE,
@@ -38,10 +37,9 @@
   invisible(out)
 }
 
-.icd10cm_parse_year <- function(
-                                year = 2019,
-                                save_data = FALSE,
-                                verbose = FALSE,
+.icd10cm_parse_year <- function(year = 2019,
+                                save_data = TRUE,
+                                verbose = TRUE,
                                 ...) {
   message("Please wait a few moments to parse data...")
   stopifnot(is.numeric(year) || is.character(year))
@@ -50,7 +48,7 @@
   stopifnot(is.logical(verbose) && length(verbose) == 1L)
   stopifnot(as.character(year) %in% names(icd10cm_sources))
   if (verbose) message("Getting flat file for year: ", year)
-  f_info <- icd10cm_get_flat_file(year = year, verbose = verbose, ...)
+  f_info <- .icd10cm_get_flat_file(year = year, verbose = verbose, ...)
   stopifnot(!is.null(f_info))
   # readLines may muck up encoding, resulting in weird factor order generation
   # later?
@@ -127,24 +125,18 @@
   )
 }
 
-.get_erm <- function() {
-  memoise::memoise(icd.data:::.get_icd34fun("expand_range_major"))
-}
-
-.icd10_generate_chap_lookup <- function(
-                                        year,
+.icd10_generate_chap_lookup <- function(year,
                                         chapters = icd.data::icd10_chapters,
                                         prefix = "chap",
                                         verbose = FALSE) {
   stopifnot(is.list(chapters), is.character(prefix))
+  erm <- memoise::memoise(icd.data:::.get_icd34fun("expand_range_major"))
   df_rows <- lapply(
     names(chapters),
     function(nm) {
       chap <- chapters[[nm]]
       out <- data.frame(
-        # expand undefined to avoid circular dependency on the ICD-10-CM data we
-        # are making now. This makes it much slower.
-        .get_erm()(
+        erm(
           icd::as.icd10cm(chap["start"]),
           icd::as.icd10cm(chap["end"]),
           defined = FALSE),

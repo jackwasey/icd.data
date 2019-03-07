@@ -18,8 +18,8 @@ vector of year (or year-like version) being returned.}
 Get the ICD-10-CM versions available in this package
 }
 \examples{
-  # Diagnostic codes:
-  get_icd10cm_available()
-  # Just get the years avaiable for English language procedure codes
-  get_icd10cm_available(pc = TRUE, return_year = TRUE)
+# Diagnostic codes:
+get_icd10cm_available()
+# Just get the years avaiable for English language procedure codes
+get_icd10cm_available(pc = TRUE, return_year = TRUE)
 }

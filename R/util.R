@@ -224,6 +224,11 @@ get_icd_data <- function(data_name, alt = NULL) {
     silent = TRUE,
     as.environment(ns)[[data_name]]
   )
+  if (!inherits(out, "try-error")) return(out)
+  out <- try(
+    silent = TRUE,
+    .get_from_cache(data_name, must_work = TRUE)
+  )
   if (!inherits(out, "try-error")) {
     out
   } else {
@@ -250,7 +255,7 @@ get_icd_data <- function(data_name, alt = NULL) {
 .stop_on_absent <- function(...) {
   msg <- paste(unlist(unname(list(...))))
   o <- getOption("icd.data.absent_action")
-  if (o == "stop" && !interactive()) {
+  if (o == "stop" || !interactive()) {
     stop(msg, call. = FALSE)
   }
   if (o == "message") message(msg)

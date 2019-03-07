@@ -89,7 +89,7 @@
 #' @template save_data
 #' @param path Absolute path in which to save parsed data
 #' @param ... Arguments passed to other functions, e.g., \code{offline} for
-#'   \code{unzip_to_data_raw}
+#'   \code{.unzip_to_data_raw}
 #' @return invisibly return the result
 #' @keywords internal datagen
 #' @noRd
@@ -107,7 +107,7 @@
   dat <- icd9cm_sources[icd9cm_sources$version == ver, ]
   fn_short_orig <- dat$short_filename
   fn_long_orig <- dat$long_filename
-  f_info_short <- unzip_to_data_raw(
+  f_info_short <- .unzip_to_data_raw(
     dat$url,
     file_name = fn_short_orig,
     verbose = verbose,
@@ -118,7 +118,7 @@
   )
   f_info_long <- NULL
   if (!is.na(fn_long_orig)) {
-    f_info_long <- unzip_to_data_raw(
+    f_info_long <- .unzip_to_data_raw(
       url = dat$url,
       file_name = fn_long_orig,
       verbose = verbose,
@@ -223,7 +223,7 @@
   fn_orig <- v27_dat$other_filename
   url <- v27_dat$url
   message("original v27 file name = '", fn_orig, "'. URL = ", url)
-  f27_info <- unzip_to_data_raw(url, fn_orig, ...)
+  f27_info <- .unzip_to_data_raw(url, fn_orig, ...)
   f <- file(f27_info$file_path, encoding = "latin1")
   icd9cm_billable27 <-
     utils::read.csv(f27_info$file_path,

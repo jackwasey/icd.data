@@ -4,7 +4,7 @@
 .icd10cm_get_xml_file <- function(ver = "2019", ...) {
   # http://www.cdc.gov/nchs/data/icd/icd10cm/2016/ICD10CM_FY2016_Full_XML.ZIP
   s <- icd10cm_sources[[ver]]
-  unzip_to_data_raw(
+  .unzip_to_data_raw(
     url = paste0(s$base_url, s$dx_xml_zip),
     file_name = s$dx_xml,
     save_name = .get_versioned_raw_file_name(s$dx_xml, ver),

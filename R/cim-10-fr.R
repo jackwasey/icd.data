@@ -3,8 +3,8 @@
 #' The short descriptions are capitalized, with accented characters, so leaving as is.
 #' @template save_data
 #' @keywords internal
-parse_cim_fr <- function(save_data = FALSE, ...) {
-  fp <- unzip_to_data_raw(
+.parse_cim_fr <- function(save_data = FALSE, ...) {
+  fp <- .unzip_to_data_raw(
     url = paste(
       sep = "/",
       "https://www.atih.sante.fr",
@@ -62,7 +62,7 @@ parse_cim_fr <- function(save_data = FALSE, ...) {
 #' @param ... passed to `download_to_data_raw`, e.g., `offline = FALSE`.
 #' @seealso \code{link{parse_icd10be2014_be}}
 #' @keywords internal
-parse_icd10be2017 <- function(save_data = FALSE, ...) {
+.parse_icd10be2017 <- function(save_data = FALSE, ...) {
   # MS Excel sheet with French English and Dutch translations of ICD-10-CM.
   # Currently all the codes are identical to ICD-10-CM US version.
   site <- "https://www.health.belgium.be"
@@ -136,7 +136,7 @@ parse_icd10be2017 <- function(save_data = FALSE, ...) {
 #' @param ... passed to `.download_to_data_raw`, e.g., `offline = FALSE`.
 #' @seealso \code{link{parse_icd10be2014_be}}
 #' @keywords internal
-parse_icd10be2014 <- function(save_data = FALSE, ...) {
+.parse_icd10be2014 <- function(save_data = FALSE, ...) {
   # MS Excel sheet with French English and Dutch translations of ICD-10-CM. Not
   # sure yet whether they also modified the codes themselves.
   site <- "https://www.health.belgium.be"

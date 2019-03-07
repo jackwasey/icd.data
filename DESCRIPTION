@@ -29,7 +29,8 @@ Suggests:
     RODBC,
     testthat,
     utils,
-    xml2
+    xml2,
+    covr
 Encoding: UTF-8
 Language: en-US
 LazyData: true

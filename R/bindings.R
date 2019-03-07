@@ -1,9 +1,9 @@
-.stop_binding_ro <- function() {
-  stop("This active binding cannot be set", call. = FALSE)
-}
+
+# Set up an environemnt to cache ICD data
+.icd_data_env <- new.env(parent = emptyenv())
 
 # Generate getter functions for all bound data
-binding_names <- c(
+.binding_names <- c(
   # WHO
   "icd10who2016",
   "icd10who2008fr",
@@ -16,49 +16,67 @@ binding_names <- c(
   "icd10be2017_pc",
   # ICD-10-CM
   "icd10cm2014",
+  "icd10cm2014_pc",
   "icd10cm2015",
-  # not 16
+  "icd10cm2015_pc",
+  # not 16 dx
+  "icd10cm2016_pc",
   "icd10cm2017",
-  "icd10cm2018"
-  # not 2019
+  "icd10cm2017_pc",
+  "icd10cm2018",
+  "icd10cm2018_pc",
+  # not 19 dx
+  "icd10cm2019_pc"
 )
-.icd_data_env <- new.env(parent = emptyenv())
 
 .make_active_bindings <- function(final_env, verbose = TRUE) {
   # This looks hairy, but we just generate the getters and binding functions
-  for (var_name in binding_names) {
+  for (var_name in .binding_names) {
     if (verbose) message("working on ", var_name)
+    # TODO: would like to substitute symbol, not string
     f <- substitute(
-      env = list(var_name = var_name),
-      function(
-                     alt = NULL,
+      env = list(
+        var_name = var_name,
+        dl_fun_name = paste0(".fetch_", var_name)
+      ),
+      function(alt = NULL,
                      must_work = TRUE,
-                     msg = past("Unable to find", var_name),
+                     msg = paste("Unable to find", var_name),
                      verbose = TRUE) {
         if (verbose) message("Starting getter")
         stopifnot(is.character(var_name))
-        if (verbose) message("Trying icd_data_env environment")
-        if (.exists(var_name)) return(.get(var_name))
-        fp <- .rds_path(var_name)
-        if (verbose) message("Trying file at: ", fp)
-        if (file.exists(fp)) {
-          val <- readRDS(fp)
-          .assign(var_name, val)
-          return(val)
-        }
+        dat <- .get_from_cache(var_name,
+          must_work = FALSE,
+          verbose = verbose
+        )
+        if (!is.null(dat)) return(dat)
         if (verbose) message("Trying to call fetch function")
-        dl_fun_name <- paste0("fetch_", var_name)
         if (verbose) message("name is ", dl_fun_name)
-        for (fr in list(parent.frame(), asNamespace("icd.data"))) {
-          if (exists(dl_fun_name, fr)) {
-            if (verbose)
-              message("Found!")
-            return(do.call(get(dl_fun_name, fr)))
-          }
+        # for (fr in list(parent.frame(), asNamespace("icd.data"))) {
+        fr <- environment()
+        if (exists(dl_fun_name, fr, inherits = TRUE)) {
+          if (verbose) message("Found!")
+          return(do.call(get(dl_fun_name,
+            envir = fr,
+            inherits = TRUE
+          ),
+          args = list() # parse = TRUE,
+          # save_data = TRUE,
+          # verbose = verbose)
+          ))
+        } else {
+          stop("No fetch function: ", dl_fun_name)
         }
+        dat <- .get_from_cache(var_name,
+          must_work = FALSE,
+          verbose = verbose
+        )
+        if (!is.null(dat)) return(dat)
         if (must_work) {
-          stop("Cannot find or fetch that data using ",
-               dl_fun_name, ", and it must work.")
+          stop(
+            "Cannot find or fetch that data using ",
+            dl_fun_name, ", and it must work."
+          )
         }
         if (is.null(alt)) {
           warning(msg)
@@ -73,18 +91,18 @@ binding_names <- c(
     # now the active binding functions themselves
     if (verbose) message("getter done, now active binding")
     # environment just for the getter name substitution
-    g <- substitute(
+    binding_fun <- substitute(
       env = list(getter_name = getter_name),
       function(x) {
         if (!missing(x)) .stop_binding_ro()
         dat <- do.call(getter_name, args = list())
         if (!is.null(dat)) return(dat)
-        message_who()
+        .message_who()
         .stop_on_absent(paste(var_name, "not available."))
       }
     )
     bound_name <- paste0(".", var_name, "_binding")
-    assign(bound_name, eval(g), final_env)
+    assign(bound_name, eval(binding_fun), final_env)
     message("Trying to create active binding itself")
     ff <- get(bound_name, final_env)
     message("class of ff is: ", class(ff))
@@ -111,7 +129,7 @@ binding_names <- c(
         if (!missing(x)) .stop_binding_ro()
         dat <- getter()
         if (!is.null(dat)) return(dat)
-        message_who()
+        .message_who()
         .stop_on_absent("ICD-10-BE 2014 not available.")
       }
     )
@@ -119,25 +137,6 @@ binding_names <- c(
   environment(.mkabfun) <- env
   .mkabfun
 }
-
-
-# experiment
-# mkmkab <- function(env = parent.frame()) {
-#   mkab <- function(fun) {
-#     force(fun)
-#     function(value) {
-#       if (!missing(value)) {
-#         stop("Binding is read-only.", call. = FALSE)
-#       }
-#       fun()
-#     }
-#   }
-#   environment(mkab) <- env
-#   mkab
-# }
-# makeActiveBinding("jack", mkmkab()(getwd), .GlobalEnv)
-# makeActiveBinding(".icd10cm2015", mkmkab(environment())(as.name("get_icd10cm2015")), .GlobalEnv)
-
 
 # Dynamic
 .icd9cm2011_binding <- function(x) {
@@ -154,139 +153,7 @@ binding_names <- c(
   if (!missing(x)) stop_binding_ro()
   icd.data::icd10cm2019
 }
-# # Belgium
-# .icd10be2014_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   dat <- get_icd10be2014()
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10-BE 2014 not available.")
-# }
-# .icd10be2014_pc_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   #dat <- get_icd10be2014_pc()
-#   # TODO!
-#   dat <- "TODO"
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10-BE 2014 procedure codes not available.")
-# }
-# .icd10be2017_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   #dat <- get_icd10be2017()
-#   # TODO!
-#   dat <- "TODO"
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10-BE 2017 not available.")
-# }
-# .icd10be2017_pc_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   #dat <- get_icd10be2017_pc()
-#   # TODO!
-#   dat <- "TODO"
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10-BE 2017 procedure codes not available.")
-# }
-# # ICD-10-CM
-# .icd10cm2014_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   dat <- .get_icd10cm_ver(2014, TRUE)
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10-CM 2014 not available.")
-# }
-# .icd10cm2014_pc_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   dat <- .get_icd10cm_ver(2014, FALSE)
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10-CM 2014 not available.")
-# }
-# .icd10cm2015_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   dat <- .get_icd10cm_ver(2015, TRUE)
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10-CM 2015 not available.")
-# }
-# .icd10cm2015_pc_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   dat <- .get_icd10cm_ver(2015, FALSE)
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10-CM 2015 not available.")
-# }
-# # no icd10cm2016 binding as this is stored directly in data/
-# .icd10cm2016_pc_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   dat <- .get_icd10cm_ver(2016, FALSE)
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10-CM 2016 not available.")
-# }
-# .icd10cm2017_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   dat <- .get_icd10cm_ver(2017, TRUE)
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10-CM 2017 not available.")
-# }
-# .icd10cm2017_pc_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   dat <- .get_icd10cm_ver(2017, FALSE)
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10-CM 2017 not available.")
-# }
-# .icd10cm2018_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   dat <- .get_icd10cm_ver(2018, TRUE)
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10-CM 2018 not available.")
-# }
-# .icd10cm2018_pc_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   dat <- .get_icd10cm_ver(2018, FALSE)
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10-CM 2018 not available.")
-# }
-# # icd10cm2019 diagnostic codes are included in data/
-# .icd10cm2019_pc_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   dat <- .get_icd10cm_ver(2019, FALSE)
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10-CM 2019 not available.")
-# }
-# .icd10who2016_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   dat <- get_icd10who2016()
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("WHO ICD-10 2016 not available.")
-# }
-#
-# .icd10who2008fr_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   dat <- get_icd10who2008fr()
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10 2008 France not available.",
-#                   "CIM-10 2008 n'est pas disponible")
-# }
-#
-# .icd10fr2019_binding <- function(x) {
-#   if (!missing(x)) stop_binding_ro()
-#   dat <- get_icd10fr2019()
-#   if (!is.null(dat)) return(dat)
-#   message_who()
-#   .stop_on_absent("ICD-10-FR 2019 France not available.",
-#                   "CIM-10-FR 2019 n'est pas disponible")
-# }
+
 #' Localised synonym for icd10fr2019, with French column names
 #' @keywords internal
 #' @noRd
@@ -314,12 +181,13 @@ binding_names <- c(
 .message_who <- function() {
   o <- getOption("icd.data_absent_action")
   if (!is.null(o) && o %nin% c("stop", "message")) {
+    # TODO: update this message, as we now automate.
     message(
       "WHO ICD data must be downloaded by each user due to copyright
     concerns. This may be achieved by running either of the commands
 
-    fetch_icd10who2016()
-    fetch_icd10who2008_fr()
+    icd.data:::.fetch_icd10who2016()
+    icd.data:::.fetch_icd10who2008_fr()
 
     The data has to be saved somewhere accessible. The
     location is given by:
@@ -335,4 +203,8 @@ binding_names <- c(
     set_resource_dir(\"new/path/to/dir\")"
     )
   }
+}
+
+.stop_binding_ro <- function() {
+  stop("This active binding cannot be set.", call. = FALSE)
 }

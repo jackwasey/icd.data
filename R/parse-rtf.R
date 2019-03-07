@@ -25,7 +25,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   rtf_dat <- icd9cm_sources[icd9cm_sources$f_year == year, ]
   fn <- rtf_dat$rtf_filename
   url <- rtf_dat$rtf_url
-  unzip_to_data_raw(url, file_name = fn, verbose = verbose, ...)
+  .unzip_to_data_raw(url, file_name = fn, verbose = verbose, ...)
 }
 
 #' parse RTF description of entire ICD-9-CM for a specific year

@@ -10,6 +10,25 @@
   get(x = var_name, envir = .icd_data_env)
 }
 
+.get_from_cache <- function(var_name, must_work = TRUE, verbose = TRUE) {
+  if (verbose) message("Trying to get from cache env or dir")
+  stopifnot(is.character(var_name))
+  if (verbose) message("Trying icd_data_env environment")
+  if (.exists(var_name)) return(.get(var_name))
+  fp <- .rds_path(var_name)
+  if (verbose) message("Trying file at: ", fp)
+  if (file.exists(fp)) {
+    val <- readRDS(fp)
+    .assign(var_name, val)
+    return(val)
+  }
+  if (must_work) {
+    stop("Unable to get cached data for: ", var_name)
+  }
+  if (verbose) message(var_name, " not found in cache env or dir.")
+  invisible()
+}
+
 .assign <- function(var_name, value) {
   assign(
     x = var_name,
@@ -79,8 +98,7 @@ get_resource_dir <- function() {
   if (interactive()) {
     ok <- isTRUE(
       askYesNo(
-        "For some data, icd.data needs to download it on demand.
-May I download a few MB per ICD edition, as needed?"
+        "For some data, icd.data needs to download it on demand. May I download a few MB per ICD edition, as needed?" # nolint
       ) # nolint
     )
   }

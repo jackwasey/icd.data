@@ -42,84 +42,6 @@
   if (!("icd.data.icd10cm_active_ver" %in% names(options()))) {
     set_icd10cm_active_ver(2019, check_exists = FALSE)
   }
-
-  # # Belgium
-  # makeActiveBinding(sym = "icd10be2014",
-  #                   fun = .icd10be2014_binding,
-  #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "icd10be2014_pc",
-  #                   fun = .icd10be2014_pc_binding,
-  #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "icd10be2017",
-  #                   fun = .icd10be2017_binding,
-  #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "icd10be2017_pc",
-  #                   fun = .icd10be2017_pc_binding,
-  #                   env = parent.env(environment()))
-  # # ICD-10-CM
-  # makeActiveBinding(sym = "icd10cm2014",
-  #                   fun = .icd10cm2014_binding,
-  #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "icd10cm2014_pc",
-  #                   fun = .icd10cm2014_pc_binding,
-  #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "icd10cm2015",
-  #                   fun = .icd10cm2015_binding,
-  #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "icd10cm2015_pc",
-  #                   fun = .icd10cm2015_pc_binding,
-  #                   env = parent.env(environment()))
-  # # makeActiveBinding(sym = "icd10cm2016",
-  # #                   fun = .icd10cm2016_binding,
-  # #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "icd10cm2016_pc",
-  #                   fun = .icd10cm2016_pc_binding,
-  #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "icd10cm2017",
-  #                   fun = .icd10cm2017_binding,
-  #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "icd10cm2017_pc",
-  #                   fun = .icd10cm2017_pc_binding,
-  #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "icd10cm2018",
-  #                   fun = .icd10cm2018_binding,
-  #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "icd10cm2018_pc",
-  #                   fun = .icd10cm2018_pc_binding,
-  #                   env = parent.env(environment()))
-  # # makeActiveBinding(sym = "icd10cm2019",
-  # #                   fun = .icd10cm2019_binding,
-  # #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "icd10cm2019_pc",
-  #                   fun = .icd10cm2019_pc_binding,
-  #                   env = parent.env(environment()))
-  # # WHO
-  # makeActiveBinding(sym = "icd10who2016",
-  #                   fun = .icd10who2016_binding,
-  #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "icd10who2008fr",
-  #                   fun = .icd10who2008fr_binding,
-  #                   env = parent.env(environment()))
-  # # Dynamic aliases
-  # makeActiveBinding(sym = "icd10cm_latest",
-  #                   fun = .icd10cm_latest_binding,
-  #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "icd10cm_active",
-  #                   fun = .icd10cm_active_binding,
-  #                   env = parent.env(environment()))
-  # # TODO: make this download on demand
-  # makeActiveBinding(sym = "icd10fr2019",
-  #                   fun = .icd10fr2019_binding,
-  #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "cim10fr2019",
-  #                   fun = .cim10fr2019_binding,
-  #                   env = parent.env(environment()))
-  # makeActiveBinding(sym = "icd9cm2011",
-  #                   fun = .icd9cm2011_binding,
-  #                   env = parent.env(environment()))
-  if (!("icd.data.icd10cm_active_ver" %in% names(options()))) {
-    set_icd10cm_active_ver(2019, check_exists = FALSE)
-  }
   invisible()
 }
 
@@ -129,8 +51,10 @@
 }
 
 release_questions <- function() {
-  c("codetools::checkUsagePackage('icd.data', all = TRUE)",
-    "styler::style_pkg()")
+  c(
+    "codetools::checkUsagePackage('icd.data', all = TRUE)",
+    "styler::style_pkg()"
+  )
 }
 
 utils::globalVariables(c(
