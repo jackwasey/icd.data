@@ -2,7 +2,7 @@
 % Please edit documentation in R/parse-icd10.R
 \name{.icd10cm_parse_all}
 \alias{.icd10cm_parse_all}
-\title{get all ICD-10-CM codes}
+\title{Get all ICD-10-CM codes}
 \source{
 \url{https://www.cms.gov/Medicare/Coding/ICD10} also available from
 \url{http://www.cdc.gov/nchs/data/icd/icd10cm/2016/ICD10CM_FY2016_code_descriptions.zip}.

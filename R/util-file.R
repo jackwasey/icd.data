@@ -62,6 +62,7 @@
   }
   stopifnot(is.character(var_name))
   stopifnot(exists(var_name, envir = envir))
+  .assign(var_name, get(var_name, envir = envir))
   saveRDS(get(var_name, envir = envir),
     .rds_path(var_name),
     compress = "gzip"

@@ -276,3 +276,15 @@ get_icd_data <- function(data_name, alt = NULL) {
   )
   options(icd_data_opts)
 }
+
+.have_memoise <- function() {
+  have_memoise <- requireNamespace("memoise", quietly = TRUE)
+  if (!have_memoise) {
+    message(
+      "Consider installing 'memoise' from CRAN using:\n",
+      'install.packages("memoise")\n',
+      "This will allow the WHO data download to resume if interrupted."
+    )
+  }
+  have_memoise
+}

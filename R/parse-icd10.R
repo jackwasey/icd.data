@@ -1,6 +1,4 @@
-# nocov start
-#
-#' get all ICD-10-CM codes
+#' Get all ICD-10-CM codes
 #'
 #' Gets all ICD-10-CM codes from an archive on the CDC web site.
 #'
@@ -102,8 +100,8 @@
   chap_lookup <- .icd10_generate_chap_lookup(year = year, verbose = verbose)
   dat[["chapter"]] <-
     merge(dat["three_digit"], chap_lookup,
-      by.x = "three_digit", by.y = "chap_major",
-      all.x = TRUE
+          by.x = "three_digit", by.y = "chap_major",
+          all.x = TRUE
     )[["chap_desc"]]
   dat <- dat[.get_icd34fun("order.icd10cm")(dat$code), ]
   class(dat$code) <- c("icd10cm", "icd10", "character")
@@ -130,7 +128,13 @@
                                         prefix = "chap",
                                         verbose = FALSE) {
   stopifnot(is.list(chapters), is.character(prefix))
-  erm <- memoise::memoise(icd.data:::.get_icd34fun("expand_range_major"))
+  erm <- if (.have_memoise())
+    memoise::memoise(
+      icd.data:::.get_icd34fun("expand_range_major"),
+      cache = memoise::cache_filesystem(
+        file.path(get_resource_dir(), "memoise")))
+  else
+    icd.data:::.get_icd34fun("expand_range_major")
   df_rows <- lapply(
     names(chapters),
     function(nm) {
@@ -153,4 +157,3 @@
   )
   chap_lookup
 }
-# nocov end

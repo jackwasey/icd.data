@@ -11,7 +11,8 @@
 }
 
 .get_from_cache <- function(var_name, must_work = TRUE, verbose = TRUE) {
-  if (verbose) message("Trying to get from cache env or dir")
+  if (verbose) message("Trying to get ", sQuote(var_name),
+                       " from cache env or dir")
   stopifnot(is.character(var_name))
   if (verbose) message("Trying icd_data_env environment")
   if (.exists(var_name)) return(.get(var_name))
@@ -82,10 +83,10 @@ set_resource_dir <- function(path) {
 get_resource_dir <- function() {
   o <- getOption("icd.data.resource")
   if (is.null(o)) {
-    return((setup_resource_dir()))
+    return(setup_resource_dir())
   } # double bracket to show invisible
   if (!dir.exists(o)) {
-    return((setup_resource_dir()))
+    return(setup_resource_dir())
   }
   o
 }

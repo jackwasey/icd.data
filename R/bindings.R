@@ -40,14 +40,14 @@
         dl_fun_name = paste0(".fetch_", var_name)
       ),
       function(alt = NULL,
-                     must_work = TRUE,
-                     msg = paste("Unable to find", var_name),
-                     verbose = TRUE) {
+               must_work = TRUE,
+               msg = paste("Unable to find", var_name),
+               verbose = TRUE) {
         if (verbose) message("Starting getter")
         stopifnot(is.character(var_name))
         dat <- .get_from_cache(var_name,
-          must_work = FALSE,
-          verbose = verbose
+                               must_work = FALSE,
+                               verbose = verbose
         )
         if (!is.null(dat)) return(dat)
         if (verbose) message("Trying to call fetch function")
@@ -56,20 +56,19 @@
         fr <- environment()
         if (exists(dl_fun_name, fr, inherits = TRUE)) {
           if (verbose) message("Found!")
-          return(do.call(get(dl_fun_name,
-            envir = fr,
-            inherits = TRUE
-          ),
-          args = list() # parse = TRUE,
-          # save_data = TRUE,
-          # verbose = verbose)
-          ))
+          out <- do.call(get(dl_fun_name,
+                             envir = fr,
+                             inherits = TRUE),
+                         args = list()
+          )
+          .save_in_resource_dir(out, var_name = var_name)
+          return(out)
         } else {
           stop("No fetch function: ", dl_fun_name)
         }
         dat <- .get_from_cache(var_name,
-          must_work = FALSE,
-          verbose = verbose
+                               must_work = FALSE,
+                               verbose = verbose
         )
         if (!is.null(dat)) return(dat)
         if (must_work) {
@@ -172,8 +171,8 @@
   )
   rownames(cim10fr2019) <- NULL
   assign("cim10fr2019",
-    value = cim10fr2019,
-    envir = .icd_data_env
+         value = cim10fr2019,
+         envir = .icd_data_env
   )
   cim10fr2019
 }

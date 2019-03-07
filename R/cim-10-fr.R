@@ -62,7 +62,7 @@
 #' @param ... passed to `download_to_data_raw`, e.g., `offline = FALSE`.
 #' @seealso \code{link{parse_icd10be2014_be}}
 #' @keywords internal
-.parse_icd10be2017 <- function(save_data = FALSE, ...) {
+.parse_icd10be2017 <- function(save_data = TRUE, ...) {
   # MS Excel sheet with French English and Dutch translations of ICD-10-CM.
   # Currently all the codes are identical to ICD-10-CM US version.
   site <- "https://www.health.belgium.be"

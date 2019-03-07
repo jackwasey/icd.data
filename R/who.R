@@ -16,14 +16,17 @@
 #' using ::, whereas this is not possible with lazy data or active bindings?
 #' @template verbose
 #' @keywords datasets
-.get_icd10who2016 <- function(verbose = FALSE) {
-  .get_from_cache("icd10who2016")
-}
-
-#' @rdname get_icd10who2016
-.get_icd10who2008fr <- function() {
-  .get_from_cache("icd10who2008fr")
-}
+#' @noRd
+NULL
+#
+# .get_icd10who2016 <- function(verbose = FALSE) {
+#   .get_from_cache("icd10who2016")
+# }
+#
+# # ' @rdname get_icd10who2016
+# .get_icd10who2008fr <- function() {
+#   .get_from_cache("icd10who2008fr")
+# }
 
 # returns the JSON data, or fails with NULL
 .fetch_who_api <- function(resource,
@@ -32,16 +35,10 @@
                            lang = "en",
                            verbose = FALSE) {
   httr_get <- httr::GET
-  if (requireNamespace("memoise", quietly = TRUE)) {
+  if (.have_memoise()) {
     httr_get <- memoise::memoise(
       httr::GET,
-      cache = memoise::cache_filesystem(
-        file.path(
-          getOption("icd.data.resource",
-            default = stop("Option icd.data.resource not set")
-          ),
-          "memoise"
-        )
+      cache = memoise::cache_filesystem(file.path(get_resource_dir(), "memoise")
       )
     )
   }
@@ -68,7 +65,9 @@
                                          year = 2016,
                                          lang = "en", verbose = TRUE) {
   .fetch_who_api_children(
-    ver = ver, year = year, lang = lang,
+    ver = ver,
+    year = year,
+    lang = lang,
     verbose = verbose
   )[["label"]]
 }
@@ -101,33 +100,14 @@
 #' @param ... further arguments passed to self recursively, or `.fetch_who_api`
 #' @keywords internal
 #' @noRd
-.fetch_icd10_who <- function(
-                             concept_id = NULL,
+.fetch_icd10_who <- function(concept_id = NULL,
                              year = 2016,
                              lang = "en",
                              verbose = FALSE,
                              hier_code = character(),
                              hier_desc = character(),
-                             debug = FALSE,
                              ...) {
-  if (!requireNamespace("memoise", quietly = TRUE)) {
-    message(
-      "Consider installing 'memoise' from CRAN using:\n",
-      'install.packages("memoise")\n',
-      "This will allow the WHO data download to resume if interrupted."
-    )
-  }
   if (verbose) print(hier_code)
-  new_rows <- data.frame(
-    code = character(),
-    leaf = logical(),
-    desc = character(),
-    three_digit = character(),
-    major = character(),
-    sub_sub_chapter = character(),
-    sub_chapter = character(),
-    chapter = character()
-  )
   if (verbose) message(".fetch_who_api_tree with concept_id = ", concept_id)
   tree_json <- .fetch_who_api_children(
     concept_id = concept_id,
@@ -145,67 +125,83 @@
   }
   if (verbose) message("hier level = ", length(hier_code))
   new_hier <- length(hier_code) + 1
-  for (branch in seq_len(nrow(tree_json))) {
-    # might be looping through chapters, sub-chapters, etc.
-    child_code <- tree_json[branch, "ID"]
-    child_desc <- tree_json[branch, "label"]
-    is_leaf <- tree_json[branch, "isLeaf"]
-    # for each level, if not defined by arguments, then assign next possible
-    hier_code[new_hier] <- child_code
-    hier_desc[new_hier] <- child_desc
-    sub_sub_chapter <- NA
-    hier_three_digit_idx <- which(nchar(hier_code) == 3 &
-      !grepl("[XVI-]", hier_code))
-    if (length(hier_code) >= 3 && nchar(hier_code[3]) > 3) {
-      sub_sub_chapter <- hier_desc[3]
-    }
-    this_child_up_hier <- grepl("[XVI-]", child_code)
-    three_digit <- hier_code[hier_three_digit_idx]
-    major <- hier_desc[hier_three_digit_idx]
-    if (!this_child_up_hier && !is.na(three_digit)) {
-      # TODO: consider add the chapter, subchapter codes
-      new_item <- data.frame(
-        code = child_code,
-        leaf = is_leaf,
-        desc = child_desc,
-        three_digit = three_digit,
-        major = major,
-        sub_sub_chapter = sub_sub_chapter,
-        sub_chapter = hier_desc[2],
-        chapter = hier_desc[1],
-        stringsAsFactors = FALSE
+  # parallel mcapply doesn't seem to give significant increase in speed, and may
+  # introduce problems
+  #for (branch in seq_len(nrow(tree_json))) {
+  all_new_rows <- lapply(
+    #parallel::mclapply(
+    seq_len(nrow(tree_json)),
+    function(branch) {
+      new_rows <- data.frame(
+        code = character(),
+        leaf = logical(),
+        desc = character(),
+        three_digit = character(),
+        major = character(),
+        sub_sub_chapter = character(),
+        sub_chapter = character(),
+        chapter = character()
       )
-      if (debug && child_code %in% new_rows$code) browser()
-      new_rows <- rbind(new_rows, new_item)
-    }
-    if (!is_leaf) {
-      if (verbose) message("Not a leaf, so recursing")
-      recursed_rows <- .fetch_icd10_who(
-        concept_id = child_code,
-        year = year,
-        lang = lang,
-        verbose = verbose,
-        hier_code = hier_code,
-        hier_desc = hier_desc,
-        ...
-      ) # recurse
-      if (debug && any(recursed_rows$code %in% new_rows$code)) browser()
-      new_rows <- rbind(new_rows, recursed_rows)
-    } # not leaf
-  } # for
+      # might be looping through chapters, sub-chapters, etc.
+      child_code <- tree_json[branch, "ID"]
+      child_desc <- tree_json[branch, "label"]
+      is_leaf <- tree_json[branch, "isLeaf"]
+      # for each level, if not defined by arguments, then assign next possible
+      hier_code[new_hier] <- child_code
+      hier_desc[new_hier] <- child_desc
+      sub_sub_chapter <- NA
+      hier_three_digit_idx <- which(nchar(hier_code) == 3 &
+                                      !grepl("[XVI-]", hier_code))
+      if (length(hier_code) >= 3 && nchar(hier_code[3]) > 3) {
+        sub_sub_chapter <- hier_desc[3]
+      }
+      this_child_up_hier <- grepl("[XVI-]", child_code)
+      three_digit <- hier_code[hier_three_digit_idx]
+      major <- hier_desc[hier_three_digit_idx]
+      if (!this_child_up_hier && !is.na(three_digit)) {
+        # TODO: consider add the chapter, subchapter codes
+        new_item <- data.frame(
+          code = child_code,
+          leaf = is_leaf,
+          desc = child_desc,
+          three_digit = three_digit,
+          major = major,
+          sub_sub_chapter = sub_sub_chapter,
+          sub_chapter = hier_desc[2],
+          chapter = hier_desc[1],
+          stringsAsFactors = FALSE
+        )
+        stopifnot(child_code %nin% new_rows$code)
+        new_rows <- rbind(new_rows, new_item)
+      }
+      if (!is_leaf) {
+        if (verbose) message("Not a leaf, so recursing")
+        recursed_rows <- .fetch_icd10_who(
+          concept_id = child_code,
+          year = year,
+          lang = lang,
+          verbose = verbose,
+          hier_code = hier_code,
+          hier_desc = hier_desc,
+          ...
+        )
+        stopifnot(!any(recursed_rows$code %in% new_rows$code))
+        #new_rows <- do.call(rbind, c(new_rows, recursed_rows))
+        new_rows <- rbind(new_rows, recursed_rows)
+      } # not leaf
+      new_rows
+    }) # loop
   if (verbose) {
     message(
-      "leaving recursion with nrow(new_rows) = ",
-      nrow(new_rows)
+      "leaving recursion with length(all_new_rows) = ",
+      length(all_new_rows)
     )
   }
-  new_rows
+  do.call(rbind, all_new_rows)
 }
 
-downloading_message <- function() {
-  message("Downloading WHO ICD data. This will take a few minutes.
-          Data is cached, so if there is a download error, re-running
-          the command will pick up where it left off.")
+.downloading_who_message <- function() {
+  message("Downloading or processing WHO ICD data. This will take a few minutes. Data is cached, so if there is a download error, repeating the instruction will return the data immediately if cached, or pick up where it left off.") # nolint
 }
 
 #' Fetch the WHO data from online source
@@ -218,8 +214,9 @@ downloading_message <- function() {
 #' anyway).
 #' @param save_data Logical, defaults to `TRUE`
 #' @param ... Arguments passed to internal functions
-fetch_icd10who2016 <- function(save_data = TRUE, ...) {
-  downloading_message()
+#' @noRd
+.fetch_icd10who2016 <- function(save_data = TRUE, ...) {
+  .downloading_who_message()
   icd10who2016 <- .fetch_icd10_who(year = "2016", lang = "en", ...)
   rownames(icd10who2016) <- NULL
   icd10who2016$code <-
@@ -237,20 +234,18 @@ fetch_icd10who2016 <- function(save_data = TRUE, ...) {
 }
 
 #' @rdname fetch_icd10who2016
-fetch_icd10who2008_fr <- function(save_data = FALSE, ...) {
-  downloading_message()
+.fetch_icd10who2008fr <- function(save_data = TRUE, ...) {
+  .downloading_who_message()
   icd10who2008fr <- .fetch_icd10_who(year = "2008", lang = "fr", ...)
   rownames(icd10who2008fr) <- NULL
   icd10who2008fr$code <-
     sub(pattern = "\\.", replacement = "", x = icd10who2008fr$code)
-  for (col_name in c(
-    "chapter",
-    "sub_chapter",
-    "sub_sub_chapter",
-    "major",
-    "desc"
-  ))
+  for (col_name in c("chapter",
+                     "sub_chapter",
+                     "sub_sub_chapter",
+                     "major",
+                     "desc"))
     icd10who2008fr[[col_name]] <- sub("[^ ]+ ", "", icd10who2008fr[[col_name]])
-  if (save_data) if (save_data) .save_in_resource_dir(icd10who2008fr)
+  if (save_data) .save_in_resource_dir(icd10who2008fr)
   invisible(icd10who2008fr)
 }
