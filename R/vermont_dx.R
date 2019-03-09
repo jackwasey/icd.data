@@ -1,4 +1,4 @@
-#' generate \code{vermont_dx} data
+#' Generate \code{vermont_dx} data
 #'
 #' Process data from \href{healthvermont.gov}{Health Vermont}
 #' @template parse-template
@@ -7,9 +7,9 @@
 #' generate_vermont_dx(save_data = TRUE)
 #' }
 #' @keywords internal datagen
-#' @noRd
-generate_vermont_dx <- function(save_data) {
-  vermont_fp <- file.path("data-raw", "VTINP13.TXT")
+.generate_vermont_dx <- function(save_data) {
+  # This is indeed in data-raw, because not available to download anymore
+  vermont_fp <- .get_raw_data_path("VTINP13.TXT")
   vermont_dx <- utils::read.csv(vermont_fp,
     stringsAsFactors = FALSE,
     strip.white = TRUE

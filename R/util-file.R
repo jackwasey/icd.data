@@ -2,11 +2,15 @@
 #'
 #' Following Hadley Wickham recommendations in R Packages, this should be in
 #' \code{inst/extdata}. \pkg{devtools} overrides \code{system.file}.
-#' @noRd
 #' @keywords internal
-.get_raw_data_dir <- function() {
+.get_raw_data_path <- function(file_name) {
   message("Using package raw data path, not resource directory.")
-  system.file("data-raw", package = "icd.data")
+  dr <- system.file("data-raw", package = "icd.data")
+  if (missing(file_name)) {
+    dr
+  } else {
+    file.path(dr, file_name)
+  }
 }
 
 .get_versioned_raw_file_name <- function(base_name, ver) {
@@ -27,7 +31,6 @@
 #' @param envir environment in which to look for the variable to save
 #' @return invisibly returns the data
 #' @keywords internal
-#' @noRd
 .save_in_data_dir <- function(var_name,
                               suffix = "",
                               compress = "gzip",
@@ -56,14 +59,18 @@
 }
 
 .save_in_resource_dir <- function(var_name,
+                                  x = NULL,
                                   envir = parent.frame()) {
   if (!is.character(var_name)) {
     var_name <- as.character(substitute(var_name))
   }
   stopifnot(is.character(var_name))
-  stopifnot(exists(var_name, envir = envir))
-  .assign(var_name, get(var_name, envir = envir))
-  saveRDS(get(var_name, envir = envir),
+  if (is.null(x)) {
+    stopifnot(exists(var_name, envir = envir))
+    x <- get(var_name, envir = envir)
+  }
+  .assign(var_name, x)
+  saveRDS(x,
     .rds_path(var_name),
     compress = "gzip"
   )
@@ -83,7 +90,6 @@
 #' @template verbose
 #' @param ... additional arguments passed to \code{utils::download.file}
 #' @keywords internal
-#' @noRd
 .unzip_single <- function(
                           url,
                           file_name,

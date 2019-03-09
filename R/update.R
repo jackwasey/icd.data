@@ -5,9 +5,7 @@
 #' comorbidity mappings from the source SAS data. Elixhauser and Quan/Elixhauser
 #' mappings are generated from transcribed codes.
 #' @keywords internal datagen
-#' @noRd
-.update_everything <- function(
-                               save_data = TRUE,
+.update_everything <- function(save_data = TRUE,
                                offline = FALSE,
                                verbose = TRUE) {
   old_opt <- options(icd.data.offline = offline)
@@ -31,15 +29,14 @@
   .icd10cm_extract_sub_chapters(save_data = save_data)
 }
 
-fetch_all_data <- function(offline = FALSE, verbose = TRUE) {
+.fetch_all_data <- function(offline = FALSE, verbose = TRUE) {
   .icd10cm_parse_all(
     save_data = TRUE,
     verbose = verbose,
-    twentysixteen = FALSE,
-    data_raw_path = get_resource_dir()
+    twentysixteen = FALSE
   )
-  .icd10_parse_cms_pcs_all(save_data = TRUE)
+  .icd10cm_parse_cms_pcs_all(save_data = TRUE)
   .parse_cim_fr(save_data = TRUE)
-  .parse_icd10be2014(save_data = TRUE)
-  .parse_icd10be2017(save_data = TRUE)
+  .fetch_icd10be2014(save_data = TRUE)
+  .fetch_icd10be2017(save_data = TRUE)
 }

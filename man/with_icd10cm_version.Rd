@@ -14,5 +14,5 @@ Dutch 2014 ICD-CM translations, use 'icd10cm2014_nl"}
 \item{code}{Code block to execute}
 }
 \description{
-Evaluate code with a particular version of ICD-10-CM
+Temporarily sets and restores the option \code{icd.data.icd10cm_active_ver}
 }

@@ -19,7 +19,6 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #' @param year character vector of length one, e.g. "2011"
 #' @param offline single logical value
 #' @keywords internal datagen
-#' @noRd
 .rtf_fetch_year <- function(year, verbose = FALSE, ...) {
   year <- as.character(year)
   rtf_dat <- icd9cm_sources[icd9cm_sources$f_year == year, ]
@@ -45,7 +44,6 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #' @source \url{https://www.cdc.gov/nchs/icd/icd9cm.htm} Navigate to
 #' 'Dtab12.zip' in the 2011 data. and similar files run from 1996 to 2011.
 #' @keywords internal datagen
-#' @noRd
 .rtf_parse_year <- function(
                             year = "2011",
                             ...,
@@ -56,7 +54,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   stopifnot(is.logical(save_data), length(save_data) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
   stopifnot(is.logical(offline), length(offline) == 1)
-  f_info_rtf <- rtf_fetch_year(year, offline = offline)
+  f_info_rtf <- .rtf_fetch_year(year, offline = offline)
   if (is.null(f_info_rtf)) {
     stop("RTF data for year ", year, " unavailable.")
   }
@@ -64,12 +62,12 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   fp_conn <- file(fp, encoding = "ASCII")
   on.exit(close(fp_conn))
   rtf_lines <- readLines(fp_conn, warn = FALSE, encoding = "ASCII")
-  out <- rtf_parse_lines(rtf_lines,
+  out <- .rtf_parse_lines(rtf_lines,
     verbose = verbose,
     ...,
     save_extras = save_data
   )
-  out <- icd::as.icd9cm(swap_names_vals(out))
+  out <- icd::as.icd9cm(.swap_names_vals(out))
   out_df <- data.frame(
     code = icd::as.icd9cm(icd::decimal_to_short(unname(out))),
     desc = names(out),
@@ -88,11 +86,11 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   for (i in rev(non_par_lines))
     filtered[i - 1] <- paste(filtered[i - 1], filtered[i], sep = "")
   filtered <- grep("^\\\\par", filtered, value = TRUE, ...)
-  filtered <- rtf_fix_unicode(filtered, ...)
+  filtered <- .rtf_fix_unicode(filtered, ...)
   # extremely long terminal line in primary source is junk
   longest_lines <- which(nchar(filtered) > 3000L)
   filtered <- filtered[-longest_lines]
-  filtered <- rtf_strip(filtered)
+  filtered <- .rtf_strip(filtered)
   grep("^[[:space:]]*$", filtered, value = TRUE, invert = TRUE, ...)
 }
 
@@ -114,9 +112,9 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   stopifnot(is.character(rtf_lines))
   stopifnot(is.logical(verbose), length(verbose) == 1)
   stopifnot(is.logical(save_extras), length(save_extras) == 1)
-  filtered <- rtf_pre_filter(rtf_lines, ...)
-  majors <- rtf_make_majors(filtered, save = save_extras, ...)
-  sub_chaps <- rtf_make_sub_chapters(filtered, ..., save = save_extras)
+  filtered <- .rtf_pre_filter(rtf_lines, ...)
+  majors <- .rtf_make_majors(filtered, save = save_extras, ...)
+  sub_chaps <- .rtf_make_sub_chapters(filtered, ..., save = save_extras)
   if (verbose) {
     message("Have ", length(majors), " majors.")
     message("Have ", length(sub_chaps), " sub_chapters")
@@ -125,7 +123,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   # subset of fourth or fifth digit codes. Need to pull code from previous row,
   # and create lookup, so we can exclude these when processing the fourth an
   # fifth digits
-  invalid_qual <- rtf_make_invalid_qual(filtered, ...)
+  invalid_qual <- .rtf_make_invalid_qual(filtered, ...)
   # several occurances of "Requires fifth digit", referring back to the previous
   # higher-level definition, without having the parent code in the line itself
   re_fifth_range_other <- "fifth +digit +to +identify +stage"
@@ -137,12 +135,12 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
     paste(filtered[fifth_backref], filtered[fifth_backref - 1])
   re_fourth_range <- "fourth-digit.+categor"
   fourth_rows <- grep(re_fourth_range, filtered, ...)
-  lookup_fourth <- rtf_generate_fourth_lookup(filtered, fourth_rows)
+  lookup_fourth <- .rtf_generate_fourth_lookup(filtered, fourth_rows)
   # at least two examples of "Use 0 as fourth digit for category 672"
   re_fourth_digit_zero <- "Use 0 as fourth digit for category"
   fourth_digit_zero_lines <- grep(re_fourth_digit_zero, filtered, ...)
   fourth_digit_zero_categories <- unname(
-    str_pair_match(
+    .str_pair_match(
       filtered[fourth_digit_zero_lines],
       "(.*category )([[:digit:]]{3})$", ...
     )
@@ -152,19 +150,19 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   for (categ in fourth_digit_zero_categories) {
     parent_row <- grep(paste0("^", categ, " .+"), filtered, value = TRUE, ...)
     filtered[length(filtered) + 1] <-
-      paste0(categ, ".0 ", str_pair_match(
+      paste0(categ, ".0 ", .str_pair_match(
         parent_row,
         "([[:digit:]]{3} )(.+)", ...
       ))
   }
-  lookup_fifth <- rtf_make_lookup_fifth(filtered, re_fifth_range_other)
-  filtered <- rtf_filter_excludes(filtered, ...)
-  out <- rtf_main_filter(filtered, ...)
-  out <- c(out, rtf_lookup_fourth(out = out, lookup_fourth = lookup_fourth))
-  out <- c(out, rtf_lookup_fifth(out, lookup_fifth))
-  out <- rtf_fix_duplicates(out, verbose)
+  lookup_fifth <- .rtf_make_lookup_fifth(filtered, re_fifth_range_other)
+  filtered <- .rtf_filter_excludes(filtered, ...)
+  out <- .rtf_main_filter(filtered, ...)
+  out <- c(out, .rtf_lookup_fourth(out = out, lookup_fourth = lookup_fourth))
+  out <- c(out, .rtf_lookup_fifth(out, lookup_fifth))
+  out <- .rtf_fix_duplicates(out, verbose)
   out <- out[-which(names(out) %in% invalid_qual)]
-  rtf_fix_quirks_2015(out)
+  .rtf_fix_quirks_2015(out)
 }
 
 #' exclude some unwanted rows from filtered RTF
@@ -219,7 +217,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   re_code_desc <- paste0("^(", re_icd9_decimal_bare, ") +([ \"[:graph:]]+)")
   # out is the start of the eventual output of code to description pairs. seems
   # to be quicker with perl and useBytes both FALSE
-  str_pair_match(filtered, re_code_desc, perl = FALSE, useBytes = FALSE)
+  .str_pair_match(filtered, re_code_desc, perl = FALSE, useBytes = FALSE)
 }
 
 .rtf_make_majors <- function(filtered, ..., save = FALSE) {
@@ -255,7 +253,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
     "(-(", re_icd9_major_strict_bare, "))?",
     "\\)"
   )
-  chapter_to_desc_range.icd9(
+  .chapter_to_desc_range.icd9(
     grep(re_subchap_either, filtered,
       value = TRUE, ...
     )
@@ -282,12 +280,12 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   invalid_qual <- c()
   for (ql in qual_subset_lines) {
     # get prior code
-    m1 <- str_match_all(
+    m1 <- .str_match_all(
       filtered[ql - 1],
       paste0("(", re_icd9_decimal_bare, ") (.*)")
     )
     code <- unlist(m1)[[2]]
-    sb <- rtf_parse_qualifier_subset(filtered[ql])
+    sb <- .rtf_parse_qualifier_subset(filtered[ql])
     inv_sb <- setdiff(as.character(0:9), sb)
     if (length(inv_sb) == 0) {
       next
@@ -312,9 +310,9 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 .rtf_generate_fourth_lookup <- function(filtered, fourth_rows, verbose = FALSE) {
   lookup_fourth <- c()
   for (f in fourth_rows) {
-    range <- rtf_parse_fifth_digit_range(filtered[f])
+    range <- .rtf_parse_fifth_digit_range(filtered[f])
 
-    fourth_suffices <- str_pair_match(
+    fourth_suffices <- .str_pair_match(
       string = filtered[seq(f + 1, f + 37)],
       pattern = "^([[:digit:]])[[:space:]](.*)"
     )
@@ -347,7 +345,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #'
 #' @keywords internal datagen
 .rtf_lookup_fourth <- function(out, lookup_fourth, verbose = FALSE) {
-  rtf_lookup_fourth_alt_env(
+  .rtf_lookup_fourth_alt_env(
     out = out,
     lookup_fourth = lookup_fourth,
     verbose = verbose
@@ -359,7 +357,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   for (f_num in seq_along(lookup_fourth)) {
     lf <- lookup_fourth[f_num]
     f <- names(lf)
-    parent_code <- get_icd9_major(f)
+    parent_code <- .get_icd9_major(f)
     if (parent_code %in% names(out)) {
       pair_fourth <- paste(out[parent_code], lf, sep = ", ")
       names(pair_fourth) <- f
@@ -379,7 +377,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   for (f_num in seq_along(lookup_fourth)) {
     lf <- lookup_fourth[f_num]
     f <- names(lf)
-    parent_code <- get_icd9_major(f)
+    parent_code <- .get_icd9_major(f)
     if (!is.null(out_env[[parent_code]])) {
       pair_fourth <- paste(out[parent_code], lf, sep = ", ")
       names(pair_fourth) <- f
@@ -406,10 +404,10 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   lookup_fifth <- c()
   for (f in fifth_rows) {
     if (verbose) message("working on fifth-digit row:", f)
-    range <- rtf_parse_fifth_digit_range(filtered[f], verbose = verbose)
+    range <- .rtf_parse_fifth_digit_range(filtered[f], verbose = verbose)
     f1 <- filtered[seq(f + 1, f + 20)]
     f2 <- grep(pattern = "^[[:digit:]][[:space:]].*", f1, value = TRUE, ...)
-    fifth_suffices <- str_pair_match(f2, "([[:digit:]])[[:space:]](.*)", ...)
+    fifth_suffices <- .str_pair_match(f2, "([[:digit:]])[[:space:]](.*)", ...)
     re_fifth_defined <- paste(c("\\.[[:digit:]][", names(fifth_suffices), "]$"),
       collapse = ""
     )
@@ -435,7 +433,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   stopifnot(length(lines_v30v39) == 1)
   f1 <- filtered[seq(from = lines_v30v39 + 1, to = lines_v30v39 + 3)]
   f2 <- grep(f1, pattern = "^[[:digit:]][[:space:]].*", value = TRUE, ...)
-  suffices_v30v39 <- str_pair_match(f2, "([[:digit:]])[[:space:]](.*)", ...)
+  suffices_v30v39 <- .str_pair_match(f2, "([[:digit:]])[[:space:]](.*)", ...)
   range <- c(
     icd::expand_range("V30", "V37",
       short_code = FALSE, defined = FALSE
@@ -456,7 +454,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 .rtf_lookup_fifth <- function(out,
                               lookup_fifth,
                               verbose = FALSE) {
-  rtf_lookup_fifth_alt_env(
+  .rtf_lookup_fifth_alt_env(
     out = out,
     lookup_fifth = lookup_fifth,
     verbose = verbose
@@ -603,8 +601,8 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
       if (grepl("-", dotmnr)) {
         # range of minors
         pair <- unlist(strsplit(dotmnr, "-", fixed = TRUE))
-        first <- paste0(get_icd9_major(base_code), pair[1])
-        last <- paste0(get_icd9_major(base_code), pair[2])
+        first <- paste0(.get_icd9_major(base_code), pair[1])
+        last <- paste0(.get_icd9_major(base_code), pair[2])
         if (verbose) {
           message("expanding specified minor range from ", first, " to ", last)
         }
@@ -614,7 +612,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
           defined = FALSE
         ))
       } else {
-        single <- paste0(get_icd9_major(base_code), dotmnr)
+        single <- paste0(.get_icd9_major(base_code), dotmnr)
         out <- c(out, icd::children(single,
           short_code = FALSE,
           defined = FALSE
@@ -659,7 +657,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 .rtf_parse_qualifier_subset <- function(qual) {
   stopifnot(is.character(qual), length(qual) == 1)
   out <- c()
-  s1 <- strsplit(strip(qual), "[]\\[,]")
+  s1 <- strsplit(.strip(qual), "[]\\[,]")
   s2 <- grep(pattern = "[[:digit:]]", unlist(s1), value = TRUE)
   vals <- unlist(strsplit(s2, ","))
   for (v in vals) {

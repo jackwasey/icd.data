@@ -1,9 +1,4 @@
-#' Read the definitions of the French edition of ICD-10
-#'
-#' The short descriptions are capitalized, with accented characters, so leaving as is.
-#' @template save_data
-#' @keywords internal
-.parse_cim_fr <- function(save_data = FALSE, ...) {
+.fetch_icd10fr2019 <- function(save_data = TRUE, parse = TRUE, ...) {
   fp <- .unzip_to_data_raw(
     url = paste(
       sep = "/",
@@ -15,6 +10,20 @@
     file_name = "LIBCIM10MULTI.TXT",
     ...
   )
+  if (parse) {
+    return(.parse_cim_fr(save_data = save_data))
+  } else {
+    fp
+  }
+}
+
+#' Read the definitions of the French edition of ICD-10
+#'
+#' The short descriptions are capitalized, with accented characters, so leaving as is.
+#' @template save_data
+#' @keywords internal
+.parse_cim_fr <- function(save_data = FALSE, ...) {
+  fp <- .fetch_icd10fr2019(save_data = save_data, parse = FALSE, ...)
   cim_raw <- read.delim(
     fileEncoding = "Latin1",
     fp$file_path,
@@ -50,6 +59,54 @@
   invisible(icd10fr2019)
 }
 
+.fetch_icd10be2017 <- function(save_data = TRUE,
+                               parse = TRUE,
+                               verbose = TRUE,
+                               ...) {
+  site <- "https://www.health.belgium.be"
+  site_path <- "sites/default/files/uploads/fields/fpshealth_theme_file"
+  site_file_2017 <-
+    "fy2017_reflist_icd-10-be.xlsx_last_updatet_28-07-2017_1.xlsx"
+  if (verbose) message("Downloading icd10be2017 data")
+  fnp <- .download_to_data_raw(
+    paste(site,
+      site_path,
+      site_file_2017,
+      sep = "/"
+    ),
+    ...
+  )
+  if (parse) {
+    if (verbose) message("Parsing icd10be2017 data")
+    return(.parse_icd10be2017(save_data = save_data))
+  } else {
+    fnp
+  }
+}
+
+.fetch_icd10be2014 <- function(save_data = TRUE,
+                               parse = TRUE,
+                               verbose = TRUE,
+                               ...) {
+  site <- "https://www.health.belgium.be"
+  site_path <- "sites/default/files/uploads/fields/fpshealth_theme_file"
+  site_file <- "fy2014_reflist_icd-10-be.xlsx"
+  if (verbose) message("Downloading or getting cached icd10be2014 data")
+  fnp <- .download_to_data_raw(
+    paste(site, site_path, site_file, sep = "/"),
+    ...
+  )
+  if (parse) {
+    if (verbose) message("Parsing icd10be2014 data")
+    return(.parse_icd10be2014(save_data = save_data))
+  } else {
+    fnp
+  }
+}
+
+.fetch_icd10be2017_pc <- .fetch_icd10be2017
+.fetch_icd10be2014_pc <- .fetch_icd10be2014
+
 #' Get French and Dutch translations of ICD-10-CM for Beglian coding
 #'
 #' There are public domain publications for 2014 and 2017. Not all items are
@@ -65,19 +122,8 @@
 .parse_icd10be2017 <- function(save_data = TRUE, ...) {
   # MS Excel sheet with French English and Dutch translations of ICD-10-CM.
   # Currently all the codes are identical to ICD-10-CM US version.
-  site <- "https://www.health.belgium.be"
-  site_path <- "sites/default/files/uploads/fields/fpshealth_theme_file"
-  site_file_2017 <-
-    "fy2017_reflist_icd-10-be.xlsx_last_updatet_28-07-2017_1.xlsx"
   sheet_2017 <- "FY2017"
-  fnp <- .download_to_data_raw(
-    paste(site,
-      site_path,
-      site_file_2017,
-      sep = "/"
-    ),
-    ...
-  )
+  fnp <- .fetch_icd10be2017(parse = FALSE, save_data = save_data, ...)
   raw_dat <- readxl::read_xlsx(fnp$file_path,
     sheet = sheet_2017,
     col_names = TRUE,
@@ -136,16 +182,9 @@
 #' @param ... passed to `.download_to_data_raw`, e.g., `offline = FALSE`.
 #' @seealso \code{link{parse_icd10be2014_be}}
 #' @keywords internal
-.parse_icd10be2014 <- function(save_data = FALSE, ...) {
-  # MS Excel sheet with French English and Dutch translations of ICD-10-CM. Not
-  # sure yet whether they also modified the codes themselves.
-  site <- "https://www.health.belgium.be"
-  site_path <- "sites/default/files/uploads/fields/fpshealth_theme_file"
-  site_file <- "fy2014_reflist_icd-10-be.xlsx"
-  fnp <- .download_to_data_raw(
-    paste(site, site_path, site_file, sep = "/"),
-    ...
-  )
+.parse_icd10be2014 <- function(save_data = TRUE, dx = TRUE, ...) {
+  # MS Excel sheet with French English and Dutch translations of ICD-10-CM.
+  fnp <- .fetch_icd10be2014(parse = FALSE, save_data = save_data, ...)
   raw_dat <- readxl::read_xlsx(fnp$file_path,
     sheet = "FY2014_ICD10BE",
     col_names = TRUE,
@@ -196,9 +235,18 @@
   class(icd10be2014_pc$code) <- c("icd10be_pc", "character")
   row.names(icd10be2014) <- NULL
   row.names(icd10be2014_pc) <- NULL
-  if (save_data) {
-    .save_in_resource_dir(icd10be2014)
-    .save_in_resource_dir(icd10be2014_pc)
+  if (dx) {
+    if (save_data) {
+      if (dx) {
+        .save_in_resource_dir(icd10be2014)
+      } else {
+        .save_in_resource_dir(icd10be2014_pc)
+      }
+    }
   }
-  invisible(list(icd10be2014, icd10be2014_pc))
+  if (dx) {
+    icd10be2014
+  } else {
+    icd10be2017_pc
+  }
 }

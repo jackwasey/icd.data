@@ -2,6 +2,7 @@
 #' @template ver
 #' @param check_exists \code{TRUE} by default, which forces a check that the
 #'   requested version is actually available in this R session.
+#' @export
 set_icd10cm_active_ver <- function(ver, check_exists = TRUE) {
   old_v <- get_icd10cm_active_ver()
   v <- as.character(ver)
@@ -17,9 +18,11 @@ set_icd10cm_active_ver <- function(ver, check_exists = TRUE) {
 }
 
 #' @rdname set_icd10cm_active_ver
+#' @export
 get_icd10cm_active_ver <- function() {
-  ver <- getOption("icd.data.icd10cm_active_ver")
-  if (!is.character(ver) && length(ver) == 1) {
+  ver <- getOption("icd.data.icd10cm_active_ver", default = "2019")
+  ver <- as.character(ver)
+  if (!grepl("^[[:digit:]]+$", ver)) {
     stop(
       "Option \"icd.data.icd10cm_active_ver\" is not valid.\n",
       "Reset it with set_icd10cm_active_ver(\"2019\") ",
@@ -38,6 +41,7 @@ get_icd10cm_active_ver <- function() {
 #' \dontrun{
 #' get_icd10cm_version("2018")
 #' }
+#' @export
 get_icd10cm_version <- function(ver = get_icd10cm_active_ver()) {
   ver <- as.character(ver)
   stopifnot(grepl("^[[:digit:]]{4}$", ver))
@@ -58,6 +62,7 @@ get_icd10cm_version <- function(ver = get_icd10cm_active_ver()) {
 #' get_icd10cm_available()
 #' # Just get the years avaiable for English language procedure codes
 #' get_icd10cm_available(pc = TRUE, return_year = TRUE)
+#' @export
 get_icd10cm_available <- function(
                                   pc = FALSE,
                                   return_year = FALSE) {
@@ -88,8 +93,7 @@ get_icd10cm_available <- function(
 #' head(icd10cm_latest)
 #' }
 #' @keywords internal datasets
-#' @noRd
-get_icd10cm_latest <- function() {
+.get_icd10cm_latest <- function() {
   var_name <- "icd10cm2019"
   if (exists(var_name)) return(get(var_name))
   getExportedValue(asNamespace("icd.data"), var_name)
@@ -98,8 +102,11 @@ get_icd10cm_latest <- function() {
 }
 
 #' Evaluate code with a particular version of ICD-10-CM
+#'
+#' Temporarily sets and restores the option \code{icd.data.icd10cm_active_ver}
 #' @template ver
 #' @param code Code block to execute
+#' @export
 with_icd10cm_version <- function(ver, code) {
   stopifnot(is.character(ver), length(ver) == 1)
   old <- options("icd.data.icd10cm_active_ver" = ver)
@@ -114,7 +121,6 @@ with_icd10cm_version <- function(ver, code) {
 #' @param interact Control whether functions thinks it is in interactive mode,
 #'   for testing.
 #' @keywords internal
-#' @noRd
 .get_icd10cm_ver <- function(
                              ver,
                              dx,
@@ -154,11 +160,10 @@ to control where data is downloaded.")
       year = ver,
       save_data = TRUE,
       verbose = FALSE,
-      offline = !.confirm_download(must_work = TRUE),
-      data_raw_path = get_resource_dir()
+      offline = !.confirm_download(must_work = TRUE)
     )
   } else {
-    dat <- icd10cm_parse_cms_pcs_year(ver, verbose = FALSE)
+    dat <- .icd10cm_parse_cms_pcs_year(ver, verbose = FALSE)
   }
   assign(var_name, dat, envir = .icd_data_env)
   return(dat)

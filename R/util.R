@@ -120,8 +120,8 @@ is_non_ascii <- function(x)
     re_major, ")\\)"
   )
   re_code_single <- paste0("(.*)[[:space:]]?\\((", re_major, ")\\)")
-  mr <- str_match_all(x, re_code_range)
-  ms <- str_match_all(x, re_code_single)
+  mr <- .str_match_all(x, re_code_range)
+  ms <- .str_match_all(x, re_code_single)
   okr <- vapply(mr, length, integer(1)) == 4L
   oks <- vapply(ms, length, integer(1)) == 3L
   if (!all(okr || oks)) {
@@ -129,7 +129,7 @@ is_non_ascii <- function(x)
   }
   m <- ifelse(okr, mr, ms)
   out <- lapply(m, function(y) c(start = y[[3]], end = y[[length(y)]]))
-  names(out) <- vapply(m, function(y) trimws(to_title_case(y[[2]])),
+  names(out) <- vapply(m, function(y) trimws(.to_title_case(y[[2]])),
     FUN.VALUE = character(1)
   )
   out
@@ -174,7 +174,7 @@ is_non_ascii <- function(x)
 #' at least as good.
 #' @keywords internal
 .get_chapters_fr <- function(save_data = FALSE) {
-  icd10_chapters_fr <- get_chapter_ranges_from_flat(
+  icd10_chapters_fr <- .get_chapter_ranges_from_flat(
     flat_hier = icd10who2008fr,
     field = "chapter"
   )
@@ -182,10 +182,8 @@ is_non_ascii <- function(x)
   invisible(icd10_chapters_fr)
 }
 
-#' @rdname get_chapters_fr
-#' @keywords internal
 .get_sub_chapters_fr <- function(save_data = FALSE) {
-  icd10_sub_chapters_fr <- get_chapter_ranges_from_flat(
+  icd10_sub_chapters_fr <- .get_chapter_ranges_from_flat(
     flat_hier = icd10who2008fr,
     field = "sub_chapter"
   )
@@ -203,13 +201,19 @@ is_non_ascii <- function(x)
   x
 }
 
-#' Get data from the icd.data package, without relying on it being attached
+#' Internal use only: get data from the icd.data package, without relying on it
+#' being attached
 #'
 #' Some data is hidden in active bindings, so it may be downloaded on demand,
 #' and some is lazy-loaded. This will work for regular package members, active
 #' bindings, and lazy data, whether or not the package is attached or loaded.
+#'
+#' This is really just needed for the transition from icd 3.3 to icd 4.0, and
+#' icd.data > 1.0
 #' @param alt If the data cannot be found, this value is returned. Default is
 #'   \code{NULL}.
+#' @keywords internal
+#' @export
 get_icd_data <- function(data_name, alt = NULL) {
   if (!is.character(data_name)) {
     data_name <- deparse(substitute(data_name))
@@ -246,7 +250,9 @@ get_icd_data <- function(data_name, alt = NULL) {
 }
 
 .exists_in_ns <- function(name) {
-  name %in% names(asNamespace("icd.data")[[".__NAMESPACE__."]][["lazydata"]])
+  pkg_ns <- asNamespace("icd.data")
+  lazy_env <- pkg_ns[[".__NAMESPACE__."]][["lazydata"]]
+  exists(name, lazy_env) || exists(name, pkg_ns)
 }
 
 # Cannot 'stop' in an active binding for R CMD check because
@@ -267,7 +273,63 @@ get_icd_data <- function(data_name, alt = NULL) {
   o[grepl("^icd\\.data", names(o))]
 }
 
-.clear_options <- function() {
+.set_default_options <- function(offline = TRUE) {
+  options(icd.data.offline = offline)
+  options(icd.data.absent_action = "message")
+  options(icd.data.icd10cm_active_ver = "2019")
+  options(icd.data.resource = get_resource_dir(force = TRUE))
+}
+
+.set_dev_options <- function() {
+  options(icd.data.offline = FALSE)
+  options(icd.data.absent_action = "stop")
+  options(icd.data.icd10cm_active_ver = "2019")
+  options(icd.data.resource = path.expand(file.path("~", ".icd.data")))
+}
+
+# options are:
+#
+# icd.data.offline - default is TRUE, unless ICD_DATA_OFFLINE is false/no
+#
+# icd.data.resource - default is ~/.icd.data but won't write unless user gives
+# permission
+#
+# icd.data.absent_action - what to do if data is missing, "stop" or "message"
+# consider removing this. Need to automate the hell out of this, but might be
+# useful for testing.
+#
+# icd.data.icd10cm_active_ver - which ICD-10-CM version is currently active.
+# Default is 2019.
+#
+# See also .show_options() .clear_options() .set_dev_options()
+# .set_default_options()
+.set_init_options <- function() {
+  if (!("icd.data.offline" %in% names(options()))) {
+    ev <- Sys.getenv("ICD_DATA_OFFLINE")
+    options(
+      "icd.data.offline" =
+        tolower(ev) %nin% c(
+          "n",
+          "no",
+          "false",
+          "0"
+        )
+    )
+  }
+  # stop or message, anything else will silently continue
+  if ("icd.data.absent_action" %nin% names(options())) {
+    ev <- tolower(Sys.getenv("ICD_DATA_ABSENT_ACTION"))
+    stopifnot(ev %in% c("stop", "message", ""))
+    if (ev == "" && interactive()) ev <- "stop"
+    options("icd.data.absent_action" = ev)
+  }
+  # Which version of ICD-10-CM to use by default?
+  if (!("icd.data.icd10cm_active_ver" %in% names(options()))) {
+    set_icd10cm_active_ver(2019, check_exists = FALSE)
+  }
+}
+
+.unset_options <- function() {
   icd_data_opts <- .show_options()
   icd_data_opts <- sapply(
     icd_data_opts,

@@ -6,7 +6,7 @@
 \usage{
 .unzip_to_data_raw(url, file_name, force = FALSE, verbose = FALSE,
   offline = getOption("icd.data.offline"),
-  data_raw_path = .get_raw_data_dir(), save_name = file_name, ...)
+  data_raw_path = get_resource_dir(), save_name = file_name, ...)
 }
 \arguments{
 \item{url}{URL of a zip file}

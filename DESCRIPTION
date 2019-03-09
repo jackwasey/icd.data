@@ -21,6 +21,7 @@ License: GPL-3
 Depends: 
     R (>= 3.4.0)
 Suggests:
+    covr,
     httr,
     icd,
     jsonlite,
@@ -29,8 +30,7 @@ Suggests:
     RODBC,
     testthat,
     utils,
-    xml2,
-    covr
+    xml2
 Encoding: UTF-8
 Language: en-US
 LazyData: true

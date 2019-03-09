@@ -50,26 +50,25 @@
 #' http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html
 #' @keywords internal datagen
 #' @noRd
-.icd9cm_parse_leaf_descs <- function(
-                                     save_data = FALSE,
+.icd9cm_parse_leaf_descs <- function(save_data = FALSE,
                                      verbose = FALSE,
                                      ...) {
-  .Deprecated("Just generate v32")
+  message("Just generate icd9cm_leaf_v32.
+Now just making icd9cm_billable[[\"32\"]]")
   stopifnot(is.logical(save_data), length(save_data) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
-  versions <- icd.data:::icd9cm_sources$version
+  # icd.data:::
+  versions <- icd9cm_sources$version
   if (verbose) {
     message(
       "Available versions of sources are: ",
       paste(versions, collapse = ", ")
     )
   }
-  icd9cm_billable <- lapply(versions,
-    icd9cm_parse_leaf_desc_ver,
+  icd9cm_billable <- .icd9cm_parse_leaf_desc_ver(ver = "32",
     save_data = save_data,
     verbose = verbose,
-    ...
-  )
+    ...)
   if (save_data) .save_in_data_dir(icd9cm_billable)
   invisible(icd9cm_billable)
 }
@@ -101,7 +100,7 @@
   ver <- as.character(ver)
   if (verbose) message("Fetching billable codes version: ", ver)
   if (ver == "27") {
-    return(invisible(parse_leaf_desc_icd9cm_v27(...)))
+    return(invisible(.parse_leaf_desc_icd9cm_v27(...)))
   }
   stopifnot(ver %in% icd9cm_sources$version)
   dat <- icd9cm_sources[icd9cm_sources$version == ver, ]
@@ -292,7 +291,7 @@
   stopifnot(is.logical(offline), length(offline) == 1)
   stopifnot(is.logical(perl), length(perl) == 1)
   stopifnot(is.logical(use_bytes), length(use_bytes) == 1)
-  icd9_rtf <- rtf_parse_year(
+  icd9_rtf <- .rtf_parse_year(
     year = "2011",
     perl = perl,
     useBytes = use_bytes,
@@ -326,7 +325,7 @@
   # just copy the long description over.
 
   # need ICD-9 codes to build this, right now just working off the final published edition.
-  bill32 <- icd9cm_parse_leaf_desc_ver("32",
+  bill32 <- .icd9cm_parse_leaf_desc_ver("32",
     verbose = verbose,
     offline = offline
   )
@@ -352,7 +351,7 @@
   )]
   out[["short_desc"]] <- enc2utf8(out[["short_desc"]])
   out[["long_desc"]] <- enc2utf8(out[["long_desc"]])
-  icd9cm_hierarchy_sanity(out)
+  .icd9cm_hierarchy_sanity(out)
   billable <- out$code %in% bill32$code
   icd9cm_hierarchy <- cbind(out[1], billable, out[-1])
   row.names(icd9cm_hierarchy) <- NULL
@@ -371,7 +370,6 @@
 #' @template short_code
 #' @template verbose
 #' @keywords internal datagen
-#' @noRd
 .icd9_get_chapters <- function(x, short_code, verbose = FALSE) {
   # set up comorbidity maps for chapters/sub/major group, then loop through each
   # ICD-9 code, loop through each comorbidity and lookup code in the map for
@@ -381,7 +379,7 @@
   stopifnot(is.logical(short_code), length(short_code) == 1)
   x <- .as_char_no_warn(x)
   all_majors <- vapply(x,
-    get_icd9_major,
+    .get_icd9_major,
     FUN.VALUE = character(1)
   )
   majors <- unique(all_majors)
@@ -394,12 +392,12 @@
     chapter = factor(rep(NA, lenm), levels = c(names(icd9_chapters), NA))
   )
   chap_lookup <- lapply(icd9_chapters, function(y)
-    vec_to_env_true(
+    .vec_to_env_true(
       .get_icd34fun("expand_range_major")(icd::as.icd9cm(y[["start"]]),
         y[["end"]], defined = FALSE)
     ))
   subchap_lookup <- lapply(icd9_sub_chapters, function(y)
-    vec_to_env_true(
+    .vec_to_env_true(
       .get_icd34fun("expand_range_major")(icd::as.icd9cm(y[["start"]]),
         y[["end"]],
         defined = FALSE)

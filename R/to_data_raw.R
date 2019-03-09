@@ -24,7 +24,7 @@
                                force = FALSE,
                                verbose = FALSE,
                                offline = getOption("icd.data.offline"),
-                               data_raw_path = .get_raw_data_dir(),
+                               data_raw_path = get_resource_dir(),
                                save_name = file_name,
                                ...) {
   stopifnot(is.character(url), length(url) == 1)
@@ -57,13 +57,11 @@
   list(file_path = file_path, save_name = save_name)
 }
 
-#' @rdname .unzip_to_data_raw
-#' @keywords internal
 .download_to_data_raw <-
   function(url,
              file_name = regmatches(url, regexpr("[^/]*$", url)),
              offline = getOption("icd.data.offline"),
-             data_raw_path = .get_raw_data_dir(),
+             data_raw_path = get_resource_dir(),
              ...) {
     stopifnot(is.character(url), length(url) == 1)
     stopifnot(is.character(file_name), length(file_name) == 1)

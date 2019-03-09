@@ -91,7 +91,7 @@ test_that("Y09 got picked up in sub-chapter parsing", {
 test_that("chapter parsing for ICD-10 went okay", {
   skip_if_not_installed("icd", "3.4")
   for (y in 2014:2019) {
-    chap_lookup <- icd10_generate_chap_lookup(year = y)
+    chap_lookup <- .icd10_generate_chap_lookup(year = y)
     expect_false(any(duplicated(chap_lookup$chap_major)), info = y)
   }
 })
@@ -99,7 +99,7 @@ test_that("chapter parsing for ICD-10 went okay", {
 test_that("sub-chapter parsing for ICD-10 went okay", {
   skip_if_not_installed("icd", "3.4")
   for (y in 2014:2019) {
-    sc_lookup <- icd10_generate_subchap_lookup(year = y)
+    sc_lookup <- .icd10_generate_subchap_lookup(year = y)
     expect_equal(anyDuplicated(sc_lookup$sc_major), 0, info = y)
     # 2019 duplicated/parse errors?
     sc_lookup[sc_lookup$sc_major %in% c("C7A", "C7B", "D3A"), ]
@@ -113,32 +113,32 @@ test_that("W02 is correctly parsed", {
 
 test_that("explain icd9GetChapters simple input", {
   skip_if_not_installed("icd", "3.4")
-  chaps1 <- icd9_get_chapters(c("410", "411", "412"), short_code = TRUE)
+  chaps1 <- .icd9_get_chapters(c("410", "411", "412"), short_code = TRUE)
   expect_equal(nrow(chaps1), 3)
 
-  chaps2 <- icd9_get_chapters("418", short_code = TRUE) # no such code 418
+  chaps2 <- .icd9_get_chapters("418", short_code = TRUE) # no such code 418
   expect_is(chaps2, "data.frame")
   expect_is(chaps2$three_digit, "factor")
   expect_is(chaps2$major, "factor")
   expect_is(chaps2$sub_chapter, "factor")
   expect_is(chaps2$chapter, "factor")
-  expect_equal(as_char_no_warn(chaps2$three_digit), NA_character_)
-  expect_equal(as_char_no_warn(chaps2$major), NA_character_)
-  expect_equal(as_char_no_warn(chaps2$sub_chapter), NA_character_)
-  expect_equal(as_char_no_warn(chaps2$chapter), NA_character_)
+  expect_equal(.as_char_no_warn(chaps2$three_digit), NA_character_)
+  expect_equal(.as_char_no_warn(chaps2$major), NA_character_)
+  expect_equal(.as_char_no_warn(chaps2$sub_chapter), NA_character_)
+  expect_equal(.as_char_no_warn(chaps2$chapter), NA_character_)
 
   chaps3 <- icd9_get_chapters("417", short_code = FALSE)
-  expect_equal(as_char_no_warn(chaps3$three_digit), "417")
+  expect_equal(.as_char_no_warn(chaps3$three_digit), "417")
   expect_equal(
-    as_char_no_warn(chaps3$major),
+    .as_char_no_warn(chaps3$major),
     "Other diseases of pulmonary circulation"
   )
   expect_equal(
-    as_char_no_warn(chaps3$sub_chapter),
+    .as_char_no_warn(chaps3$sub_chapter),
     "Diseases Of Pulmonary Circulation"
   )
   expect_equal(
-    as_char_no_warn(chaps3$chapter),
+    .as_char_no_warn(chaps3$chapter),
     "Diseases Of The Circulatory System"
   )
 

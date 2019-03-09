@@ -14,23 +14,16 @@
 #' CRAN compatible way in the 'icd' package, so this function is just for that
 #' purpose, since we can check whether this function exists and call it without
 #' using ::, whereas this is not possible with lazy data or active bindings?
+#' @param resource Fragment of URL with specific ICD-10 resource requested
+#' @param edition icd10
+#' @param year Four-digit year as integer or character
+#' @template lang
 #' @template verbose
-#' @keywords datasets
-#' @noRd
-NULL
-#
-# .get_icd10who2016 <- function(verbose = FALSE) {
-#   .get_from_cache("icd10who2016")
-# }
-#
-# # ' @rdname get_icd10who2016
-# .get_icd10who2008fr <- function() {
-#   .get_from_cache("icd10who2008fr")
-# }
-
-# returns the JSON data, or fails with NULL
+#' @return
+#' \code{.fetch_who_api} returns the JSON data, or fails with NULL
+#' @keywords internal datasets
 .fetch_who_api <- function(resource,
-                           ver = "icd10",
+                           edition = "icd10",
                            year = 2016,
                            lang = "en",
                            verbose = FALSE) {
@@ -38,13 +31,12 @@ NULL
   if (.have_memoise()) {
     httr_get <- memoise::memoise(
       httr::GET,
-      cache = memoise::cache_filesystem(file.path(get_resource_dir(), "memoise")
-      )
+      cache = memoise::cache_filesystem(file.path(get_resource_dir(), "memoise"))
     )
   }
-  ver <- match.arg(ver)
+  edition <- match.arg(edition)
   who_base <- "https://apps.who.int/classifications"
-  json_url <- paste(who_base, ver, "browse", year, lang, resource, sep = "/")
+  json_url <- paste(who_base, edition, "browse", year, lang, resource, sep = "/")
   if (verbose) message("Getting WHO data with JSON: ", json_url)
   http_response <- httr_get(json_url)
   if (http_response$status_code >= 400) {
@@ -60,7 +52,6 @@ NULL
 #' Of note, the `WHO` package does not provide access to classifications, just
 #' WHO summary data.
 #' @keywords internal
-#' @noRd
 .fetch_who_api_chapter_names <- function(ver = "icd10",
                                          year = 2016,
                                          lang = "en", verbose = TRUE) {
@@ -99,7 +90,6 @@ NULL
 #' @param verbose logical
 #' @param ... further arguments passed to self recursively, or `.fetch_who_api`
 #' @keywords internal
-#' @noRd
 .fetch_icd10_who <- function(concept_id = NULL,
                              year = 2016,
                              lang = "en",
@@ -127,9 +117,9 @@ NULL
   new_hier <- length(hier_code) + 1
   # parallel mcapply doesn't seem to give significant increase in speed, and may
   # introduce problems
-  #for (branch in seq_len(nrow(tree_json))) {
+  # for (branch in seq_len(nrow(tree_json))) {
   all_new_rows <- lapply(
-    #parallel::mclapply(
+    # parallel::mclapply(
     seq_len(nrow(tree_json)),
     function(branch) {
       new_rows <- data.frame(
@@ -151,7 +141,7 @@ NULL
       hier_desc[new_hier] <- child_desc
       sub_sub_chapter <- NA
       hier_three_digit_idx <- which(nchar(hier_code) == 3 &
-                                      !grepl("[XVI-]", hier_code))
+        !grepl("[XVI-]", hier_code))
       if (length(hier_code) >= 3 && nchar(hier_code[3]) > 3) {
         sub_sub_chapter <- hier_desc[3]
       }
@@ -186,11 +176,12 @@ NULL
           ...
         )
         stopifnot(!any(recursed_rows$code %in% new_rows$code))
-        #new_rows <- do.call(rbind, c(new_rows, recursed_rows))
+        # new_rows <- do.call(rbind, c(new_rows, recursed_rows))
         new_rows <- rbind(new_rows, recursed_rows)
       } # not leaf
       new_rows
-    }) # loop
+    }
+  ) # loop
   if (verbose) {
     message(
       "leaving recursion with length(all_new_rows) = ",
@@ -204,17 +195,17 @@ NULL
   message("Downloading or processing WHO ICD data. This will take a few minutes. Data is cached, so if there is a download error, repeating the instruction will return the data immediately if cached, or pick up where it left off.") # nolint
 }
 
-#' Fetch the WHO data from online source
+#' Fetch English or French WHO data from online source
 #'
 #' This will download the latest ICD-10 codes and descriptions from the WHO, and
-#' save the results in a directory given by `icd.data:::get_resource_dir()`.
+#' save the results in a directory given by `icd.data::get_resource_dir()`.
 #' This defaults to a subdirectory `.icd.data` of the home directory. This is
 #' necessary because it is not permitted to write data back to the installed
 #' package location (and this may not be allowed on a multi-user system,
 #' anyway).
 #' @param save_data Logical, defaults to `TRUE`
 #' @param ... Arguments passed to internal functions
-#' @noRd
+#' @keywords internal
 .fetch_icd10who2016 <- function(save_data = TRUE, ...) {
   .downloading_who_message()
   icd10who2016 <- .fetch_icd10_who(year = "2016", lang = "en", ...)
@@ -233,18 +224,20 @@ NULL
   invisible(icd10who2016)
 }
 
-#' @rdname fetch_icd10who2016
+#' @rdname dot-fetch_icd10who2016
 .fetch_icd10who2008fr <- function(save_data = TRUE, ...) {
   .downloading_who_message()
   icd10who2008fr <- .fetch_icd10_who(year = "2008", lang = "fr", ...)
   rownames(icd10who2008fr) <- NULL
   icd10who2008fr$code <-
     sub(pattern = "\\.", replacement = "", x = icd10who2008fr$code)
-  for (col_name in c("chapter",
-                     "sub_chapter",
-                     "sub_sub_chapter",
-                     "major",
-                     "desc"))
+  for (col_name in c(
+    "chapter",
+    "sub_chapter",
+    "sub_sub_chapter",
+    "major",
+    "desc"
+  ))
     icd10who2008fr[[col_name]] <- sub("[^ ]+ ", "", icd10who2008fr[[col_name]])
   if (save_data) .save_in_resource_dir(icd10who2008fr)
   invisible(icd10who2008fr)

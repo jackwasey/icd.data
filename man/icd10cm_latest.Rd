@@ -8,6 +8,6 @@
 The latest available version of ICD-10-CM in this package
 }
 \details{
-This is an active binding.
+This is an active binding, so is exported explicitly
 }
 \keyword{datasets}

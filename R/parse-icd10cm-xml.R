@@ -1,6 +1,3 @@
-# nocov start
-
-# TODO: don't default to one particular year unless I have to.
 .icd10cm_get_xml_file <- function(ver = "2019", ...) {
   # http://www.cdc.gov/nchs/data/icd/icd10cm/2016/ICD10CM_FY2016_Full_XML.ZIP
   s <- icd10cm_sources[[ver]]
@@ -24,10 +21,9 @@
 #' putative sub-chapter.
 #' @template save_data
 #' @keywords internal datagen
-#' @noRd
 .icd10cm_extract_sub_chapters <- function(save_data = FALSE, ...) {
   stopifnot(is.logical(save_data))
-  f_info <- icd10cm_get_xml_file(...)
+  f_info <- .icd10cm_get_xml_file(...)
   stopifnot(!is.null(f_info))
   j <- xml2::read_xml(f_info$file_path)
   xml2::xml_name(xml2::xml_children(j)) == "chapter" -> chapter_indices
@@ -39,7 +35,7 @@
     subchaps <- c_kids[subchap_indices]
     for (subchap in subchaps) {
       new_sub_chap_range <-
-        chapter_to_desc_range.icd10(
+        .chapter_to_desc_range.icd10(
           xml2::xml_text(
             xml2::xml_children(
               subchap
@@ -71,8 +67,6 @@
   d3a <- icd10_sub_chapters[41]
   icd10_sub_chapters[41] <- NULL
   icd10_sub_chapters <- append(icd10_sub_chapters, d3a, after = 41)
-  if (save_data) save_in_data_dir(icd10_sub_chapters)
+  if (save_data) .save_in_data_dir(icd10_sub_chapters)
   invisible(icd10_sub_chapters)
 }
-
-# nocov end

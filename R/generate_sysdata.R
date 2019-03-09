@@ -1,7 +1,7 @@
 # nocov start
-generate_sysdata <- function(save_data = FALSE, verbose = FALSE) {
-  icd9cm_sources <- make_icd9cm_sources()
-  icd10cm_sources <- make_icd10cm_sources()
+.generate_sysdata <- function(save_data = FALSE, verbose = FALSE) {
+  icd9cm_sources <- .make_icd9cm_sources()
+  icd10cm_sources <- .make_icd10cm_sources()
   long_fns <- icd9cm_sources[["long_filename"]]
   short_fns <- icd9cm_sources[["long_filename"]]
   # make.names is stricter than necessary, but no function to sanitize a file
@@ -49,7 +49,7 @@ generate_sysdata <- function(save_data = FALSE, verbose = FALSE) {
   invisible(mget(sysdata_names))
 }
 
-make_icd9cm_sources <- function() {
+.make_icd9cm_sources <- function() {
   cms_base <-
     "https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/"
   cdc_base <- "ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Publications/"
@@ -132,7 +132,7 @@ make_icd9cm_sources <- function() {
   )
 }
 
-make_icd10cm_sources <- function() {
+.make_icd10cm_sources <- function() {
   list(
     "2019" = list(
       base_url = "https://www.cms.gov/Medicare/Coding/ICD10/Downloads/",
@@ -203,12 +203,12 @@ make_icd10cm_sources <- function() {
   )
 }
 
-url_ok <- function(url) {
+.url_ok <- function(url) {
   httr::HEAD(url)$status_code < 400
 }
 
-url_warn_or_stop <- function(url, warn = FALSE) {
-  if (!url_ok(url)) {
+.url_warn_or_stop <- function(url, warn = FALSE) {
+  if (!.url_ok(url)) {
     if (warn) {
       warning("NA: ", url, call. = FALSE)
     } else {
@@ -220,23 +220,23 @@ url_warn_or_stop <- function(url, warn = FALSE) {
   }
 }
 
-check_icd9cm_urls <- function(warn = FALSE) {
+.check_icd9cm_urls <- function(warn = FALSE) {
   oldwarn <- options("warn" = 1)
   on.exit(options(oldwarn))
-  urls <- c(make_icd9cm_sources()$url, make_icd9cm_sources()$rtf_url)
+  urls <- c(.make_icd9cm_sources()$url, .make_icd9cm_sources()$rtf_url)
   for (url in urls)
-    url_warn_or_stop(url, warn)
+    .url_warn_or_stop(url, warn)
   message("now regenerate sysdata with\ngenerate_sysdata()")
 }
 
-check_icd10cm_urls <- function(warn = FALSE) {
+.check_icd10cm_urls <- function(warn = FALSE) {
   oldwarn <- options("warn" = 1)
   on.exit(options(oldwarn))
-  lapply(make_icd10cm_sources(), function(year) {
+  lapply(.make_icd10cm_sources(), function(year) {
     zips <- grep("zip$", names(year))
     urls <- paste0(year$base_url, unlist(unname(year))[zips])
     for (url in urls)
-      url_warn_or_stop(url, warn)
+      .url_warn_or_stop(url, warn)
   })
   message("now regenerate sysdata with\ngenerate_sysdata()")
 }

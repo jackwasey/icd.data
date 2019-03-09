@@ -10,7 +10,7 @@
 #' @references
 #'   \href{https://www.cms.gov/Medicare/Coding/ICD10/downloads/icd-10quickrefer.pdf}{CMS ICD-10 Quick Reference}
 #'   \href{https://www.cdc.gov/nchs/icd/icd10cm.htm#FY\%202019\%20release\%20of\%20ICD-10-CM}{CDC copy of ICD-10-CM for 2019}
-#' @keywords internal
+#' @keywords internal datagen
 .icd10cm_parse_all <- function(save_data = FALSE,
                                offline = getOption("icd.data.offline"),
                                verbose = TRUE,
@@ -100,14 +100,15 @@
   chap_lookup <- .icd10_generate_chap_lookup(year = year, verbose = verbose)
   dat[["chapter"]] <-
     merge(dat["three_digit"], chap_lookup,
-          by.x = "three_digit", by.y = "chap_major",
-          all.x = TRUE
+      by.x = "three_digit", by.y = "chap_major",
+      all.x = TRUE
     )[["chap_desc"]]
   dat <- dat[.get_icd34fun("order.icd10cm")(dat$code), ]
   class(dat$code) <- c("icd10cm", "icd10", "character")
   row.names(dat) <- NULL
   assign(paste0("icd10cm", year), value = dat)
   if (save_data) {
+    # I don't know why parent.frame() doesn't work
     .save_in_resource_dir(paste0("icd10cm", year))
     if (year == "2016") .save_in_data_dir("icd10cm2016")
   }
@@ -128,13 +129,18 @@
                                         prefix = "chap",
                                         verbose = FALSE) {
   stopifnot(is.list(chapters), is.character(prefix))
-  erm <- if (.have_memoise())
+  erm <- if (.have_memoise()) {
     memoise::memoise(
-      icd.data:::.get_icd34fun("expand_range_major"),
+      # icd.data:::
+      .get_icd34fun("expand_range_major"),
       cache = memoise::cache_filesystem(
-        file.path(get_resource_dir(), "memoise")))
-  else
-    icd.data:::.get_icd34fun("expand_range_major")
+        file.path(get_resource_dir(), "memoise")
+      )
+    )
+  } else {
+    # icd.data:::
+    .get_icd34fun("expand_range_major")
+  }
   df_rows <- lapply(
     names(chapters),
     function(nm) {
@@ -143,7 +149,8 @@
         erm(
           icd::as.icd10cm(chap["start"]),
           icd::as.icd10cm(chap["end"]),
-          defined = FALSE),
+          defined = FALSE
+        ),
         nm
       )
       # ICD-10 is not in leixcographic order. E.g., C7A is not in the same group

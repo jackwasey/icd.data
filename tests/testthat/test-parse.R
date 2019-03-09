@@ -2,7 +2,7 @@ context("RTF parsing")
 
 test_that("bookmark ends only", {
   expect_equal(
-    rtf_strip(
+    .rtf_strip(
       paste(
         "{\\*\\bkmkend 200.05}{\\*\\bkmkend 200.06}{\\*\\bkmkend 200.07}{\\*\\bkmkend 200.08}", # nolint
         "{\\*\\bkmkend 200.0}\\hich\\af1\\dbch\\af31505\\loch\\f1 200.0\\tab Reticulosarcoma"
@@ -12,9 +12,9 @@ test_that("bookmark ends only", {
   )
 })
 
-test_that("rtf_strip bug case with combined line", {
+test_that(".rtf_strip bug case with combined line", {
   expect_equal(
-    rtf_strip(
+    .rtf_strip(
       paste(
         sep = "", "\\rtlch\\fcs1 \\af1\\afs20\\alang1025 \\ltrch\\fcs0 \\fs20\\cf1", # nolint
         "\\lang1033\\langfe1033\\loch\\af1\\hich\\af1\\dbch\\af31505\\cgrid", # nolint
@@ -31,9 +31,9 @@ test_that("rtf_strip bug case with combined line", {
   )
 })
 
-test_that("rtf_strip does what it says on the tin", {
+test_that(".rtf_strip does what it says on the tin", {
   expect_equal(
-    rtf_strip(
+    .rtf_strip(
       paste(
         sep = "", "\\rtlch\\fcs1 \\af1\\afs20\\alang1025 \\ltrch\\fcs0 ",
         "\\fs20\\cf1\\lang1033\\langfe1033\\loch\\af1\\hich\\af1\\dbch\\af31505", # nolint
@@ -45,7 +45,7 @@ test_that("rtf_strip does what it says on the tin", {
   )
 
   expect_equal(
-    rtf_strip(
+    .rtf_strip(
       paste(
         "The following fifth-digit subclassification is for use with categories", # nolint
         "67\\hich\\af1\\dbch\\af31505\\loch\\f1 8-679 to denote the current episode of care:"
@@ -58,7 +58,7 @@ test_that("rtf_strip does what it says on the tin", {
   )
 
   expect_equal(
-    rtf_strip(
+    .rtf_strip(
       paste(
         "The following fifth-digit subclassification is for use with",
         "category 711; valid digits are in [brackets] under each code.",
@@ -73,14 +73,14 @@ test_that("rtf_strip does what it says on the tin", {
   )
 
   expect_equal(
-    rtf_strip(
+    .rtf_strip(
       "229.8\\tab Othe\\hich\\af1\\dbch\\af31505\\loch\\f1 r specified sites"
     ),
     "229.8 Other specified sites"
   )
 
   expect_equal(
-    rtf_strip(
+    .rtf_strip(
       paste(
         sep = "",
         "\\lsdsemihidden0 \\lsdunhideused0 \\lsdpriority71 ",
@@ -97,7 +97,7 @@ test_that("rtf_strip does what it says on the tin", {
   # make sure we pick up unusual characters within Rtf expressions, otherwise we
   # spill numbers etc into later parsing:
   expect_equal(
-    rtf_strip(
+    .rtf_strip(
       paste(
         sep = "",
         "\\par }\\pard\\plain \\ltrpar\\s82\\ql \\fi-1080\\li2160\\ri0",
@@ -121,20 +121,20 @@ test_that("extraction from qualifier subset works", {
     "[0,2,4,8,9]", "[0,4,8,9]", "[6-9]", "[0,8,9]"
   )
   expect_equal(
-    rtf_parse_qualifier_subset("[0-6]"),
+    .rtf_parse_qualifier_subset("[0-6]"),
     as.character(c(0, 1, 2, 3, 4, 5, 6))
   )
   expect_equal(
-    rtf_parse_qualifier_subset("[0,2-4,8,9]"),
+    .rtf_parse_qualifier_subset("[0,2-4,8,9]"),
     as.character(c(0, 2, 3, 4, 8, 9))
   )
   expect_equal(
-    rtf_parse_qualifier_subset("[0]"),
+    .rtf_parse_qualifier_subset("[0]"),
     "0"
   )
   expect_true(
     all(vapply(all2015,
-      FUN = function(f) length(rtf_parse_qualifier_subset(f)) > 0,
+      FUN = function(f) length(.rtf_parse_qualifier_subset(f)) > 0,
       FUN.VALUE = logical(1)
     ))
   )
@@ -154,7 +154,7 @@ if (rtf_year_ok(test_year)) {
   f_info_short <- unzip_to_data_raw(rtf_dat$rtf_url,
     file_name = rtf_dat$rtf_filename
   )
-  rtf <- rtf_parse_lines(readLines(f_info_short$file_path, warn = FALSE),
+  rtf <- .rtf_parse_lines(readLines(f_info_short$file_path, warn = FALSE),
     perl = TRUE, useBytes = TRUE
   )
   nrtf <- names(rtf)

@@ -149,6 +149,7 @@ NULL
 #' @source \url{http://www.who.int}
 #' @docType data
 #' @keywords datasets
+#' @export
 NULL
 
 #' 2008 WHO ICD-10 data in French
@@ -159,13 +160,15 @@ NULL
 #' @source \url{http://www.who.int}
 #' @docType data
 #' @keywords datasets
+#' @export
 NULL
 
 #' The latest available version of ICD-10-CM in this package
-#' @details This is an active binding.
+#' @details This is an active binding, so is exported explicitly
 #' @docType data
 #' @keywords datasets
 #' @name icd10cm_latest
+#' @export
 NULL
 
 #' The currently active version of ICD-10-CM in this package.
@@ -176,10 +179,11 @@ NULL
 #' \dontrun{
 #' set_icd10cm_active_ver("2016")
 #' }
-#' @details This is an active binding.
+#' @details This is an active binding, so is exported explicitly
 #' @docType data
 #' @keywords datasets
 #' @name icd10cm_active
+#' @export
 NULL
 
 #' French ICD-10-FR modification of WHO ICD-10 used in France
@@ -201,6 +205,7 @@ NULL
 #' @docType data
 #' @keywords datasets
 #' @name icd10fr2019
+#' @export
 NULL
 
 #' Belgian ICD-10-BE
@@ -219,6 +224,7 @@ NULL
 #' @aliases icd10be2017 icd10be2014_pc icd10be2017_pc
 #' @docType data
 #' @keywords datasets
+#' @export
 NULL
 
 
@@ -230,26 +236,32 @@ NULL
 #'   the year, e.g., \code{"2018"}. Each data frame contains two character
 #'   columns, the first, named \code{code} is the procedure code; the second,
 #'   named \code{desc}, has the description.
-#' @name icd10
-#' @aliases icd10cm2014_pc icd10cm2015_pc icd10cm2016_pc icd10cm2017_pc
-#'   icd10cm2018_pc icd10cm2019_pc icd10cm2014_pc_fr icd10cm2014_pc_nl
+#' @name icd10cm2014_pc
 #' @seealso
 #' \url{https://www.cms.gov/Medicare/Coding/ICD10/downloads/pcs_refman.pdf}
 #' @docType data
 #' @keywords datasets
+#' @export
 NULL
 
-#' AHRQ ICD-10-PCS categories
-#'
-#' The AHRQ has categorized each of the ICD-10-PCS (Procedure Codes) into one of
-#' four groups: minor diagnostic, minor therapeutic, major diagnostic or major
-#' therapeutic. This mapping can be used to get the type(s) of procedure(s)
-#' performed on a patient from a \code{data.frame} of patients and associated
-#' procedure codes in 'long' format. See the ICD-10 vignette for an example.
-#' @name icd10_map_ahrq_pcs
-#' @seealso \url{https://www.hcup-us.ahrq.gov/toolssoftware/procedureicd10/procedure_icd10.jsp}
-#' @docType data
-#' @keywords datasets
+#' @rdname icd10cm2014_pc
+#' @export
+#' @name icd10cm2015_pc
+NULL
+
+#' @rdname icd10cm2014_pc
+#' @export
+#' @name icd10cm2016_pc
+NULL
+
+#' @rdname icd10cm2014_pc
+#' @export
+#' @name icd10cm2017_pc
+NULL
+
+#' @rdname icd10cm2014_pc
+#' @export
+#' @name icd10cm2018_pc
 NULL
 
 #' Final version ICD-9-CM, just billable/leaf codes

@@ -2,6 +2,14 @@
 #' @aliases icd.data-package
 #' @concept ICD-9 ICD-10 ICD
 #' @author Jack O. Wasey \email{jack@@jackwasey.com}
+## usethis namespace: start
+#' @importFrom stats setNames
+#' @importFrom utils globalVariables
+#' @importFrom utils read.csv
+#' @importFrom utils read.delim
+#' @importFrom utils read.fwf
+#' @importFrom utils askYesNo
+## usethis namespace: end
 #' @keywords misc utilities datasets
 "_PACKAGE"
 
