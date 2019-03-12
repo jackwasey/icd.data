@@ -127,8 +127,8 @@
   if (verbose > 1) message("hier level = ", length(hier_code))
   new_hier <- length(hier_code) + 1
   # parallel mcapply is about 2-3x as fast, but may get throttled for multiple
-  # connections. It seems to get up to about 10-15, which is reasonable.
-  all_new_rows <- parallel::mclapply(
+  # connections. It seems to get up to about 10-15, which is reasonable. However, it may (inexplicably) introduce data errors, e.g. duplicated codes which are not identical in other columns.
+  all_new_rows <- lapply(
     # parallel::mclapply(
     seq_len(nrow(tree_json)),
     function(branch) {
@@ -199,7 +199,11 @@
       length(all_new_rows)
     )
   }
-  dat <- do.call(rbind, all_new_rows)
+  # just return the rows (we are recursing so can't save anything in this function). Parser can do this.
+  do.call(rbind, all_new_rows)
+}
+
+.dl_icd10who_finalize <- function(dat, year, lang) {
   rownames(dat) <- NULL
   dat[["code"]] <- sub(pattern = "\\.", replacement = "", x = dat[["code"]])
   for (col_name in c(
@@ -212,17 +216,25 @@
     dat[[col_name]] <- sub("[^ ]+ ", "", dat[[col_name]])
   var_name <- paste0("icd10who", year, ifelse(lang == "en", "", lang))
   .save_in_resource_dir(var_name, x = dat)
-  invisible(dat)
+  dat
 }
 
-.parse_icd10who2016 <- function(...) {
-  .confirm_download()
-  .dl_icd10who(year = 2016, lang = "en", ...)
+.parse_icd10who2016 <- function(must_work = TRUE, ...) {
+  ok <- .confirm_download(must_work = must_work)
+  if (!ok) return()
+  .dl_icd10who_finalize(
+    .dl_icd10who(year = 2016, lang = "en", ...),
+    2016, "en"
+  )
 }
 
-.parse_icd10who2008fr <- function(...) {
-  .confirm_download()
-  .dl_icd10who(year = 2008, lang = "fr", ...)
+.parse_icd10who2008fr <- function(must_work = TRUE, ...) {
+  ok <- .confirm_download(must_work = must_work)
+  if (!ok) return()
+  .dl_icd10who_finalize(
+    .dl_icd10who(year = 2008, lang = "fr", ...),
+    2008, "fr"
+  )
 }
 
 .downloading_who_message <- function() {

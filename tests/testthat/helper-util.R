@@ -228,9 +228,14 @@ expect_icd10_only_sub_chap <- function(x, ...) {
 expect_equal_no_icd <- function(object, expected, ...) {
   # taken from icd class.R
   icd_all_classes <- c(
-    "icd9cm", "icd9", "icd10cm", "icd10who",
-    "icd10", "icd_long_data",
-    "icd_wide_data", "comorbidity_map"
+    "icd9cm",
+    "icd9",
+    "icd10cm",
+    "icd10who",
+    "icd10",
+    "icd_long_data",
+    "icd_wide_data",
+    "comorbidity_map"
   )
   class(object) <- class(object)[class(object) %nin% icd_all_classes]
   class(expected) <- class(expected)[class(expected) %nin% icd_all_classes]

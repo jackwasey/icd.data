@@ -20,7 +20,7 @@
 #' as is.
 #' @template save_data
 #' @keywords internal
-.parse_icd10fr2019 <- function(save_data = FALSE, ...) {
+.parse_icd10fr2019 <- function(...) {
   fp <- .dl_icd10fr2019(save_data = save_data, ...)
   cim_raw <- read.delim(
     fileEncoding = "Latin1",
@@ -51,8 +51,6 @@
   # TODO: chapitres
   class(icd10fr2019$code) <- c("icd10fr", "icd10", "character")
   class(icd10fr2019$three_digit) <- c("icd10fr", "icd10", "character")
-  if (save_data) {
-    .save_in_resource_dir(icd10fr2019)
-  }
+  .save_in_resource_dir(icd10fr2019)
   invisible(icd10fr2019)
 }

@@ -115,6 +115,12 @@ with_icd10cm_version <- function(ver, code) {
   force(code)
 }
 
+with_offline <- function(code) {
+  old <- options("icd.data.offline" = TRUE)
+  on.exit(options(old))
+  force(code)
+}
+
 #' Internal function used to search and maybe prompt when active binding used.
 #'
 #' Tries to get from the local environment first, then from resource directory,

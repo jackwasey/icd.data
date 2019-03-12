@@ -26,7 +26,6 @@ Suggests:
     icd,
     jsonlite,
     memoise,
-    parallel,
     readxl,
     RODBC,
     testthat,
