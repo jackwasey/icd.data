@@ -1,4 +1,4 @@
-.make_icd10cm_dl_parse()
+.make_icd10cm_parsers()
 
 .onLoad <- function(libname, pkgname) {
   .set_init_options()

@@ -22,7 +22,7 @@
   match.fun(.get_parser_name(var_name))
 }
 
-.get_parse_icd10cm_name <- function(ver, dx) {
+.get_parser_icd10cm_name <- function(ver, dx) {
   paste0(".parse_", paste0("icd10cm", ver, ifelse(dx, "", "_pc")))
 }
 

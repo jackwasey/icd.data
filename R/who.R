@@ -29,13 +29,10 @@
                      offline = getOption("icd.data.offline", TRUE),
                      verbose = TRUE) {
   if (offline) stop("Offline, so unable to attempt WHO data download.")
-  httr_get <- function(...) {
-    if (verbose) message("Downloading...")
-    httr::RETRY(verb = "GET", ...)
-  }
+  httr_retry <- httr::RETRY
   if (.have_memoise()) {
-    httr_get <- memoise::memoise(
-      httr_get,
+    httr_retry <- memoise::memoise(
+      httr_retry,
       cache = memoise::cache_filesystem(
         file.path(get_resource_dir(), "memoise")
       )
@@ -45,7 +42,7 @@
   who_base <- "https://apps.who.int/classifications"
   json_url <- paste(who_base, edition, "browse", year, lang, resource, sep = "/")
   if (verbose > 1) message("Getting WHO data with JSON: ", json_url)
-  http_response <- httr_get(json_url)
+  http_response <- httr_retry("GET", json_url)
   if (http_response$status_code >= 400) {
     warning("Unable to fetch resource: ", json_url)
     return()
@@ -154,7 +151,7 @@
       hier_desc[new_hier] <- child_desc
       sub_sub_chapter <- NA
       hier_three_digit_idx <- which(nchar(hier_code) == 3 &
-        !grepl("[XVI-]", hier_code))
+                                      !grepl("[XVI-]", hier_code))
       if (length(hier_code) >= 3 && nchar(hier_code[3]) > 3) {
         sub_sub_chapter <- hier_desc[3]
       }
@@ -202,90 +199,32 @@
       length(all_new_rows)
     )
   }
-  do.call(rbind, all_new_rows)
+  dat <- do.call(rbind, all_new_rows)
+  rownames(dat) <- NULL
+  dat[["code"]] <- sub(pattern = "\\.", replacement = "", x = dat[["code"]])
+  for (col_name in c(
+    "chapter",
+    "sub_chapter",
+    "sub_sub_chapter",
+    "major",
+    "desc"
+  ))
+    dat[[col_name]] <- sub("[^ ]+ ", "", dat[[col_name]])
+  var_name <- paste0("icd10who", year, ifelse(lang == "en", "", lang))
+  .save_in_resource_dir(var_name, x = dat)
+  invisible(dat)
 }
 
-.parse_icd10who <- function(...) {
+.parse_icd10who2016 <- function(...) {
   .confirm_download()
-  .dl_icd10who(...)
+  .dl_icd10who(year = 2016, lang = "en", ...)
 }
 
-.fetch_icd10who <- function(var_name,
-                            must_work = TRUE,
-                            verbose = TRUE,
-                            ...) {
-  if (verbose) message("Fetching WHO ICD data")
-  dat <- .get_from_cache(
-    var_name = var_name,
-    must_work = FALSE
-  )
-  if (!is.null(dat)) return(dat)
-  if (verbose) message("Downloading WHO ICD data")
-  dat <- .dl_icd10who(...)
-  if (!is.null(dat)) {
-    .save_in_resource_dir(var_name = var_name, x = dat)
-  } else {
-    if (must_work) stop("Unable to get WHO ICD data: ", sQuote(var_name))
-  }
-  NULL
+.parse_icd10who2008fr <- function(...) {
+  .confirm_download()
+  .dl_icd10who(year = 2008, lang = "fr", ...)
 }
 
 .downloading_who_message <- function() {
   message("Downloading or parsing cached WHO ICD data. This may take a few minutes. Data is cached, so if there is a download error, repeating the instruction will return the data immediately if cached, or pick up where it left off.") # nolint
-}
-
-#' Fetch English or French WHO data from online source
-#'
-#' This will download the latest ICD-10 codes and descriptions from the WHO, and
-#' save the results in a directory given by `icd.data::get_resource_dir()`.
-#' This defaults to a subdirectory `.icd.data` of the home directory. This is
-#' necessary because it is not permitted to write data back to the installed
-#' package location (and this may not be allowed on a multi-user system,
-#' anyway).
-#' @param save_data Logical, defaults to `TRUE`
-#' @param ... Arguments passed to internal functions
-#' @keywords internal
-.dl_icd10who2016 <- function(save_data = TRUE, ...) {
-  .downloading_who_message()
-  icd10who2016 <- .parse_icd10who(year = "2016", lang = "en", ...)
-  rownames(icd10who2016) <- NULL
-  icd10who2016$code <-
-    sub(pattern = "\\.", replacement = "", x = icd10who2016$code)
-  for (col_name in c(
-    "chapter",
-    "sub_chapter",
-    "sub_sub_chapter",
-    "major",
-    "desc"
-  ))
-    icd10who2016[[col_name]] <- sub("[^ ]+ ", "", icd10who2016[[col_name]])
-  if (save_data) .save_in_resource_dir(icd10who2016)
-  invisible(icd10who2016)
-}
-
-.parse_icd10who2016 <- function(...) {
-  .dl_icd10who2016(...)
-}
-
-.dl_icd10who2008fr <- function(save_data = TRUE, ...) {
-  .downloading_who_message()
-  # year = "2008", lang = "fr",
-  icd10who2008fr <- .fetch_icd10who(var_name = "icd10who2008fr", ...)
-  rownames(icd10who2008fr) <- NULL
-  icd10who2008fr$code <-
-    sub(pattern = "\\.", replacement = "", x = icd10who2008fr$code)
-  for (col_name in c(
-    "chapter",
-    "sub_chapter",
-    "sub_sub_chapter",
-    "major",
-    "desc"
-  ))
-    icd10who2008fr[[col_name]] <- sub("[^ ]+ ", "", icd10who2008fr[[col_name]])
-  if (save_data) .save_in_resource_dir(icd10who2008fr)
-  invisible(icd10who2008fr)
-}
-
-.parse_icd10who2008fr <- function(...) {
-  .dl_icd10who2008fr(...)
 }

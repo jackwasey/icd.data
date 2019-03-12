@@ -123,17 +123,29 @@
 #   )
 # }
 
-.make_icd10cm_dl_parse <- function(env = parent.frame()) {
+.make_icd10cm_parse_fun <- function(year, dx) {
+  # can't have the function in the loop otherwise it inherits the environment of
+  # the loop, doesn't have it's own unique one?
+  #
+  # Must force, so that the values to the arguments are not promises which are
+  # later evaluated in the loop environment.
+  force(year)
+  force(dx)
+  parse_fun <- function() {
+    .parse_icd10cm_year(year = year, dx = dx)
+  }
+  parse_fun_env <- environment(parse_fun)
+  parse_fun_env$year <- as.character(year)
+  parse_fun_env$dx <- dx
+  parse_fun
+}
+
+.make_icd10cm_parsers <- function(env = parent.frame()) {
   for (y in 2014:2019) {
     for (dx in c(TRUE, FALSE)) {
-      if (dx && y %in% c(2016, 2019)) next
-      parse_fun_name <- .get_parse_icd10cm_name(y, dx)
-      parse_fun <- function() {
-        .parse_icd10cm_year(year = year, dx = dx)
-      }
-      parse_fun_env <- environment(parse_fun)
-      parse_fun_env$year <- as.character(y)
-      parse_fun_env$dx <- dx
+      if (dx && (y %in% c(2016, 2019))) next
+      parse_fun_name <- .get_parser_icd10cm_name(y, dx)
+      parse_fun <- .make_icd10cm_parse_fun(y, dx)
       assign(parse_fun_name, parse_fun, envir = env)
     }
   }

@@ -1,5 +1,7 @@
 .dl_icd10fr2019 <- function(save_data = TRUE, ...) {
-  fp <- .unzip_to_data_raw(
+  ok <- .confirm_download()
+  if (!ok) return()
+  .unzip_to_data_raw(
     url = paste(
       sep = "/",
       "https://www.atih.sante.fr",
@@ -14,10 +16,11 @@
 
 #' Read the definitions of the French edition of ICD-10
 #'
-#' The short descriptions are capitalized, with accented characters, so leaving as is.
+#' The short descriptions are capitalized, with accented characters, so leaving
+#' as is.
 #' @template save_data
 #' @keywords internal
-.parse_cim_fr <- function(save_data = FALSE, ...) {
+.parse_icd10fr2019 <- function(save_data = FALSE, ...) {
   fp <- .dl_icd10fr2019(save_data = save_data, ...)
   cim_raw <- read.delim(
     fileEncoding = "Latin1",

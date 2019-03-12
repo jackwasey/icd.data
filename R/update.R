@@ -37,7 +37,7 @@
     twentysixteen = FALSE
   )
   .icd10cm_parse_cms_pcs_all(save_data = TRUE)
-  .parse_cim_fr(save_data = TRUE)
+  .parse_icd10fr2019() #save data?
   .fetch_icd10be2014()
   .fetch_icd10be2017()
 }
