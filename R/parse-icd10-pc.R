@@ -12,6 +12,7 @@
 .icd10cm_parse_cms_pcs_year <- function(year,
                                         save_data = FALSE,
                                         verbose = TRUE) {
+  .confirm_download()
   message("Please wait a few moments to parse data...")
   year <- as.character(year)
   fp <- .fetch_icd10cm_ver(

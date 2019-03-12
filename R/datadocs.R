@@ -115,7 +115,9 @@ NULL
 #' \emph{leaf} flag indicating whether a code is a \emph{billable} leaf node, or
 #' a code higher in the hierarchy which nevertheless will have a description.
 #' @section Editions: There are annual revisions to this data in the US.
-#' @aliases icd10cm2014 icd10cm2015 icd10cm2016 icd10cm2017 icd10cm2018
+#' @aliases icd10cm2016
+#' @seealso \code{\link{icd10cm2014}} \code{\link{icd10cm2015}}
+#'   \code{\link{icd10cm2017}} \code{\link{icd10cm2018}}
 #' @source \url{http://www.cdc.gov/nchs/icd/icd10cm.htm}
 #' @docType data
 #' @keywords datasets
@@ -136,10 +138,39 @@ NULL
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-Code-Tables-and-Index.zip}
 #'   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-PCS-long-and-abbreviated-titles.zip}
 #' @name icd10cm2019
-#' @aliases icd10cm2014 icd10cm2015 icd10cm2016 icd10cm2017 icd10cm2018
 NULL
-# active binding so must be exported (in NAMESPACE, as roxygen screws this up)
 
+#' @name icd10cm2014
+#' @title ICD-10-CM 2014
+#' @seealso \code{\link{icd10cm2019}}
+#' @docType data
+#' @keywords datasets
+#' @export
+NULL
+
+#' @name icd10cm2015
+#' @title ICD-10-CM 2015
+#' @seealso \code{\link{icd10cm2019}}
+#' @docType data
+#' @keywords datasets
+#' @export
+NULL
+
+#' @name icd10cm2017
+#' @title ICD-10-CM 2017
+#' @seealso \code{\link{icd10cm2019}}
+#' @docType data
+#' @keywords datasets
+#' @export
+NULL
+
+#' @name icd10cm2018
+#' @title ICD-10-CM 2018
+#' @seealso \code{\link{icd10cm2019}}
+#' @docType data
+#' @keywords datasets
+#' @export
+NULL
 
 #' 2016 WHO ICD-10 data
 #'
@@ -221,12 +252,39 @@ NULL
 #' \url{https://www.health.belgium.be/fr/sante/organisation-des-soins-de-sante/hopitaux/systemes-denregistrement/icd-10-be}
 #' \url{https://www.health.belgium.be/fr/fy2014reflisticd-10-bexlsx}
 #' @name icd10be2014
-#' @aliases icd10be2017 icd10be2014_pc icd10be2017_pc
+#' @seealso \code{\link{icd10be2017}} \code{\link{icd10be2014_pc}}
+#'   \code{\link{icd10be2017_pc}}
 #' @docType data
 #' @keywords datasets
 #' @export
 NULL
 
+#' @title ICD-10-BE 2017
+#' @name icd10be2017
+#' @seealso \code{\link{icd10be2014}} \code{\link{icd10be2014_pc}}
+#'   \code{\link{icd10be2017_pc}}
+#' @docType data
+#' @keywords datasets
+#' @export
+NULL
+
+#' @title ICD-10-BE 2017 procedure codes
+#' @name icd10be2017_pc
+#' @seealso \code{\link{icd10be2014}} \code{\link{icd10be2014_pc}}
+#'   \code{\link{icd10be2017}}
+#' @docType data
+#' @keywords datasets
+#' @export
+NULL
+
+#' @title ICD-10-BE 2014 procedure codes
+#' @name icd10be2014_pc
+#' @seealso \code{\link{icd10be2014}} \code{\link{icd10be2017}}
+#'   \code{\link{icd10be2017_pc}}
+#' @docType data
+#' @keywords datasets
+#' @export
+NULL
 
 #' ICD-10-CM Procedure Codes
 #'
@@ -266,6 +324,7 @@ NULL
 
 #' Final version ICD-9-CM, just billable/leaf codes
 #'
+#' These will be removed in a future version in favor of \code{icd9cm2011}.
 #' These are derived from the final CMS published version 32 for 2014, which was
 #' unchanged since 2011. The short descriptions are in ASCII with no special
 #' characters, whereas the long descriptions contain accented characters which
@@ -275,6 +334,9 @@ NULL
 #' including pulling the data from the web pages directly. Despite my best
 #' efforts, current locale can give different results, but this packaged data is
 #' correct, with some \code{UTF-8} encoded strings.
+#'
+#' \code{icd9cm_billable} is deprecated, and currently only provides a list with
+#' one item named \code{"32"}.
 #' @docType data
 #' @keywords datasets
 #' @format data frames with columns \code{code}, \code{short_desc}, and
@@ -282,6 +344,15 @@ NULL
 #' @source
 #' \url{http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html}
 #' @name icd9cm_leaf_v32
+NULL
+
+#' Deprecated ICD-9-CM leaf/billable codes
+#'
+#' @seealso \code{\link{icd9cm2011}}, and the also deprecated
+#'   \code{\link{icd9cm_billable}}
+#' @name icd9cm_billable
+#' @docType data
+#' @keywords datasets
 NULL
 
 #' Hospital discharge data from Vermont

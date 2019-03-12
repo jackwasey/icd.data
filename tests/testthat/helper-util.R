@@ -1,7 +1,14 @@
-# nocov start
-
 rtf_year_ok <- function(year, ...) {
   !is.null(.rtf_fetch_year(year, offline = TRUE, ...))
+}
+
+skip_if_offline <- function() {
+  if (isTRUE(getOption("icd.data.offline"))) {
+    skip("Offline")
+  }
+  if (!isTRUE(getOption("icd.data.interact"))) {
+    skip("Not interactive")
+  }
 }
 
 skip_on_no_rtf <- function(test_year) {
@@ -34,15 +41,16 @@ skip_flat_icd9_all_avail <- function() {
   for (v in icd9cm_sources$version) skip_flat_icd9_avail(v)
 }
 
-skip_icd10cm_flat_avail <- function(year,
-                                    msg = "skipping test because flat file ICD-10-CM source not available") {
-  if (is.null(icd10cm_get_flat_file(year = year, offline = TRUE))) {
+skip_icd10cm_flat_avail <- function(year, dx = TRUE) {
+  msg <- "skipping test because flat file ICD-10-CM source not available"
+  if (.exists_in_cache(var_name = paste0("icd10cm", year, ifelse(dx, "", "_pc"))))
     testthat::skip(msg)
   }
-}
 
-skip_icd10cm_xml_avail <- function(msg = "skipping test because XML file ICD-10-CM source not available")
-  if (is.null(icd10cm_get_xml_file(offline = TRUE))) testthat::skip(msg)
+skip_icd10cm_xml_avail <- function() {
+  msg <- "skipping test because XML file ICD-10-CM source not available"
+  if (is.null(.icd10cm_get_xml_file(offline = TRUE))) testthat::skip(msg)
+}
 
 skip_flat_icd9_avail_all <- function() {
   for (v in icd9cm_sources$version)
@@ -237,16 +245,14 @@ expect_equal_no_icd <- function(object, expected, ...) {
 #' @param lang Language, currently either 'en' or 'fr'
 skip_missing_icd10who <- function(ver = "2016", lang = "en") {
   if (ver == "2016" && lang == "en") {
-    if (is.null(.get_icd10who2016())) {
-      testthat::skip("English WHO ICD-10 not loaded, or unavailable")
+    if (is.null(.get_icd10who2016(must_work = FALSE))) {
+      testthat::skip("English WHO ICD-10 not available")
     }
   } else if (ver == "2008" && lang == "fr") {
-    if (is.null(.get_icd10who2008fr())) {
-      testthat::skip("French WHO ICD-10 not loaded, or unavailable")
+    if (is.null(.get_icd10who2008fr(must_work = FALSE))) {
+      testthat::skip("French WHO ICD-10 not available")
     }
   } else {
     stop("Unavailable year/language combination for WHO codes sought.")
   }
 }
-
-# nocov end

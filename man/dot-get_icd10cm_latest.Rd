@@ -7,18 +7,19 @@
 .get_icd10cm_latest()
 }
 \description{
-Usually, the \code{icd.data} package should be attached, and therefore appear on
-the search list, using \code{library(icd.data)} or \code{require(icd.data)}. If it is
-not attached, the active binding \code{icd10cm_latest} cannot find the packages
+Usually, the `icd.data` package should be attached, and therefore appear on
+the search list, using `library(icd.data)` or `require(icd.data)`. If it is
+not attached, the active binding `icd10cm_latest` cannot find the packages
 own data! This function is a possible work-around to get the data without
 having to attach the package.
 }
 \examples{
-\dontrun{
 # if icd.data not attached:
-get_icd10cm_latest()
-icd.data::icd10cm_latest
-# preferred:
+a <- icd.data::icd10cm_latest
+b <- icd.data:::.get_icd10cm_latest()
+stopifnot(identical(a, b))
+# Preferred:
+\dontrun{
 library(icd.data)
 head(icd10cm_latest)
 }

@@ -12,6 +12,7 @@
   on.exit(options(old_opt))
   .generate_sysdata(save_data = save_data, verbose = verbose)
   load(file.path("R", "sysdata.rda"))
+  # .icd9cm_parse_leaf_descs
   .icd9cm_parse_leaf_desc_ver(
     ver = "32",
     save_data = save_data,
@@ -37,6 +38,6 @@
   )
   .icd10cm_parse_cms_pcs_all(save_data = TRUE)
   .parse_cim_fr(save_data = TRUE)
-  .fetch_icd10be2014(save_data = TRUE)
-  .fetch_icd10be2017(save_data = TRUE)
+  .fetch_icd10be2014()
+  .fetch_icd10be2017()
 }

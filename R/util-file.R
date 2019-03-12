@@ -90,8 +90,7 @@
 #' @template verbose
 #' @param ... additional arguments passed to \code{utils::download.file}
 #' @keywords internal
-.unzip_single <- function(
-                          url,
+.unzip_single <- function(url,
                           file_name,
                           save_path,
                           insecure = TRUE,
@@ -103,6 +102,7 @@
   zipfile <- tempfile(fileext = ".zip")
   on.exit(unlink(zipfile), add = TRUE)
   extra <- ifelse(insecure, "--insecure --silent", NULL)
+  .confirm_download()
   dl_code <- utils::download.file(
     url = url,
     destfile = zipfile,

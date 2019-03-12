@@ -152,18 +152,17 @@ test_that("ICD-9-CM billable codes package data is recreated", {
     b32[b32$code == "V9199", "short_desc"],
     "Mult gest-plac/sac undet"
   )
-  for (ver in c("27", "28", "29", "30", "31", "32")) {
-    v <- icd9cm_billable[[ver]][["long_desc"]]
-    cb <- check_billable[[ver]][["long_desc"]]
-    diff <- v != cb
-    expect_identical(
-      check_billable[[ver]],
-      icd9cm_billable[[ver]],
-      info = paste(
-        "long_desc differences for version", ver,
-        "\noriginal: ", paste(v[diff][1:5], collapse = ", "),
-        "\nprocess:", paste(cb[diff][1:5], collapse = ", ")
-      )
+  ver <- "32"
+  v <- icd9cm_billable[[ver]][["long_desc"]]
+  cb <- check_billable[[ver]][["long_desc"]]
+  diff <- v != cb
+  expect_identical(
+    check_billable[[ver]],
+    icd9cm_billable[[ver]],
+    info = paste(
+      "long_desc differences for version", ver,
+      "\noriginal: ", paste(v[diff][1:5], collapse = ", "),
+      "\nprocess:", paste(cb[diff][1:5], collapse = ", ")
     )
-  }
+  )
 })

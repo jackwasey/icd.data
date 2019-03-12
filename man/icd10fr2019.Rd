@@ -20,6 +20,6 @@ Définitions CIM-10-FR de l'OMS (WHO ICD-10 definitions)
 }
 \references{
 \href{https://www.atih.sante.fr/nomenclatures-de-recueil-de-linformation/cim}{ATIH
-CIM-10-FR}
+  CIM-10-FR}
 }
 \keyword{datasets}

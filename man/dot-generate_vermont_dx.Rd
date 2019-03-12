@@ -15,7 +15,7 @@ it can reduced to a smaller set of codes using \code{icd_condense}.}
 }
 \value{
 invisibly returns the list of vectors, where a co-morbidity name is
-associated with a character vector of ICD-9 codes.
+  associated with a character vector of ICD-9 codes.
 }
 \description{
 Process data from \href{healthvermont.gov}{Health Vermont}

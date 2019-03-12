@@ -2,7 +2,25 @@
 .icd_data_env <- new.env(parent = emptyenv())
 
 # Generate getter functions for all bound data
-.binding_names <- c(
+.bindings <- list(
+  # WHO
+  "icd10who2016" = c("dx"),
+  "icd10who2008fr" = c("dx"),
+  # FR
+  "icd10fr2019" = c("dx"),
+  # BE
+  "icd10be2014" = c("dx", "pc"),
+  "icd10be2017" = c("dx", "pc"),
+  # ICD-10-CM
+  "icd10cm2014" = c("dx", "pc"),
+  "icd10cm2015" = c("dx", "pc"),
+  "icd10cm2016" = c("pc"),
+  "icd10cm2017" = c("dx", "pc"),
+  "icd10cm2018" = c("dx", "pc"),
+  "icd10cm2019" = c("pc")
+)
+
+.binding_names <- list(
   # WHO
   "icd10who2016",
   "icd10who2008fr",
@@ -18,48 +36,32 @@
   "icd10cm2014_pc",
   "icd10cm2015",
   "icd10cm2015_pc",
-  # not 16 dx
   "icd10cm2016_pc",
   "icd10cm2017",
   "icd10cm2017_pc",
   "icd10cm2018",
   "icd10cm2018_pc",
-  # not 19 dx
   "icd10cm2019_pc"
 )
 
-.get_getter_name <- function(var_name) {
-  paste0(".get_", var_name)
-}
-.get_fetch_name <- function(var_name) {
-  paste0(".fetch_", var_name)
-}
-.get_fetch_icd10cm_name <- function(ver, dx) {
-  paste0(".fetch_", paste0("icd10cm", ver, ifelse(dx, "", "_pc")))
-}
-
 .make_active_bindings <- function(final_env, verbose = TRUE) {
-  # This looks hairy, but we are just generating the getters and bindings
   for (var_name in .binding_names) {
-    if (verbose) message("working on ", var_name)
-    getter_name <- .get_getter_name(var_name)
-    if (verbose) message("assigning ", getter_name)
-    # eval(f) ?
-    assign(getter_name, .make_getter(var_name, verbose), final_env)
-    # now the active binding functions themselves
-    if (verbose) message("getter done, now active binding")
-    # environment just for the getter name substitution
+    if (verbose) message("Making active binding(s) for: ", var_name)
     binding_fun <- .make_binding_fun(var_name = var_name, verbose = verbose)
     bound_name <- paste0(".", var_name, "_binding")
     assign(bound_name, eval(binding_fun), final_env)
     if (verbose) message("Trying to create active binding itself")
     ff <- get(bound_name, final_env)
     if (is.function(ff)) {
+      if (exists(var_name, final_env)) {
+        stop(var_name, " already exists.")
+      }
       makeActiveBinding(
         sym = var_name,
         ff,
         env = final_env
       )
+      lockBinding(var_name, final_env)
     } else {
       if (verbose) message(var_name, " is not a function! Skipping")
     }
@@ -68,77 +70,26 @@
 }
 
 .make_binding_fun <- function(var_name, verbose = TRUE) {
-  # TODO: ideally don't use do.call, but have actual function (or it's symbol?)
+  # TODO: ideally don't use do.call, but the actual function (or it's symbol?)
   if (verbose) message("Making binding fun for: ", var_name)
-  getter_name <- .get_getter_name(var_name)
+  fetcher_name <- .get_fetcher_name(var_name)
   binding_fun <- function(x) {
     if (verbose) message("Running binding for ", var_name)
     if (!missing(x)) .stop_binding_ro()
-    dat <- do.call(getter_name, args = list())
+    dat <- do.call(fetcher_name, args = list())
     if (!is.null(dat)) return(dat)
     .message_who()
     .stop_on_absent(paste(var_name, "not available."))
   }
   f_env <- environment(binding_fun)
-  f_env$getter_name <- getter_name
+  f_env$fetcher_name <- fetcher_name
   f_env$var_name <- var_name
   f_env$verbose <- verbose
   binding_fun
 }
 
-.make_getter <- function(var_name, verbose) {
-  force(var_name)
-  force(verbose)
-  dl_fun_name <- paste0(".fetch_", var_name)
-  f <- function(alt = NULL,
-                  must_work = TRUE,
-                  msg = paste("Unable to find", var_name)) {
-    if (verbose) message("Starting getter")
-    stopifnot(is.character(var_name))
-    dat <- .get_from_cache(var_name,
-      must_work = FALSE,
-      verbose = verbose
-    )
-    if (!is.null(dat)) return(dat)
-    if (verbose) message("Trying to call fetch function")
-    if (verbose) message("name is ", dl_fun_name)
-    # for (fr in list(parent.frame(), asNamespace("icd.data"))) {
-    fr <- environment()
-    if (exists(dl_fun_name, fr, inherits = TRUE)) {
-      if (verbose) message("Found!")
-      out <- do.call(get(dl_fun_name,
-        envir = fr,
-        inherits = TRUE
-      ),
-      args = list()
-      )
-      .save_in_resource_dir(out, var_name = var_name)
-      return(out)
-    } else {
-      stop("No fetch function: ", dl_fun_name)
-    }
-    dat <- .get_from_cache(var_name,
-      must_work = FALSE,
-      verbose = verbose
-    )
-    if (!is.null(dat)) return(dat)
-    if (must_work) {
-      stop(
-        "Cannot find or fetch that data using ",
-        dl_fun_name, ", and it must work."
-      )
-    }
-    if (is.null(alt)) {
-      warning(msg)
-    }
-    if (verbose) message("Returning 'alt' as ", dl_fun_name, " not available")
-    alt
-  }
-  f_env <- environment(f)
-  f_env$verbose <- verbose
-  f_env$dl_fun_name <- dl_fun_name
-  f_env$var_name <- var_name
-  f
+skip_if_no_dat <- function() {
+  # testthat::skip
 }
 
 # Dynamic
@@ -147,18 +98,21 @@
   icd.data::icd9cm_hierarchy
 }
 makeActiveBinding("icd9cm2011", .icd9cm2011_binding, environment())
+lockBinding("icd9cm2011", environment())
 
 .icd10cm_active_binding <- function(x) {
   if (!missing(x)) .stop_binding_ro()
   get_icd10cm_version()
 }
 makeActiveBinding("icd10cm_active", .icd10cm_active_binding, environment())
+lockBinding("icd10cm_active", environment())
 
 .icd10cm_latest_binding <- function(x) {
   if (!missing(x)) .stop_binding_ro()
   icd.data::icd10cm2019
 }
 makeActiveBinding("icd10cm_latest", .icd10cm_latest_binding, environment())
+lockBinding("icd10cm_latest", environment())
 
 #' Localised synonym for icd10fr2019, with French column names
 #' @keywords internal
@@ -183,6 +137,13 @@ makeActiveBinding("icd10cm_latest", .icd10cm_latest_binding, environment())
   )
   cim10fr2019
 }
+
+.icd9cm_leaf_v32_binding <- function(x) {
+  stopifnot(missing(x))
+  icd.data::icd9cm_billable[["32"]]
+}
+makeActiveBinding("icd9cm_leaf_v32", .icd9cm_leaf_v32_binding, environment())
+lockBinding("icd9cm_leaf_v32", environment())
 
 .message_who <- function() {
   o <- getOption("icd.data_absent_action")

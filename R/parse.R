@@ -50,10 +50,10 @@
 #' http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html
 #' @keywords internal datagen
 #' @noRd
-.icd9cm_parse_leaf_descs <- function(save_data = FALSE,
+.icd9cm_parse_leaf_descs <- function(save_data = TRUE,
                                      verbose = FALSE,
                                      ...) {
-  message("Just generate icd9cm_leaf_v32.
+  message("In future, just generate icd9cm_leaf_v32.
 Now just making icd9cm_billable[[\"32\"]]")
   stopifnot(is.logical(save_data), length(save_data) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
@@ -65,10 +65,16 @@ Now just making icd9cm_billable[[\"32\"]]")
       paste(versions, collapse = ", ")
     )
   }
-  icd9cm_billable <- .icd9cm_parse_leaf_desc_ver(ver = "32",
-    save_data = save_data,
+  dat <- .icd9cm_parse_leaf_desc_ver(
+    ver = "32",
+    # don't save with icd9cm_leaf_v32 yet
+    save_data = FALSE,
     verbose = verbose,
-    ...)
+    ...
+  )
+  dat <- dat[.get_icd34fun("order.icd9")(dat$code), ]
+  icd9cm_billable <- list()
+  icd9cm_billable[["32"]] <- dat
   if (save_data) .save_in_data_dir(icd9cm_billable)
   invisible(icd9cm_billable)
 }
@@ -92,8 +98,7 @@ Now just making icd9cm_billable[[\"32\"]]")
 #' @return invisibly return the result
 #' @keywords internal datagen
 #' @noRd
-.icd9cm_parse_leaf_desc_ver <- function(
-                                        ver,
+.icd9cm_parse_leaf_desc_ver <- function(ver,
                                         save_data = FALSE,
                                         verbose = FALSE,
                                         ...) {

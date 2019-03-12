@@ -4,8 +4,7 @@
 \alias{setup_resource_dir}
 \alias{set_resource_dir}
 \alias{get_resource_dir}
-\title{This directory is created only at user's permission. Default is \code{~/.icd.data}.
-Get or set the resource directory for on-demand downloads, and cached data}
+\title{Get or set the resource directory for on-demand downloads, and cached data}
 \usage{
 setup_resource_dir(path = NULL, interact = interactive(),
   force = TRUE, verbose = TRUE)
@@ -31,7 +30,7 @@ required.}
 }
 \value{
 The path to the resource directory, or \code{NULL} if it could not be
-found.
+  found.
 }
 \description{
 For getting the path, first the option \code{icd.data.resource} is tried,

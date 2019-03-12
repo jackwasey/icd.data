@@ -127,7 +127,7 @@ test_that("explain icd9GetChapters simple input", {
   expect_equal(.as_char_no_warn(chaps2$sub_chapter), NA_character_)
   expect_equal(.as_char_no_warn(chaps2$chapter), NA_character_)
 
-  chaps3 <- icd9_get_chapters("417", short_code = FALSE)
+  chaps3 <- .icd9_get_chapters("417", short_code = FALSE)
   expect_equal(.as_char_no_warn(chaps3$three_digit), "417")
   expect_equal(
     .as_char_no_warn(chaps3$major),
@@ -142,11 +142,11 @@ test_that("explain icd9GetChapters simple input", {
     "Diseases Of The Circulatory System"
   )
 
-  chaps4 <- icd9_get_chapters("417", short_code = TRUE)
-  chaps5 <- icd9_get_chapters("417.1", short_code = FALSE)
-  chaps6 <- icd9_get_chapters("4171", short_code = TRUE)
-  chaps7 <- icd9_get_chapters("417.1", short_code = FALSE)
-  chaps8 <- icd9_get_chapters("4171", short_code = TRUE)
+  chaps4 <- .icd9_get_chapters("417", short_code = TRUE)
+  chaps5 <- .icd9_get_chapters("417.1", short_code = FALSE)
+  chaps6 <- .icd9_get_chapters("4171", short_code = TRUE)
+  chaps7 <- .icd9_get_chapters("417.1", short_code = FALSE)
+  chaps8 <- .icd9_get_chapters("4171", short_code = TRUE)
   expect_equal(chaps3, chaps4)
   expect_equal(chaps3, chaps5)
   expect_equal(chaps3, chaps6)

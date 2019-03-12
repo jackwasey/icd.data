@@ -20,24 +20,31 @@
 #' @template lang
 #' @template verbose
 #' @return
-#' \code{.fetch_who_api} returns the JSON data, or fails with NULL
+#' \code{.who_api} returns the JSON data, or fails with NULL
 #' @keywords internal datasets
-.fetch_who_api <- function(resource,
-                           edition = "icd10",
-                           year = 2016,
-                           lang = "en",
-                           verbose = FALSE) {
-  httr_get <- httr::GET
+.who_api <- function(resource,
+                     edition = "icd10",
+                     year = 2016,
+                     lang = "en",
+                     offline = getOption("icd.data.offline", TRUE),
+                     verbose = TRUE) {
+  if (offline) stop("Offline, so unable to attempt WHO data download.")
+  httr_get <- function(...) {
+    if (verbose) message("Downloading...")
+    httr::RETRY(verb = "GET", ...)
+  }
   if (.have_memoise()) {
     httr_get <- memoise::memoise(
-      httr::GET,
-      cache = memoise::cache_filesystem(file.path(get_resource_dir(), "memoise"))
+      httr_get,
+      cache = memoise::cache_filesystem(
+        file.path(get_resource_dir(), "memoise")
+      )
     )
   }
   edition <- match.arg(edition)
   who_base <- "https://apps.who.int/classifications"
   json_url <- paste(who_base, edition, "browse", year, lang, resource, sep = "/")
-  if (verbose) message("Getting WHO data with JSON: ", json_url)
+  if (verbose > 1) message("Getting WHO data with JSON: ", json_url)
   http_response <- httr_get(json_url)
   if (http_response$status_code >= 400) {
     warning("Unable to fetch resource: ", json_url)
@@ -52,10 +59,11 @@
 #' Of note, the `WHO` package does not provide access to classifications, just
 #' WHO summary data.
 #' @keywords internal
-.fetch_who_api_chapter_names <- function(ver = "icd10",
-                                         year = 2016,
-                                         lang = "en", verbose = TRUE) {
-  .fetch_who_api_children(
+.who_api_chapter_names <- function(ver = "icd10",
+                                   year = 2016,
+                                   lang = "en",
+                                   verbose = TRUE) {
+  .who_api_children(
     ver = ver,
     year = year,
     lang = lang,
@@ -63,11 +71,11 @@
   )[["label"]]
 }
 
-.fetch_who_api_children <- function(concept_id = NULL, ...) {
+.who_api_children <- function(concept_id = NULL, ...) {
   if (is.null(concept_id)) {
-    .fetch_who_api(resource = "JsonGetRootConcepts?useHtml=false", ...)
+    .who_api(resource = "JsonGetRootConcepts?useHtml=false", ...)
   } else {
-    .fetch_who_api(
+    .who_api(
       resource = paste0(
         "JsonGetChildrenConcepts?ConceptId=",
         concept_id,
@@ -88,18 +96,24 @@
 #' @param year integer 4-digit year
 #' @param lang Currently it seems only 'en' works
 #' @param verbose logical
-#' @param ... further arguments passed to self recursively, or `.fetch_who_api`
+#' @param ... further arguments passed to self recursively, or `.who_api`
 #' @keywords internal
-.fetch_icd10_who <- function(concept_id = NULL,
-                             year = 2016,
-                             lang = "en",
-                             verbose = FALSE,
-                             hier_code = character(),
-                             hier_desc = character(),
-                             ...) {
-  if (verbose) print(hier_code)
-  if (verbose) message(".fetch_who_api_tree with concept_id = ", concept_id)
-  tree_json <- .fetch_who_api_children(
+.dl_icd10who <- function(concept_id = NULL,
+                         year = 2016,
+                         lang = "en",
+                         progress = TRUE,
+                         verbose = TRUE,
+                         hier_code = character(),
+                         hier_desc = character(),
+                         offline = getOption("icd.data.offline", TRUE),
+                         ...) {
+  if (verbose > 1) print(hier_code)
+  if (verbose > 1) message(".who_api_tree with concept_id = ", concept_id)
+  if (offline) {
+    if (verbose) message("Returning NULL because offline")
+    return()
+  }
+  tree_json <- .who_api_children(
     concept_id = concept_id,
     year = year,
     lang = lang,
@@ -108,17 +122,16 @@
   )
   if (is.null(tree_json)) {
     warning(
-      "Unable to get results for concept_id: ", concept_id,
-      ". Returning NULL. Try re-running the command."
+      "Unable to retrieve results for concept_id: ", concept_id,
+      "so returning NULL. Try re-running the command."
     )
     return()
   }
-  if (verbose) message("hier level = ", length(hier_code))
+  if (verbose > 1) message("hier level = ", length(hier_code))
   new_hier <- length(hier_code) + 1
-  # parallel mcapply doesn't seem to give significant increase in speed, and may
-  # introduce problems
-  # for (branch in seq_len(nrow(tree_json))) {
-  all_new_rows <- lapply(
+  # parallel mcapply is about 2-3x as fast, but may get throttled for multiple
+  # connections. It seems to get up to about 10-15, which is reasonable.
+  all_new_rows <- parallel::mclapply(
     # parallel::mclapply(
     seq_len(nrow(tree_json)),
     function(branch) {
@@ -165,8 +178,9 @@
         new_rows <- rbind(new_rows, new_item)
       }
       if (!is_leaf) {
-        if (verbose) message("Not a leaf, so recursing")
-        recursed_rows <- .fetch_icd10_who(
+        if (verbose > 1) message("Not a leaf, so recursing")
+        if (progress) cat(".")
+        recursed_rows <- .dl_icd10who(
           concept_id = child_code,
           year = year,
           lang = lang,
@@ -182,7 +196,7 @@
       new_rows
     }
   ) # loop
-  if (verbose) {
+  if (verbose > 1) {
     message(
       "leaving recursion with length(all_new_rows) = ",
       length(all_new_rows)
@@ -191,8 +205,33 @@
   do.call(rbind, all_new_rows)
 }
 
+.parse_icd10who <- function(...) {
+  .confirm_download()
+  .dl_icd10who(...)
+}
+
+.fetch_icd10who <- function(var_name,
+                            must_work = TRUE,
+                            verbose = TRUE,
+                            ...) {
+  if (verbose) message("Fetching WHO ICD data")
+  dat <- .get_from_cache(
+    var_name = var_name,
+    must_work = FALSE
+  )
+  if (!is.null(dat)) return(dat)
+  if (verbose) message("Downloading WHO ICD data")
+  dat <- .dl_icd10who(...)
+  if (!is.null(dat)) {
+    .save_in_resource_dir(var_name = var_name, x = dat)
+  } else {
+    if (must_work) stop("Unable to get WHO ICD data: ", sQuote(var_name))
+  }
+  NULL
+}
+
 .downloading_who_message <- function() {
-  message("Downloading or processing WHO ICD data. This will take a few minutes. Data is cached, so if there is a download error, repeating the instruction will return the data immediately if cached, or pick up where it left off.") # nolint
+  message("Downloading or parsing cached WHO ICD data. This may take a few minutes. Data is cached, so if there is a download error, repeating the instruction will return the data immediately if cached, or pick up where it left off.") # nolint
 }
 
 #' Fetch English or French WHO data from online source
@@ -206,9 +245,9 @@
 #' @param save_data Logical, defaults to `TRUE`
 #' @param ... Arguments passed to internal functions
 #' @keywords internal
-.fetch_icd10who2016 <- function(save_data = TRUE, ...) {
+.dl_icd10who2016 <- function(save_data = TRUE, ...) {
   .downloading_who_message()
-  icd10who2016 <- .fetch_icd10_who(year = "2016", lang = "en", ...)
+  icd10who2016 <- .parse_icd10who(year = "2016", lang = "en", ...)
   rownames(icd10who2016) <- NULL
   icd10who2016$code <-
     sub(pattern = "\\.", replacement = "", x = icd10who2016$code)
@@ -224,10 +263,14 @@
   invisible(icd10who2016)
 }
 
-#' @rdname dot-fetch_icd10who2016
-.fetch_icd10who2008fr <- function(save_data = TRUE, ...) {
+.parse_icd10who2016 <- function(...) {
+  .dl_icd10who2016(...)
+}
+
+.dl_icd10who2008fr <- function(save_data = TRUE, ...) {
   .downloading_who_message()
-  icd10who2008fr <- .fetch_icd10_who(year = "2008", lang = "fr", ...)
+  # year = "2008", lang = "fr",
+  icd10who2008fr <- .fetch_icd10who(var_name = "icd10who2008fr", ...)
   rownames(icd10who2008fr) <- NULL
   icd10who2008fr$code <-
     sub(pattern = "\\.", replacement = "", x = icd10who2008fr$code)
@@ -241,4 +284,8 @@
     icd10who2008fr[[col_name]] <- sub("[^ ]+ ", "", icd10who2008fr[[col_name]])
   if (save_data) .save_in_resource_dir(icd10who2008fr)
   invisible(icd10who2008fr)
+}
+
+.parse_icd10who2008fr <- function(...) {
+  .dl_icd10who2008fr(...)
 }

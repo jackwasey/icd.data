@@ -11,7 +11,7 @@
 #'   \href{https://www.cms.gov/Medicare/Coding/ICD10/downloads/icd-10quickrefer.pdf}{CMS ICD-10 Quick Reference}
 #'   \href{https://www.cdc.gov/nchs/icd/icd10cm.htm#FY\%202019\%20release\%20of\%20ICD-10-CM}{CDC copy of ICD-10-CM for 2019}
 #' @keywords internal datagen
-.icd10cm_parse_all <- function(save_data = FALSE,
+.parse_icd10cm_all <- function(save_data = FALSE,
                                offline = getOption("icd.data.offline"),
                                verbose = TRUE,
                                twentysixteen = FALSE,
@@ -35,7 +35,7 @@
   invisible(out)
 }
 
-.icd10cm_parse_year <- function(year = 2019,
+.parse_icd10cm_year <- function(year = 2019,
                                 save_data = TRUE,
                                 verbose = TRUE,
                                 ...) {
@@ -113,54 +113,4 @@
     if (year == "2016") .save_in_data_dir("icd10cm2016")
   }
   invisible(dat)
-}
-
-.icd10_generate_subchap_lookup <- function(year, verbose = FALSE) {
-  .icd10_generate_chap_lookup(
-    year = year,
-    chapters = icd.data::icd10_sub_chapters,
-    prefix = "sc",
-    verbose = verbose
-  )
-}
-
-.icd10_generate_chap_lookup <- function(year,
-                                        chapters = icd.data::icd10_chapters,
-                                        prefix = "chap",
-                                        verbose = FALSE) {
-  stopifnot(is.list(chapters), is.character(prefix))
-  erm <- if (.have_memoise()) {
-    memoise::memoise(
-      # icd.data:::
-      .get_icd34fun("expand_range_major"),
-      cache = memoise::cache_filesystem(
-        file.path(get_resource_dir(), "memoise")
-      )
-    )
-  } else {
-    # icd.data:::
-    .get_icd34fun("expand_range_major")
-  }
-  df_rows <- lapply(
-    names(chapters),
-    function(nm) {
-      chap <- chapters[[nm]]
-      out <- data.frame(
-        erm(
-          icd::as.icd10cm(chap["start"]),
-          icd::as.icd10cm(chap["end"]),
-          defined = FALSE
-        ),
-        nm
-      )
-      # ICD-10 is not in leixcographic order. E.g., C7A is not in the same group
-      # as C76-C80
-    }
-  )
-  chap_lookup <- do.call(rbind, df_rows)
-  names(chap_lookup) <- c(
-    paste0(prefix, "_major"),
-    paste0(prefix, "_desc")
-  )
-  chap_lookup
 }

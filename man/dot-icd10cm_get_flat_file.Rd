@@ -11,7 +11,7 @@
 
 \item{verbose}{single logical value, defaults to \code{FALSE} in most functions.}
 
-\item{...}{passed through, e.g., \code{offline = FALSE}}
+\item{...}{passed through, e.g., `offline = FALSE`}
 }
 \description{
 Get annual version of ICD-10-CM

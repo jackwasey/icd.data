@@ -63,6 +63,7 @@
              offline = getOption("icd.data.offline"),
              data_raw_path = get_resource_dir(),
              ...) {
+    .confirm_download()
     stopifnot(is.character(url), length(url) == 1)
     stopifnot(is.character(file_name), length(file_name) == 1)
     stopifnot(is.logical(offline), length(offline) == 1)

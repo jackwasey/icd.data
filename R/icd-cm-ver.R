@@ -84,11 +84,12 @@ get_icd10cm_available <- function(
 #' own data! This function is a possible work-around to get the data without
 #' having to attach the package.
 #' @examples
-#' \dontrun{
 #' # if icd.data not attached:
-#' get_icd10cm_latest()
-#' icd.data::icd10cm_latest
-#' # preferred:
+#' a <- icd.data::icd10cm_latest
+#' b <- icd.data:::.get_icd10cm_latest()
+#' stopifnot(identical(a, b))
+#' # Preferred:
+#' \dontrun{
 #' library(icd.data)
 #' head(icd10cm_latest)
 #' }
@@ -124,7 +125,7 @@ with_icd10cm_version <- function(ver, code) {
 .get_icd10cm_ver <- function(
                              ver,
                              dx,
-                             must_work = FALSE,
+#                             must_work = FALSE,
                              interact = interactive()) {
   ver <- as.character(ver)
   stopifnot(grepl("^[[:digit:]]{4}$", ver))
@@ -138,29 +139,21 @@ with_icd10cm_version <- function(ver, code) {
     assign(var_name, dat, envir = .icd_data_env)
     return(dat)
   }
-  can_download <- .confirm_download()
-  if (!can_download) {
-    if (must_work) {
-      stop("No consent to download data. Declined, or not interactive mode.
-You may wish to use:
-set_resource_path(\"/path/you/desire/\")
-to control where data is downloaded.")
-    } else {
-      return(invisible())
-    }
-  }
-  # .fetch_icd10cm_ver(ver = ver,
-  #                    dx = dx,
-  #                    save_data = TRUE,
-  #                    verbose = FALSE,
-  #                    offline = confirm_download(must_work = TRUE),
-  #                    data_raw_path = get_resource_dir())
+#   if (!can_download) {
+#     if (must_work) {
+#       stop("No consent to download data. Declined, or not interactive mode.
+# You may wish to use:
+# set_resource_path(\"/path/you/desire/\")
+# to control where data is downloaded.")
+#     } else {
+#       return(invisible())
+#     }
+#  }
   if (dx) {
     dat <- .icd10cm_parse_year(
       year = ver,
       save_data = TRUE,
-      verbose = FALSE,
-      offline = !.confirm_download(must_work = TRUE)
+      verbose = FALSE
     )
   } else {
     dat <- .icd10cm_parse_cms_pcs_year(ver, verbose = FALSE)

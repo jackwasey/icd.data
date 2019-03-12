@@ -15,6 +15,8 @@
 #' @param ... passed through, e.g., `offline = FALSE`
 #' @keywords internal
 .icd10cm_get_flat_file <- function(year, verbose = TRUE, ...) {
+  ok <- .confirm_download()
+  if (!ok) return()
   if (verbose) message("Getting flat file for year: ", year)
   y <- icd10cm_sources[[as.character(year)]]
   .unzip_to_data_raw(
@@ -32,7 +34,7 @@
 #' YEAR-ICD10-Code-Descriptions has flat files, YEAR-ICD10-Code-Tables-Index has
 #' XML
 #' @keywords internal
-.fetch_icd10cm_all <- function(verbose = FALSE, ...) {
+.dl_icd10cm_all <- function(verbose = FALSE, ...) {
   for (year in names(icd10cm_sources)) {
     for (dx in c(TRUE, FALSE)) {
       if (verbose) {
@@ -49,18 +51,18 @@
       )
     }
   }
+  invisible()
 }
 
-#' @rdname .fetch_icd10cm_all
+#' Downlaod a specific ICD-10-CM version
+#' @return file path and name, in list, or NULL if offline or failure
 #' @keywords internal
 #' @noRd
-.fetch_icd10cm_ver <- function(ver,
-                               dx,
-                               save_data = TRUE,
-                               parse = FALSE,
-                               verbose = TRUE,
-                               ...) {
-  message("Please wait a moment to download (or use cached) ~1-10MB of data...")
+.dl_icd10cm_ver <- function(ver,
+                            dx,
+                            save_data = TRUE,
+                            verbose = TRUE,
+                            ...) {
   stopifnot(is.numeric(ver) || is.character(ver), length(ver) == 1)
   ver <- as.character(ver)
   stopifnot(is.logical(dx), length(dx) == 1)
@@ -92,9 +94,8 @@
       "\nsave_name = ", save_name
     )
   }
-  if (getOption("icd.data.offline")) {
-    .confirm_download(must_work = FALSE)
-  }
+  .confirm_download()
+  message("Please wait a moment to download (or use cached) ~1-10MB of data...")
   if (save_data) {
     fp <- .unzip_to_data_raw(
       url = url,
@@ -104,74 +105,36 @@
       ...
     )
   }
-  if (!parse) return(fp)
-  if (dx) {
-    .icd10cm_parse_year(
-      year = ver,
-      save_data = save_data,
-      verbose = verbose
-    )
-  } else {
-    .icd10cm_parse_cms_pcs_year(
-      year = ver,
-      save_data = save_data,
-      verbose = verbose
-    )
-  }
+  fp
 }
 
-for (y in 2014:2019) {
-  for (dx in c(TRUE, FALSE)) {
-    if (dx && y %in% c(2016, 2019)) next
-    fetch_fun_name <- .get_fetch_icd10cm_name(y, dx)
-    fetch_fun <- function() {
-      .fetch_icd10cm_ver(ver = ver, dx = dx, parse = TRUE)
+# if (!parse) return(fp)
+# if (dx) {
+#   .icd10cm_parse_year(
+#     year = ver,
+#     save_data = save_data,
+#     verbose = verbose
+#   )
+# } else {
+#   .icd10cm_parse_cms_pcs_year(
+#     year = ver,
+#     save_data = save_data,
+#     verbose = verbose
+#   )
+# }
+
+.make_icd10cm_dl_parse <- function(env = parent.frame()) {
+  for (y in 2014:2019) {
+    for (dx in c(TRUE, FALSE)) {
+      if (dx && y %in% c(2016, 2019)) next
+      parse_fun_name <- .get_parse_icd10cm_name(y, dx)
+      parse_fun <- function() {
+        .parse_icd10cm_year(year = year, dx = dx)
+      }
+      parse_fun_env <- environment(parse_fun)
+      parse_fun_env$year <- as.character(y)
+      parse_fun_env$dx <- dx
+      assign(parse_fun_name, parse_fun, envir = env)
     }
-    fetch_fun_env <- environment(fetch_fun)
-    fetch_fun_env$ver <- as.character(y)
-    fetch_fun_env$dx <- dx
-    assign(fetch_fun_name, fetch_fun)
   }
 }
-
-#
-#
-# .fetch_icd10cm2014 <- function() {
-#   .fetch_icd10cm_ver(ver = 2014, dx = TRUE, parse = TRUE)
-# }
-#
-# .fetch_icd10cm2015 <- function() {
-#   .fetch_icd10cm_ver(ver = 2015, dx = TRUE, parse = TRUE)
-# }
-# # 2016 dx is currently built into package for compatibility with icd < 4.0
-# .fetch_icd10cm2016_pc <- function() {
-#   .fetch_icd10cm_ver(ver = 2016, dx = FALSE, parse = TRUE)
-# }
-#
-# .fetch_icd10cm2017 <- function() {
-#   .fetch_icd10cm_ver(ver = 2017, dx = TRUE, parse = TRUE)
-# }
-#
-# .fetch_icd10cm2018 <- function() {
-#   .fetch_icd10cm_ver(ver = 2018, dx = TRUE, parse = TRUE)
-# }
-#
-# .fetch_icd10cm2014_pc <- function() {
-#   .fetch_icd10cm_ver(ver = 2014, dx = FALSE, parse = TRUE)
-# }
-#
-# .fetch_icd10cm2015_pc <- function() {
-#   .fetch_icd10cm_ver(ver = 2015, dx = FALSE, parse = TRUE)
-# }
-#
-# .fetch_icd10cm2017_pc <- function() {
-#   .fetch_icd10cm_ver(ver = 2017, dx = FALSE, parse = TRUE)
-# }
-#
-# .fetch_icd10cm2018_pc <- function() {
-#   .fetch_icd10cm_ver(ver = 2018, dx = FALSE, parse = TRUE)
-# }
-# # The latest version (2019) is currently built into package
-# .fetch_icd10cm2019_pc <- function() {
-#   .fetch_icd10cm_ver(ver = 2019, dx = FALSE, parse = TRUE)
-# }

@@ -1,9 +1,11 @@
+.make_icd10cm_dl_parse()
+
 .onLoad <- function(libname, pkgname) {
   .set_init_options()
   # ask user if possible, and set offline option to false if user agrees
   setup_resource_dir()
   # must make bindings on load, not attach (when namespace is sealed)
-  .make_active_bindings(asNamespace(pkgname), verbose = FALSE)
+  .make_active_bindings(asNamespace(pkgname), verbose = TRUE)
 }
 
 .onAttach <- function(libname, pkgname) {
@@ -29,6 +31,7 @@ utils::globalVariables(c(
   "icd10_chapters",
   "icd10_sub_chapters",
   "dl_fun_name",
-  ".binding_names",
+  ".binding_namess",
+  # names(.bindings)
   .binding_names
 ))

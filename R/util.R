@@ -278,6 +278,15 @@ get_icd_data <- function(data_name, alt = NULL) {
   options(icd.data.absent_action = "message")
   options(icd.data.icd10cm_active_ver = "2019")
   options(icd.data.resource = get_resource_dir(force = TRUE))
+  optiosn(icd.data.interact = TRUE)
+}
+
+.set_test_options <- function() {
+  options(icd.data.offline = TRUE)
+  options(icd.data.absent_action = "stop")
+  options(icd.data.icd10cm_active_ver = "2019")
+  options(icd.data.resource = get_resource_dir(force = TRUE))
+  options(icd.data.interact = FALSE)
 }
 
 .set_dev_options <- function() {
@@ -285,6 +294,7 @@ get_icd_data <- function(data_name, alt = NULL) {
   options(icd.data.absent_action = "stop")
   options(icd.data.icd10cm_active_ver = "2019")
   options(icd.data.resource = path.expand(file.path("~", ".icd.data")))
+  options(icd.data.interact = TRUE)
 }
 
 # options are:

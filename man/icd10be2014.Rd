@@ -3,9 +3,6 @@
 \docType{data}
 \name{icd10be2014}
 \alias{icd10be2014}
-\alias{icd10be2017}
-\alias{icd10be2014_pc}
-\alias{icd10be2017_pc}
 \title{Belgian ICD-10-BE}
 \source{
 \url{https://www.health.belgium.be/en/node/30433}
@@ -19,5 +16,9 @@ most of the codes into Dutch and French. 2017 has about a hundred additional
 code definitions over ICD-10-CM 2017. The 2014 data also has the interesting
 fields for gender specificity of a given code, and whether it is permissible
 as Present-on-Arrival (POA).
+}
+\seealso{
+\code{\link{icd10be2017}} \code{\link{icd10be2014_pc}}
+  \code{\link{icd10be2017_pc}}
 }
 \keyword{datasets}

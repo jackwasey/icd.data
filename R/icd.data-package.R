@@ -9,6 +9,7 @@
 #' @importFrom utils read.delim
 #' @importFrom utils read.fwf
 #' @importFrom utils askYesNo
+#' @importFrom parallel mclapply
 ## usethis namespace: end
 #' @keywords misc utilities datasets
 "_PACKAGE"
