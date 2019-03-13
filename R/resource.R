@@ -99,9 +99,9 @@
   }
   if (raw) {
     raw_files <- list.files(icd_data_dir(),
-                            pattern = "(\\.txt$)|(\\.xlsx$)",
-                            ignore.case = TRUE,
-                            full.names = TRUE
+      pattern = "(\\.txt$)|(\\.xlsx$)",
+      ignore.case = TRUE,
+      full.names = TRUE
     )
     message("Deleting:")
     print(raw_files)
@@ -112,7 +112,7 @@
     message("Deleting:")
     print(rds_files)
     unlink(rds_files,
-           recursive = FALSE
+      recursive = FALSE
     )
   }
 }
@@ -121,13 +121,13 @@
   force(var_name)
   force(verbose)
   getter_fun <- function(alt = NULL,
-                         must_work = TRUE,
-                         msg = paste("Unable to find", var_name)) {
+                           must_work = TRUE,
+                           msg = paste("Unable to find", var_name)) {
     if (verbose) message("Starting getter")
     stopifnot(is.character(var_name))
     dat <- .get_from_cache(var_name,
-                           must_work = FALSE,
-                           verbose = verbose
+      must_work = FALSE,
+      verbose = verbose
     )
     if (!is.null(dat)) return(dat)
     if (must_work) {
@@ -151,13 +151,13 @@
   force(verbose)
   parse_fun_name <- .get_parser_name(var_name)
   fetcher_fun <- function(alt = NULL,
-                          must_work = TRUE,
-                          msg = paste("Unable to find", var_name)) {
+                            must_work = TRUE,
+                            msg = paste("Unable to find", var_name)) {
     if (verbose) message("Starting fetcher")
     # TODO: call the specific/generated getter instead?
     dat <- .get_from_cache(var_name,
-                           must_work = FALSE,
-                           verbose = verbose
+      must_work = FALSE,
+      verbose = verbose
     )
     if (!is.null(dat)) return(dat)
     if (verbose) message("Trying to call parse function")
@@ -166,8 +166,8 @@
     if (exists(parse_fun_name, fr, inherits = TRUE)) {
       if (verbose) message("Found parse function. Calling it.")
       out <- do.call(get(parse_fun_name,
-                         envir = fr,
-                         inherits = TRUE
+        envir = fr,
+        inherits = TRUE
       ),
       args = list()
       )
@@ -178,8 +178,8 @@
     }
     # Parse function should have saved the data in env and file caches
     dat <- .get_from_cache(var_name,
-                           must_work = FALSE,
-                           verbose = verbose
+      must_work = FALSE,
+      verbose = verbose
     )
     if (!is.null(dat)) return(dat)
     if (must_work) {
@@ -217,14 +217,14 @@
     getter_name <- .get_getter_name(var_name)
     if (verbose) message("assigning: ", getter_name)
     assign(getter_name,
-           .make_getter(var_name, verbose),
-           envir = final_env
+      .make_getter(var_name, verbose),
+      envir = final_env
     )
     fetcher_name <- .get_fetcher_name(var_name)
     if (verbose) message("assigning: ", fetcher_name)
     assign(fetcher_name,
-           .make_fetcher(var_name, verbose),
-           envir = final_env
+      .make_fetcher(var_name, verbose),
+      envir = final_env
     )
   }
 }
@@ -248,14 +248,16 @@
                    ...) {
   if (.exists_in_cache(var_name, verbose = verbose)) {
     .get_from_cache(var_name,
-                    must_work = TRUE,
-                    verbose = verbose
+      must_work = TRUE,
+      verbose = verbose
     )
   } else {
     parser <- .get_parser_fun(var_name)
-    parser(verbose = verbose,
-           must_work = must_work,
-           ...)
+    parser(
+      verbose = verbose,
+      must_work = must_work,
+      ...
+    )
   }
 }
 
@@ -263,13 +265,17 @@
 .available <- function(var_name, verbose = TRUE, ...) {
   with_offline(
     !is.null(
-      .fetch(var_name = var_name,
-             must_work = FALSE,
-             verbose = verbose,
-             ...)
+      .fetch(
+        var_name = var_name,
+        must_work = FALSE,
+        verbose = verbose,
+        ...
+      )
     )
   )
 }
+
+.icd_data_default <- file.path("~", ".icd.data")
 
 #' Get or set the resource directory for on-demand downloads, and cached data
 #'
@@ -294,16 +300,15 @@
 #' try(icd_data_dir())
 #' @export
 icd_setup_data_dir <- function(path = NULL,
-                           interact = .interactive(),
-                           force = TRUE,
-                           verbose = TRUE) {
-  default_path <- file.path("~", ".icd.data")
+                               interact = .interactive(),
+                               force = TRUE,
+                               verbose = TRUE) {
   for (trypath in c(
     path,
     getOption("icd.data.resource", default = ""),
     Sys.getenv("ICD_DATA_PATH"),
     file.path(Sys.getenv("HOME"), ".icd.data"),
-    path.expand(default_path)
+    path.expand(.icd_data_default)
   )) {
     if (verbose) message("Trying path: ", trypath)
     if (!is.null(trypath) && dir.exists(trypath)) {
@@ -313,7 +318,7 @@ icd_setup_data_dir <- function(path = NULL,
   }
   # ask if we can create the directory, or use temp. Don't defer this until
   # later as it causes a lot of problems with the active bindings.
-  if (force) dir.create(path.expand(default_path))
+  if (force) dir.create(path.expand(.icd_data_default))
   if (!interact) return(NULL)
   ok <- utils::askYesNo(
     "For use of WHO, French, Belgian, and some versions of US ICD-10-CM, icd.data needs to download and process data. The data occupies a few MB per ICD edition. Is it alright to create a directory \".icd.data\" in your home directory for this purpose?"
@@ -324,10 +329,10 @@ icd_setup_data_dir <- function(path = NULL,
     return(set_resource_dir(temp_dir))
   }
   options("icd.data.offline" = FALSE)
-  invisible(set_resource_dir(default_path))
+  invisible(set_resource_dir(.icd_data_default))
 }
 
-.set_data_dir <- function(path = file.path("~", ".icd.data")) {
+.set_data_dir <- function(path = .icd_data_default) {
   if (!dir.exists(path)) {
     if (!dir.create(path)) stop("Could not create directory at: ", path)
   }

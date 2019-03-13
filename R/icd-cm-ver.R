@@ -131,7 +131,7 @@ with_offline <- function(code) {
 .get_icd10cm_ver <- function(
                              ver,
                              dx,
-#                             must_work = FALSE,
+                             #                             must_work = FALSE,
                              interact = .interactive()) {
   ver <- as.character(ver)
   stopifnot(grepl("^[[:digit:]]{4}$", ver))
@@ -145,16 +145,16 @@ with_offline <- function(code) {
     assign(var_name, dat, envir = .icd_data_env)
     return(dat)
   }
-#   if (!can_download) {
-#     if (must_work) {
-#       stop("No consent to download data. Declined, or not interactive mode.
-# You may wish to use:
-# set_resource_path(\"/path/you/desire/\")
-# to control where data is downloaded.")
-#     } else {
-#       return(invisible())
-#     }
-#  }
+  #   if (!can_download) {
+  #     if (must_work) {
+  #       stop("No consent to download data. Declined, or not interactive mode.
+  # You may wish to use:
+  # set_resource_path(\"/path/you/desire/\")
+  # to control where data is downloaded.")
+  #     } else {
+  #       return(invisible())
+  #     }
+  #  }
   if (dx) {
     dat <- .icd10cm_parse_year(
       year = ver,

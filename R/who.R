@@ -150,7 +150,7 @@
       hier_desc[new_hier] <- child_desc
       sub_sub_chapter <- NA
       hier_three_digit_idx <- which(nchar(hier_code) == 3 &
-                                      !grepl("[XVI-]", hier_code))
+        !grepl("[XVI-]", hier_code))
       if (length(hier_code) >= 3 && nchar(hier_code[3]) > 3) {
         sub_sub_chapter <- hier_desc[3]
       }

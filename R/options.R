@@ -19,10 +19,12 @@
 #
 # See also .show_options() .clear_options() .set_dev_options()
 .set_init_options <- function() {
-  if (!("icd.data.offline" %in% names(options())))
+  if (!("icd.data.offline" %in% names(options()))) {
     options("icd.data.offline" = !.env_var_is_false("ICD_DATA_OFFLINE"))
-  if (!("icd.data.interact" %in% names(options())))
+  }
+  if (!("icd.data.interact" %in% names(options()))) {
     options("icd.data.interact" = .env_var_is_true("ICD_DATA_INTERACT"))
+  }
   # stop or message, anything else will silently continue
   if ("icd.data.absent_action" %nin% names(options())) {
     ev <- tolower(Sys.getenv("ICD_DATA_ABSENT_ACTION"))

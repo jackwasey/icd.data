@@ -43,9 +43,12 @@ skip_flat_icd9_all_avail <- function() {
 
 skip_icd10cm_flat_avail <- function(year, dx = TRUE) {
   msg <- "skipping test because flat file ICD-10-CM source not available"
-  if (.exists_in_cache(var_name = paste0("icd10cm", year, ifelse(dx, "", "_pc"))))
+  if (!.exists_in_cache(
+    var_name = paste0("icd10cm", year, ifelse(dx, "", "_pc"))
+  )) {
     testthat::skip(msg)
   }
+}
 
 skip_icd10cm_xml_avail <- function() {
   msg <- "skipping test because XML file ICD-10-CM source not available"

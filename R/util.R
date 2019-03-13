@@ -32,9 +32,9 @@
 #' @keywords internal
 "%eine%" <- function(x, table) {
   vapply(ls(name = x),
-         function(y) !is.null(table[[y]]),
-         FUN.VALUE = logical(1L),
-         USE.NAMES = FALSE
+    function(y) !is.null(table[[y]]),
+    FUN.VALUE = logical(1L),
+    USE.NAMES = FALSE
   )
 }
 
@@ -100,8 +100,8 @@ is_non_ascii <- function(x)
 #' @keywords internal
 .get_encodings <- function(x) {
   vapply(x,
-         FUN = function(y) unique(Encoding(.as_char_no_warn(y))),
-         FUN.VALUE = character(1)
+    FUN = function(y) unique(Encoding(.as_char_no_warn(y))),
+    FUN.VALUE = character(1)
   )
 }
 
@@ -130,7 +130,7 @@ is_non_ascii <- function(x)
   m <- ifelse(okr, mr, ms)
   out <- lapply(m, function(y) c(start = y[[3]], end = y[[length(y)]]))
   names(out) <- vapply(m, function(y) trimws(.to_title_case(y[[2]])),
-                       FUN.VALUE = character(1)
+    FUN.VALUE = character(1)
   )
   out
 }
@@ -144,8 +144,8 @@ is_non_ascii <- function(x)
 }
 
 .get_chapter_ranges_from_flat <- function(
-  flat_hier = icd10cm2019,
-  field = "chapter") {
+                                          flat_hier = icd10cm2019,
+                                          field = "chapter") {
   u <- if (is.factor(flat_hier[[field]])) {
     levels(flat_hier[[field]])
   } else {
@@ -195,7 +195,7 @@ is_non_ascii <- function(x)
   for (split_char in c(" ", "-", "[")) {
     s <- strsplit(x, split_char, fixed = TRUE)[[1]]
     x <- paste(toupper(substring(s, 1L, 1L)), substring(s, 2L),
-               sep = "", collapse = split_char
+      sep = "", collapse = split_char
     )
   }
   x
