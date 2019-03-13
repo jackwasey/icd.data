@@ -6,9 +6,9 @@
 \title{Gets data, from env cache, file cache, the downloading and parsing if
 necessary and possible.}
 \usage{
-.fetch(var_name, must_work = TRUE, verbose = TRUE, ...)
+.fetch(var_name, must_work = TRUE, verbose = .verbose(), ...)
 
-.available(var_name, verbose = TRUE, ...)
+.available(var_name, verbose = .verbose(), ...)
 }
 \arguments{
 \item{var_name}{Character, e.g., \code{"icd10cm2015"}}

@@ -8,9 +8,9 @@
 \usage{
 .get_getter_name(var_name)
 
-.exists_in_cache(var_name, verbose = TRUE)
+.exists_in_cache(var_name, verbose = .verbose())
 
-.get_from_cache(var_name, must_work = TRUE, verbose = TRUE)
+.get_from_cache(var_name, must_work = TRUE, verbose = .verbose())
 }
 \description{
 The getter looks first in the environment cache, then file cache for a parsed

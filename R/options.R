@@ -19,6 +19,9 @@
 #
 # See also .show_options() .clear_options() .set_dev_options()
 .set_init_options <- function() {
+  if (!("icd.data.verbose" %in% names(options()))) {
+    options(icd.data.verbose = FALSE)
+  }
   if (!("icd.data.offline" %in% names(options()))) {
     options("icd.data.offline" = !.env_var_is_false("ICD_DATA_OFFLINE"))
   }
@@ -42,8 +45,9 @@
   options(icd.data.offline = TRUE)
   options(icd.data.absent_action = "stop")
   options(icd.data.icd10cm_active_ver = "2019")
-  options(icd.data.resource = icd_get_data_dir(force = TRUE))
+  options(icd.data.resource = icd_data_dir(force = TRUE))
   options(icd.data.interact = FALSE)
+  options(icd.data.verbose = TRUE)
 }
 
 .set_dev_options <- function() {
@@ -52,6 +56,12 @@
   options(icd.data.icd10cm_active_ver = "2019")
   options(icd.data.resource = path.expand(file.path("~", ".icd.data")))
   options(icd.data.interact = TRUE)
+  options(icd.data.verbose = TRUE)
+}
+
+.verbose <- function() {
+  isTRUE(getOption("icd.data.verbose"))
+  #FALSE
 }
 
 .env_var_is_false <- function(x) {
@@ -75,7 +85,7 @@
 }
 
 .unset_options <- function() {
-  icd_data_opts <- .show_options()
+  icd_data_opts <- names(.show_options())
   icd_data_opts <- sapply(
     icd_data_opts,
     simplify = FALSE, USE.NAMES = TRUE,

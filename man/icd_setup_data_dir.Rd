@@ -6,7 +6,7 @@
 \title{Get or set the resource directory for on-demand downloads, and cached data}
 \usage{
 icd_setup_data_dir(path = NULL, interact = .interactive(),
-  force = TRUE, verbose = TRUE)
+  force = TRUE, verbose = .verbose())
 
 icd_data_dir(must_work = FALSE, ...)
 }
@@ -22,7 +22,7 @@ of user interactivity.}
 
 \item{must_work}{Single logical, default is \code{FALSE}}
 
-\item{...}{Arguments passed to \code{\link{setup_resource_dir}} if this is
+\item{...}{Arguments passed to \code{\link{icd_setup_data_dir}} if this is
 required.}
 }
 \value{
@@ -31,7 +31,7 @@ The path to the resource directory, or \code{NULL} if it could not be
 }
 \description{
 For getting the path, first the option \code{icd.data.resource} is tried,
-otherwise \code{\link{setup_resource_dir}} is called.
+otherwise \code{\link{icd_setup_data_dir}} is called.
 }
 \details{
 For setting, \code{path} is created if it does not exist.

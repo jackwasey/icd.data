@@ -5,7 +5,7 @@
   # ask user if possible, and set offline option to false if user agrees
   icd_setup_data_dir()
   # must make bindings on load, not attach (when namespace is sealed)
-  .make_active_bindings(asNamespace(pkgname), verbose = TRUE)
+  .make_active_bindings(asNamespace(pkgname), verbose = .verbose())
 }
 
 .onAttach <- function(libname, pkgname) {

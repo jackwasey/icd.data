@@ -4,7 +4,7 @@
 \alias{.parse_icd10fr2019}
 \title{Read the definitions of the French edition of ICD-10}
 \usage{
-.parse_icd10fr2019(...)
+.parse_icd10fr2019(save_data = TRUE, ...)
 }
 \arguments{
 \item{save_data}{single logical value, if \code{TRUE} will save the generated

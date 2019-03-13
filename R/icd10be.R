@@ -1,7 +1,7 @@
 .dl_icd10be2017 <- function(save_data = TRUE,
                             dx = TRUE,
                             must_work = TRUE,
-                            verbose = TRUE,
+                            verbose = .verbose(),
                             ...) {
   site <- "https://www.health.belgium.be"
   site_path <- "sites/default/files/uploads/fields/fpshealth_theme_file"
@@ -22,7 +22,7 @@
 
 .dl_icd10be2014 <- function(save_data = TRUE,
                             dx = TRUE,
-                            verbose = TRUE,
+                            verbose = .verbose(),
                             ...) {
   site <- "https://www.health.belgium.be"
   site_path <- "sites/default/files/uploads/fields/fpshealth_theme_file"

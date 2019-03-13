@@ -156,7 +156,7 @@ with_offline <- function(code) {
   #     }
   #  }
   if (dx) {
-    dat <- .icd10cm_parse_year(
+    dat <- .parse_icd10cm_year(
       year = ver,
       save_data = TRUE,
       verbose = FALSE

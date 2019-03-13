@@ -5,7 +5,7 @@
 \title{Use WHO API to discover chapters}
 \usage{
 .who_api_chapter_names(ver = "icd10", year = 2016, lang = "en",
-  verbose = TRUE)
+  verbose = .verbose())
 }
 \description{
 Of note, the `WHO` package does not provide access to classifications, just

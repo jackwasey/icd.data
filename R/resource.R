@@ -13,7 +13,7 @@
 }
 
 #' Parse ICD data (downloading data if needed)
-#' @seealso \code{\link{.get}}, \code{\link{.get_getter_name}} and \code{\link{.get_parser_icd10cm_name}}
+#' @seealso \code{\link{.get}}, \code{.get_getter_name} and \code{.get_parser_icd10cm_name}
 #' @keywords internal
 .get_parser_name <- function(var_name) {
   paste0(".parse_", var_name)
@@ -40,7 +40,7 @@
 }
 
 #' @rdname dot-get_getter_name
-.exists_in_cache <- function(var_name, verbose = TRUE) {
+.exists_in_cache <- function(var_name, verbose = .verbose()) {
   if (verbose) {
     message("Seeing if ", sQuote(var_name), " exists in cache env or dir")
   }
@@ -57,7 +57,7 @@
 #' @rdname dot-get_getter_name
 .get_from_cache <- function(var_name,
                             must_work = TRUE,
-                            verbose = TRUE) {
+                            verbose = .verbose()) {
   if (verbose) {
     message(
       "Trying to get ", sQuote(var_name),
@@ -208,7 +208,7 @@
 }
 
 .make_getters_and_fetchers <- function(final_env = parent.frame(),
-                                       verbose = TRUE) {
+                                       verbose = .verbose()) {
   # for (var_name in names(.bindings)) {
   for (var_name in .binding_names) {
     # dx_pc <- .bindings[[var_name]]
@@ -228,7 +228,7 @@
     )
   }
 }
-.make_getters_and_fetchers(verbose = TRUE)
+.make_getters_and_fetchers(verbose = .verbose())
 
 #' Gets data, from env cache, file cache, the downloading and parsing if
 #' necessary and possible.
@@ -244,7 +244,7 @@
 #' @keywords internal
 .fetch <- function(var_name,
                    must_work = TRUE,
-                   verbose = TRUE,
+                   verbose = .verbose(),
                    ...) {
   if (.exists_in_cache(var_name, verbose = verbose)) {
     .get_from_cache(var_name,
@@ -262,7 +262,7 @@
 }
 
 #' @rdname dot-fetch
-.available <- function(var_name, verbose = TRUE, ...) {
+.available <- function(var_name, verbose = .verbose(), ...) {
   with_offline(
     !is.null(
       .fetch(
@@ -280,7 +280,7 @@
 #' Get or set the resource directory for on-demand downloads, and cached data
 #'
 #' For getting the path, first the option \code{icd.data.resource} is tried,
-#' otherwise \code{\link{setup_resource_dir}} is called.
+#' otherwise \code{\link{icd_setup_data_dir}} is called.
 #'
 #' For setting, \code{path} is created if it does not exist.
 #' @param path Path to desired directory
@@ -289,7 +289,7 @@
 #'   of user interactivity.
 #' @template verbose
 #' @param must_work Single logical, default is \code{FALSE}
-#' @param ... Arguments passed to \code{\link{setup_resource_dir}} if this is
+#' @param ... Arguments passed to \code{\link{icd_setup_data_dir}} if this is
 #'   required.
 #' @return The path to the resource directory, or \code{NULL} if it could not be
 #'   found.
@@ -302,7 +302,7 @@
 icd_setup_data_dir <- function(path = NULL,
                                interact = .interactive(),
                                force = TRUE,
-                               verbose = TRUE) {
+                               verbose = .verbose()) {
   for (trypath in c(
     path,
     getOption("icd.data.resource", default = ""),
@@ -326,10 +326,10 @@ icd_setup_data_dir <- function(path = NULL,
   if (!isTRUE(ok)) {
     temp_dir <- tempdir()
     message("Using a temporary directory: ", temp_dir)
-    return(set_resource_dir(temp_dir))
+    return(.set_data_dir(temp_dir))
   }
   options("icd.data.offline" = FALSE)
-  invisible(set_resource_dir(.icd_data_default))
+  invisible(.set_data_dir(.icd_data_default))
 }
 
 .set_data_dir <- function(path = .icd_data_default) {
@@ -345,7 +345,7 @@ icd_setup_data_dir <- function(path = NULL,
 icd_data_dir <- function(must_work = FALSE, ...) {
   o <- getOption("icd.data.resource")
   if (!is.null(o)) return(o)
-  if (!dir.exists(o)) return(setup_resource_dir(...))
+  if (!dir.exists(o)) return(icd_setup_data_dir(...))
   if (must_work) {
     stop("The ", sQuote("icd.data.resource"), " option is not set.")
   }

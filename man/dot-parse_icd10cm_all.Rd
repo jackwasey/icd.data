@@ -9,7 +9,7 @@
 }
 \usage{
 .parse_icd10cm_all(save_data = FALSE,
-  offline = getOption("icd.data.offline"), verbose = TRUE,
+  offline = getOption("icd.data.offline"), verbose = .verbose(),
   twentysixteen = FALSE, ...)
 }
 \description{

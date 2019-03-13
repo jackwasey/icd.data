@@ -8,7 +8,7 @@
 Deprecated ICD-9-CM leaf/billable codes
 }
 \seealso{
-\code{\link{icd9cm2011}}, and the also deprecated
+\code{icd9cm2011}, and the also deprecated
   \code{\link{icd9cm_billable}}
 }
 \keyword{datasets}

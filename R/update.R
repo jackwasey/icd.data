@@ -7,7 +7,7 @@
 #' @keywords internal datagen
 .update_everything <- function(save_data = TRUE,
                                offline = FALSE,
-                               verbose = TRUE) {
+                               verbose = .verbose()) {
   old_opt <- options(icd.data.offline = offline)
   on.exit(options(old_opt))
   .generate_sysdata(save_data = save_data, verbose = verbose)
@@ -22,7 +22,7 @@
     save_data = save_data,
     verbose = verbose
   )
-  .icd10cm_parse_all(
+  .parse_icd10cm_all(
     save_data = save_data,
     verbose = verbose,
     twentysixteen = TRUE
@@ -30,8 +30,8 @@
   .icd10cm_extract_sub_chapters(save_data = save_data)
 }
 
-.fetch_all_data <- function(offline = FALSE, verbose = TRUE) {
-  .icd10cm_parse_all(
+.fetch_all_data <- function(offline = FALSE, verbose = .verbose()) {
+  .parse_icd10cm_all(
     save_data = TRUE,
     verbose = verbose,
     twentysixteen = FALSE

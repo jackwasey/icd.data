@@ -5,7 +5,7 @@
 \title{Use public interface to fetch ICD-10 WHO version}
 \usage{
 .dl_icd10who(concept_id = NULL, year = 2016, lang = "en",
-  progress = TRUE, verbose = TRUE, hier_code = character(),
+  progress = TRUE, verbose = .verbose(), hier_code = character(),
   hier_desc = character(), offline = getOption("icd.data.offline",
   TRUE), ...)
 }

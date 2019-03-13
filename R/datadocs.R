@@ -348,7 +348,7 @@ NULL
 
 #' Deprecated ICD-9-CM leaf/billable codes
 #'
-#' @seealso \code{\link{icd9cm2011}}, and the also deprecated
+#' @seealso \code{icd9cm2011}, and the also deprecated
 #'   \code{\link{icd9cm_billable}}
 #' @name icd9cm_billable
 #' @docType data

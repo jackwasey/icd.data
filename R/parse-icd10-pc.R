@@ -1,5 +1,6 @@
 
-.icd10cm_parse_cms_pcs_all <- function(save_data = FALSE, verbose = TRUE) {
+.icd10cm_parse_cms_pcs_all <- function(save_data = FALSE,
+                                       verbose = .verbose()) {
   if (verbose) message("Parsing all ICD-10-CM procedure codes")
   lapply(names(icd10cm_sources),
     .icd10cm_parse_cms_pcs_year,
@@ -11,11 +12,11 @@
 
 .icd10cm_parse_cms_pcs_year <- function(year,
                                         save_data = FALSE,
-                                        verbose = TRUE) {
+                                        verbose = .verbose()) {
   .confirm_download()
   message("Please wait a few moments to parse data...")
   year <- as.character(year)
-  fp <- .fetch_icd10cm_ver(
+  fp <- .parse_icd10cm_year(
     ver = year,
     dx = FALSE,
     verbose = verbose,

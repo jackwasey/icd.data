@@ -44,7 +44,7 @@
   "icd10cm2019_pc"
 )
 
-.make_active_bindings <- function(final_env, verbose = TRUE) {
+.make_active_bindings <- function(final_env, verbose = .verbose()) {
   for (var_name in .binding_names) {
     if (verbose) message("Making active binding(s) for: ", var_name)
     binding_fun <- .make_binding_fun(var_name = var_name, verbose = verbose)
@@ -69,7 +69,7 @@
   } # end loop through bindings
 }
 
-.make_binding_fun <- function(var_name, verbose = TRUE) {
+.make_binding_fun <- function(var_name, verbose = .verbose()) {
   # TODO: ideally don't use do.call, but the actual function (or it's symbol?)
   if (verbose) message("Making binding fun for: ", var_name)
   fetcher_name <- .get_fetcher_name(var_name)

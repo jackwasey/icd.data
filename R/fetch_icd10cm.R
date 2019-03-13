@@ -14,7 +14,7 @@
 #' @template verbose
 #' @param ... passed through, e.g., `offline = FALSE`
 #' @keywords internal
-.icd10cm_get_flat_file <- function(year, verbose = TRUE, ...) {
+.icd10cm_get_flat_file <- function(year, verbose = .verbose(), ...) {
   ok <- .confirm_download()
   if (!ok) return()
   if (verbose) message("Getting flat file for year: ", year)
@@ -44,7 +44,7 @@
           "codes"
         )
       }
-      .fetch_icd10cm_ver(year,
+      .parse_icd10cm_year(year,
         dx = dx,
         verbose = verbose,
         ...
@@ -61,7 +61,7 @@
 .dl_icd10cm_ver <- function(ver,
                             dx,
                             save_data = TRUE,
-                            verbose = TRUE,
+                            verbose = .verbose(),
                             ...) {
   stopifnot(is.numeric(ver) || is.character(ver), length(ver) == 1)
   ver <- as.character(ver)
@@ -107,21 +107,6 @@
   }
   fp
 }
-
-# if (!parse) return(fp)
-# if (dx) {
-#   .icd10cm_parse_year(
-#     year = ver,
-#     save_data = save_data,
-#     verbose = verbose
-#   )
-# } else {
-#   .icd10cm_parse_cms_pcs_year(
-#     year = ver,
-#     save_data = save_data,
-#     verbose = verbose
-#   )
-# }
 
 .make_icd10cm_parse_fun <- function(year, dx) {
   # can't have the function in the loop otherwise it inherits the environment of

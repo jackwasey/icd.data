@@ -4,7 +4,8 @@
 \alias{.update_everything}
 \title{Generate all package data}
 \usage{
-.update_everything(save_data = TRUE, offline = FALSE, verbose = TRUE)
+.update_everything(save_data = TRUE, offline = FALSE,
+  verbose = .verbose())
 }
 \description{
 Parses (and downloads if necessary) CDC annual revisions of ICD-9-CM to get

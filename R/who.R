@@ -27,7 +27,7 @@
                      year = 2016,
                      lang = "en",
                      offline = getOption("icd.data.offline", TRUE),
-                     verbose = TRUE) {
+                     verbose = .verbose()) {
   if (offline) stop("Offline, so unable to attempt WHO data download.")
   httr_retry <- httr::RETRY
   if (.have_memoise()) {
@@ -59,7 +59,7 @@
 .who_api_chapter_names <- function(ver = "icd10",
                                    year = 2016,
                                    lang = "en",
-                                   verbose = TRUE) {
+                                   verbose = .verbose()) {
   .who_api_children(
     ver = ver,
     year = year,
@@ -99,7 +99,7 @@
                          year = 2016,
                          lang = "en",
                          progress = TRUE,
-                         verbose = TRUE,
+                         verbose = .verbose(),
                          hier_code = character(),
                          hier_desc = character(),
                          offline = getOption("icd.data.offline", TRUE),

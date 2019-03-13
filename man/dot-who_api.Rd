@@ -5,7 +5,7 @@
 \title{Functions to get the WHO ICD-10 2016 data}
 \usage{
 .who_api(resource, edition = "icd10", year = 2016, lang = "en",
-  offline = getOption("icd.data.offline", TRUE), verbose = TRUE)
+  offline = getOption("icd.data.offline", TRUE), verbose = .verbose())
 }
 \arguments{
 \item{resource}{Fragment of URL with specific ICD-10 resource requested}

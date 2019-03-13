@@ -13,7 +13,7 @@
 #' @keywords internal datagen
 .parse_icd10cm_all <- function(save_data = FALSE,
                                offline = getOption("icd.data.offline"),
-                               verbose = TRUE,
+                               verbose = .verbose(),
                                twentysixteen = FALSE,
                                ...) {
   if (verbose) message("Parsing all ICD-10-CM diagnostic codes.")
@@ -25,7 +25,7 @@
   }
   out <- lapply(
     yrs,
-    .icd10cm_parse_year,
+    .parse_icd10cm_year,
     save_data = save_data,
     offline = offline,
     verbose = verbose,
@@ -37,7 +37,7 @@
 
 .parse_icd10cm_year <- function(year = 2019,
                                 save_data = TRUE,
-                                verbose = TRUE,
+                                verbose = .verbose(),
                                 ...) {
   message("Please wait a few moments to parse data...")
   stopifnot(is.numeric(year) || is.character(year))
