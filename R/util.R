@@ -261,7 +261,7 @@ get_icd_data <- function(data_name, alt = NULL) {
 .stop_on_absent <- function(...) {
   msg <- paste(unlist(unname(list(...))))
   o <- getOption("icd.data.absent_action")
-  if (o == "stop" || !interactive()) {
+  if (o == "stop" || !.interactive()) {
     stop(msg, call. = FALSE)
   }
   if (o == "message") message(msg)

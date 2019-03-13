@@ -358,6 +358,9 @@ icd_data_dir <- function(must_work = FALSE, ...) {
 
 .confirm_download <- function(must_work = TRUE,
                               interact = .interactive()) {
+  message("DEBUG: interact = ", interact)
+  message("DEBUG: interactive() = ", interactive())
+  message("DEBUG: .interactive() = ", .interactive())
   if (isFALSE(getOption("icd.data.offline"))) return(TRUE)
   ok <- FALSE
   if (interact) {

@@ -11,7 +11,10 @@ r:
   - release
   - devel
 
+
 env:
+  global:
+    - R_CHECK_ARGS="--install-args=--build"
  - ICD_DATA_OFFLINE=TRUE
  - ICD_DATA_OFFLINE=FALSE
 
