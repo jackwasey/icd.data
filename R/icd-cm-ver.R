@@ -132,7 +132,7 @@ with_offline <- function(code) {
                              ver,
                              dx,
 #                             must_work = FALSE,
-                             interact = getOption("icd.data.interact", FALSE)) {
+                             interact = .interactive()) {
   ver <- as.character(ver)
   stopifnot(grepl("^[[:digit:]]{4}$", ver))
   var_name <- paste0("icd10cm", ver)

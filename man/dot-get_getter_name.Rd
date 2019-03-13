@@ -3,11 +3,14 @@
 \name{.get_getter_name}
 \alias{.get_getter_name}
 \alias{.exists_in_cache}
+\alias{.get_from_cache}
 \title{Get or check existence of a getter function, returning the name of, or the function itself}
 \usage{
 .get_getter_name(var_name)
 
 .exists_in_cache(var_name, verbose = TRUE)
+
+.get_from_cache(var_name, must_work = TRUE, verbose = TRUE)
 }
 \description{
 The getter looks first in the environment cache, then file cache for a parsed

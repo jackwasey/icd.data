@@ -2,11 +2,13 @@
 % Please edit documentation in R/resource.R
 \name{icd_setup_data_dir}
 \alias{icd_setup_data_dir}
+\alias{icd_data_dir}
 \title{Get or set the resource directory for on-demand downloads, and cached data}
 \usage{
-icd_setup_data_dir(path = NULL,
-  interact = getOption("icd.data.interact", FALSE), force = TRUE,
-  verbose = TRUE)
+icd_setup_data_dir(path = NULL, interact = .interactive(),
+  force = TRUE, verbose = TRUE)
+
+icd_data_dir(must_work = FALSE, ...)
 }
 \arguments{
 \item{path}{Path to desired directory}
@@ -35,8 +37,8 @@ otherwise \code{\link{setup_resource_dir}} is called.
 For setting, \code{path} is created if it does not exist.
 }
 \examples{
-set_data_dir(td <- tempdir())
-get_data_dir()
+icd.data:::.set_data_dir(td <- tempdir())
+icd_data_dir()
 unlink(td)
-try(get_data_dir())
+try(icd_data_dir())
 }

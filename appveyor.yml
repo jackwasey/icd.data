@@ -23,6 +23,9 @@ cache:
 
 environment:
   USE_RTOOLS: true # Set to false if no GitHub packages are necessary
+  ICD_DATA_OFFLINE: true
+  ICD_DATA_INTERACT: false
+  ICD_DATA_ABSENT_ACTION: 'message'
 
 build_script:
   - travis-tool.sh install_deps

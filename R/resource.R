@@ -13,7 +13,8 @@
 }
 
 #' Parse ICD data (downloading data if needed)
-#' @seealso \code{\link{.get}}, \code{\link{.get_getter_name}} and \code{\link{.get_parse_icd10cm_name}}
+#' @seealso \code{\link{.get}}, \code{\link{.get_getter_name}} and \code{\link{.get_parser_icd10cm_name}}
+#' @keywords internal
 .get_parser_name <- function(var_name) {
   paste0(".parse_", var_name)
 }
@@ -53,7 +54,7 @@
   FALSE
 }
 
-#' @rdname .get_getter_name
+#' @rdname dot-get_getter_name
 .get_from_cache <- function(var_name,
                             must_work = TRUE,
                             verbose = TRUE) {
@@ -86,18 +87,18 @@
                                 destroy = FALSE) {
   if (destroy) {
     utils::askYesNo("Destroy entire resource directory?")
-    unlink(get_resource_dir(), recursive = TRUE)
+    unlink(icd_data_dir(), recursive = TRUE)
     return(invisible())
   }
   if (memoise) {
     message("deleting memoise directory")
     unlink(
-      file.path(get_resource_dir(), "memoise"),
+      file.path(icd_data_dir(), "memoise"),
       recursive = TRUE
     )
   }
   if (raw) {
-    raw_files <- list.files(get_resource_dir(),
+    raw_files <- list.files(icd_data_dir(),
                             pattern = "(\\.txt$)|(\\.xlsx$)",
                             ignore.case = TRUE,
                             full.names = TRUE
@@ -107,7 +108,7 @@
     unlink(raw_files, recursive = FALSE)
   }
   if (rds) {
-    rds_files <- list.files(get_resource_dir(), ".*\\.rds", full.names = TRUE)
+    rds_files <- list.files(icd_data_dir(), ".*\\.rds", full.names = TRUE)
     message("Deleting:")
     print(rds_files)
     unlink(rds_files,
@@ -287,13 +288,13 @@
 #' @return The path to the resource directory, or \code{NULL} if it could not be
 #'   found.
 #' @examples
-#' set_data_dir(td <- tempdir())
-#' get_data_dir()
+#' icd.data:::.set_data_dir(td <- tempdir())
+#' icd_data_dir()
 #' unlink(td)
-#' try(get_data_dir())
+#' try(icd_data_dir())
 #' @export
 icd_setup_data_dir <- function(path = NULL,
-                           interact = getOption("icd.data.interact", FALSE),
+                           interact = .interactive(),
                            force = TRUE,
                            verbose = TRUE) {
   default_path <- file.path("~", ".icd.data")
@@ -334,9 +335,9 @@ icd_setup_data_dir <- function(path = NULL,
   invisible(path)
 }
 
-#' @rdname setup_data_dir
+#' @rdname icd_setup_data_dir
 #' @export
-icd_get_data_dir <- function(must_work = FALSE, ...) {
+icd_data_dir <- function(must_work = FALSE, ...) {
   o <- getOption("icd.data.resource")
   if (!is.null(o)) return(o)
   if (!dir.exists(o)) return(setup_resource_dir(...))
@@ -346,13 +347,15 @@ icd_get_data_dir <- function(must_work = FALSE, ...) {
   NULL
 }
 
+.interactive <- function() {
+  isTRUE(getOption("icd.data.interact"))
+}
+
 .confirm_download <- function(must_work = TRUE,
-                              interact = getOption("icd.data.interact", FALSE)) {
-  if (isFALSE(getOption("icd.data.offline"))) {
-    return(TRUE)
-  }
+                              interact = .interactive()) {
+  if (isFALSE(getOption("icd.data.offline"))) return(TRUE)
   ok <- FALSE
-  if (!isTRUE(getOption("icd.data.interact")) && interact) {
+  if (interact) {
     ok <- isTRUE(
       utils::askYesNo(
         "For some data, icd.data needs to download it on demand. May I download a few MB per ICD edition, as needed?" # nolint
@@ -366,7 +369,7 @@ icd_get_data_dir <- function(must_work = FALSE, ...) {
   ok
 }
 .rds_path <- function(var_name) {
-  file.path(get_resource_dir(), paste0(var_name, ".rds"))
+  file.path(icd_data_dir(), paste0(var_name, ".rds"))
 }
 
 #' Check or get data from environment, not file cache

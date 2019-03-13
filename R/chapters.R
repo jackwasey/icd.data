@@ -17,7 +17,7 @@
     memoise::memoise(
       .get_icd34fun("expand_range_major"),
       cache = memoise::cache_filesystem(
-        file.path(get_resource_dir(), "memoise")
+        file.path(icd_data_dir(), "memoise")
       )
     )
   } else {

@@ -24,7 +24,7 @@
   if (verbose) print(fp)
   pcs_file <- icd10cm_sources[[year]][["pcs_flat"]]
   pcs_path <- file.path(
-    get_resource_dir(),
+    icd_data_dir(),
     .get_versioned_raw_file_name(pcs_file, ver = year)
   )
   out <- read.fwf(pcs_path, c(5, 8, 2, 62, 120),

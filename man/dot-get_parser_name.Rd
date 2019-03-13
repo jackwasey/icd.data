@@ -10,5 +10,6 @@
 Parse ICD data (downloading data if needed)
 }
 \seealso{
-\code{\link{.get}}, \code{\link{.get_getter_name}} and \code{\link{.get_parse_icd10cm_name}}
+\code{\link{.get}}, \code{\link{.get_getter_name}} and \code{\link{.get_parser_icd10cm_name}}
 }
+\keyword{internal}

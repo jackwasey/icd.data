@@ -159,15 +159,15 @@ lockBinding("icd9cm_leaf_v32", environment())
     The data has to be saved somewhere accessible. The
     location is given by:
 
-    get_resource_dir()
+    icd_data_dir()
 
     which defaults to:
 
     file.path(\"~/.icd.data\")
 
     See:
-    get_resource_dir(),
-    set_resource_dir(\"new/path/to/dir\")"
+    icd_data_dir(),
+    icd_setup_data_dir(\"new/path/to/dir\")"
     )
   }
 }
