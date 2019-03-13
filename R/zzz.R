@@ -3,14 +3,14 @@
 .onLoad <- function(libname, pkgname) {
   .set_init_options()
   # ask user if possible, and set offline option to false if user agrees
-  setup_resource_dir()
+  icd_setup_data_dir()
   # must make bindings on load, not attach (when namespace is sealed)
   .make_active_bindings(asNamespace(pkgname), verbose = TRUE)
 }
 
 .onAttach <- function(libname, pkgname) {
   # might be done already, but try again, as we may now be interactive
-  setup_resource_dir()
+  icd_setup_data_dir()
 }
 
 release_questions <- function() {

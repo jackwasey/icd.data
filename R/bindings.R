@@ -95,7 +95,7 @@ skip_if_no_dat <- function() {
 # Dynamic
 .icd9cm2011_binding <- function(x) {
   if (!missing(x)) .stop_binding_ro()
-  icd.data::icd9cm_hierarchy
+  icd9cm_hierarchy
 }
 makeActiveBinding("icd9cm2011", .icd9cm2011_binding, environment())
 lockBinding("icd9cm2011", environment())
@@ -109,7 +109,7 @@ lockBinding("icd10cm_active", environment())
 
 .icd10cm_latest_binding <- function(x) {
   if (!missing(x)) .stop_binding_ro()
-  icd.data::icd10cm2019
+  icd10cm2019
 }
 makeActiveBinding("icd10cm_latest", .icd10cm_latest_binding, environment())
 lockBinding("icd10cm_latest", environment())
@@ -140,7 +140,7 @@ lockBinding("icd10cm_latest", environment())
 
 .icd9cm_leaf_v32_binding <- function(x) {
   stopifnot(missing(x))
-  icd.data::icd9cm_billable[["32"]]
+  icd9cm_billable[["32"]]
 }
 makeActiveBinding("icd9cm_leaf_v32", .icd9cm_leaf_v32_binding, environment())
 lockBinding("icd9cm_leaf_v32", environment())

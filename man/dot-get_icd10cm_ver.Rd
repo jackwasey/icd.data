@@ -4,7 +4,8 @@
 \alias{.get_icd10cm_ver}
 \title{Internal function used to search and maybe prompt when active binding used.}
 \usage{
-.get_icd10cm_ver(ver, dx, interact = interactive())
+.get_icd10cm_ver(ver, dx, interact = getOption("icd.data.interact",
+  FALSE))
 }
 \arguments{
 \item{interact}{Control whether functions thinks it is in interactive mode,

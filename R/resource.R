@@ -287,15 +287,15 @@
 #' @return The path to the resource directory, or \code{NULL} if it could not be
 #'   found.
 #' @examples
-#' set_resource_dir(td <- tempdir())
-#' get_resource_dir()
+#' set_data_dir(td <- tempdir())
+#' get_data_dir()
 #' unlink(td)
-#' try(get_resource_dir())
+#' try(get_data_dir())
 #' @export
-setup_resource_dir <- function(path = NULL,
-                               interact = interactive(),
-                               force = TRUE,
-                               verbose = TRUE) {
+icd_setup_data_dir <- function(path = NULL,
+                           interact = getOption("icd.data.interact", FALSE),
+                           force = TRUE,
+                           verbose = TRUE) {
   default_path <- file.path("~", ".icd.data")
   for (trypath in c(
     path,
@@ -326,9 +326,7 @@ setup_resource_dir <- function(path = NULL,
   invisible(set_resource_dir(default_path))
 }
 
-#' @rdname setup_resource_dir
-#' @export
-set_resource_dir <- function(path) {
+.set_data_dir <- function(path = file.path("~", ".icd.data")) {
   if (!dir.exists(path)) {
     if (!dir.create(path)) stop("Could not create directory at: ", path)
   }
@@ -336,9 +334,9 @@ set_resource_dir <- function(path) {
   invisible(path)
 }
 
-#' @rdname setup_resource_dir
+#' @rdname setup_data_dir
 #' @export
-get_resource_dir <- function(must_work = FALSE, ...) {
+icd_get_data_dir <- function(must_work = FALSE, ...) {
   o <- getOption("icd.data.resource")
   if (!is.null(o)) return(o)
   if (!dir.exists(o)) return(setup_resource_dir(...))
@@ -349,7 +347,7 @@ get_resource_dir <- function(must_work = FALSE, ...) {
 }
 
 .confirm_download <- function(must_work = TRUE,
-                              interact = interactive()) {
+                              interact = getOption("icd.data.interact", FALSE)) {
   if (isFALSE(getOption("icd.data.offline"))) {
     return(TRUE)
   }
@@ -396,4 +394,12 @@ get_resource_dir <- function(must_work = FALSE, ...) {
 #' @rdname dot-exists
 .ls <- function() {
   ls(.icd_data_env, all.names = TRUE)
+}
+
+#' List the actual data in this package, not bindings
+#' @examples
+#' icd.data:::.ls_icd_data()
+#' @keywords datasets internal
+.ls_icd_data <- function() {
+  utils::data(package = "icd.data")$results[, "Item"]
 }

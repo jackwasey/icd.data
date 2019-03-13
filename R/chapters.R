@@ -2,27 +2,25 @@
 .icd10_generate_subchap_lookup <- function(year, verbose = FALSE) {
   .icd10_generate_chap_lookup(
     year = year,
-    chapters = icd.data::icd10_sub_chapters,
+    chapters = icd10_sub_chapters,
     prefix = "sc",
     verbose = verbose
   )
 }
 
 .icd10_generate_chap_lookup <- function(year,
-                                        chapters = icd.data::icd10_chapters,
+                                        chapters = icd10_chapters,
                                         prefix = "chap",
                                         verbose = FALSE) {
   stopifnot(is.list(chapters), is.character(prefix))
   erm <- if (.have_memoise()) {
     memoise::memoise(
-      # icd.data:::
       .get_icd34fun("expand_range_major"),
       cache = memoise::cache_filesystem(
         file.path(get_resource_dir(), "memoise")
       )
     )
   } else {
-    # icd.data:::
     .get_icd34fun("expand_range_major")
   }
   df_rows <- lapply(

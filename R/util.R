@@ -32,9 +32,9 @@
 #' @keywords internal
 "%eine%" <- function(x, table) {
   vapply(ls(name = x),
-    function(y) !is.null(table[[y]]),
-    FUN.VALUE = logical(1L),
-    USE.NAMES = FALSE
+         function(y) !is.null(table[[y]]),
+         FUN.VALUE = logical(1L),
+         USE.NAMES = FALSE
   )
 }
 
@@ -100,8 +100,8 @@ is_non_ascii <- function(x)
 #' @keywords internal
 .get_encodings <- function(x) {
   vapply(x,
-    FUN = function(y) unique(Encoding(.as_char_no_warn(y))),
-    FUN.VALUE = character(1)
+         FUN = function(y) unique(Encoding(.as_char_no_warn(y))),
+         FUN.VALUE = character(1)
   )
 }
 
@@ -130,7 +130,7 @@ is_non_ascii <- function(x)
   m <- ifelse(okr, mr, ms)
   out <- lapply(m, function(y) c(start = y[[3]], end = y[[length(y)]]))
   names(out) <- vapply(m, function(y) trimws(.to_title_case(y[[2]])),
-    FUN.VALUE = character(1)
+                       FUN.VALUE = character(1)
   )
   out
 }
@@ -144,8 +144,8 @@ is_non_ascii <- function(x)
 }
 
 .get_chapter_ranges_from_flat <- function(
-                                          flat_hier = icd10cm2019,
-                                          field = "chapter") {
+  flat_hier = icd10cm2019,
+  field = "chapter") {
   u <- if (is.factor(flat_hier[[field]])) {
     levels(flat_hier[[field]])
   } else {
@@ -195,7 +195,7 @@ is_non_ascii <- function(x)
   for (split_char in c(" ", "-", "[")) {
     s <- strsplit(x, split_char, fixed = TRUE)[[1]]
     x <- paste(toupper(substring(s, 1L, 1L)), substring(s, 2L),
-      sep = "", collapse = split_char
+               sep = "", collapse = split_char
     )
   }
   x
@@ -266,87 +266,6 @@ get_icd_data <- function(data_name, alt = NULL) {
   }
   if (o == "message") message(msg)
   invisible()
-}
-
-.show_options <- function() {
-  o <- options()
-  o[grepl("^icd\\.data", names(o))]
-}
-
-.set_default_options <- function(offline = TRUE) {
-  options(icd.data.offline = offline)
-  options(icd.data.absent_action = "message")
-  options(icd.data.icd10cm_active_ver = "2019")
-  options(icd.data.resource = get_resource_dir(force = TRUE))
-  optiosn(icd.data.interact = TRUE)
-}
-
-.set_test_options <- function() {
-  options(icd.data.offline = TRUE)
-  options(icd.data.absent_action = "stop")
-  options(icd.data.icd10cm_active_ver = "2019")
-  options(icd.data.resource = get_resource_dir(force = TRUE))
-  options(icd.data.interact = FALSE)
-}
-
-.set_dev_options <- function() {
-  options(icd.data.offline = FALSE)
-  options(icd.data.absent_action = "stop")
-  options(icd.data.icd10cm_active_ver = "2019")
-  options(icd.data.resource = path.expand(file.path("~", ".icd.data")))
-  options(icd.data.interact = TRUE)
-}
-
-# options are:
-#
-# icd.data.offline - default is TRUE, unless ICD_DATA_OFFLINE is false/no
-#
-# icd.data.resource - default is ~/.icd.data but won't write unless user gives
-# permission
-#
-# icd.data.absent_action - what to do if data is missing, "stop" or "message"
-# consider removing this. Need to automate the hell out of this, but might be
-# useful for testing.
-#
-# icd.data.icd10cm_active_ver - which ICD-10-CM version is currently active.
-# Default is 2019.
-#
-# See also .show_options() .clear_options() .set_dev_options()
-# .set_default_options()
-.set_init_options <- function() {
-  if (!("icd.data.offline" %in% names(options()))) {
-    ev <- Sys.getenv("ICD_DATA_OFFLINE")
-    options(
-      "icd.data.offline" =
-        tolower(ev) %nin% c(
-          "n",
-          "no",
-          "false",
-          "0"
-        )
-    )
-  }
-  # stop or message, anything else will silently continue
-  if ("icd.data.absent_action" %nin% names(options())) {
-    ev <- tolower(Sys.getenv("ICD_DATA_ABSENT_ACTION"))
-    stopifnot(ev %in% c("stop", "message", ""))
-    if (ev == "" && interactive()) ev <- "stop"
-    options("icd.data.absent_action" = ev)
-  }
-  # Which version of ICD-10-CM to use by default?
-  if (!("icd.data.icd10cm_active_ver" %in% names(options()))) {
-    set_icd10cm_active_ver(2019, check_exists = FALSE)
-  }
-}
-
-.unset_options <- function() {
-  icd_data_opts <- .show_options()
-  icd_data_opts <- sapply(
-    icd_data_opts,
-    simplify = FALSE, USE.NAMES = TRUE,
-    FUN = function(x) NULL
-  )
-  options(icd_data_opts)
 }
 
 .have_memoise <- function() {
