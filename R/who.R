@@ -127,9 +127,8 @@
   if (verbose > 1) message("hier level = ", length(hier_code))
   new_hier <- length(hier_code) + 1
   # parallel mcapply is about 2-3x as fast, but may get throttled for multiple
-  # connections. It seems to get up to about 10-15, which is reasonable. However, it may (inexplicably) introduce data errors, e.g. duplicated codes which are not identical in other columns.
-  all_new_rows <- lapply(
-    # parallel::mclapply(
+  # connections. It seems to get up to about 10-15, which is reasonable.
+  all_new_rows <- parallel::mclapply(
     seq_len(nrow(tree_json)),
     function(branch) {
       new_rows <- data.frame(
@@ -216,7 +215,11 @@
     dat[[col_name]] <- sub("[^ ]+ ", "", dat[[col_name]])
   var_name <- paste0("icd10who", year, ifelse(lang == "en", "", lang))
   .save_in_resource_dir(var_name, x = dat)
-  dat
+  # First, if three digit doesn't match code, then drop the row, as these are incorrectly assimilated rows.
+  thr <- .get_icd10_major(dat$code)
+  dat <- dat[dat$three_digit == thr, ]
+  # Then I think any remaining rows are plain duplicates
+  dat[!duplicated(dat$code), ]
 }
 
 .parse_icd10who2016 <- function(must_work = TRUE, ...) {
