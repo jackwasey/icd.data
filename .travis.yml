@@ -11,9 +11,14 @@ r:
   - release
   - devel
 
+env:
+ - ICD_DATA_OFFLINE=TRUE
+ - ICD_DATA_OFFLINE=FALSE
+
 matrix:
   allow_failures:
     - r: oldrel
+    - env: ICD_DATA_OFFLINE=FALSE
 
 r_packages:
   - covr
@@ -27,10 +32,16 @@ r_github_packages:
 
 before_script:
  - sed -i'' '/.*[Dd]ata.*/d' .Rbuildignore # do include (raw) data for testing
-# - sed -i'' '/\.covrignore/d' .Rbuildignore
+ - sed -i'' '/\.covrignore/d' .Rbuildignore
  - sed -i'' '/\.lintr/d' .Rbuildignore
 
 after_success:
   - R CMD INSTALL $PKG_TARBALL
   - Rscript -e 'lintr::lint_package()'
+  - Rscript -e 'if (!require("remotes")) install.packages("remotes"); remotes::install_github("jackwasey/icd")
   - Rscript -e 'covr::codecov()'
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
