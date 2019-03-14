@@ -3,21 +3,24 @@
   o[grepl("^icd\\.data", names(o))]
 }
 
-# options are:
-#
-# icd.data.offline - default is TRUE, unless ICD_DATA_OFFLINE is false/no
-#
-# icd.data.resource - default is ~/.icd.data but won't write unless user gives
-# permission
-#
-# icd.data.absent_action - what to do if data is missing, "stop" or "message"
-# consider removing this. Need to automate the hell out of this, but might be
-# useful for testing.
-#
-# icd.data.icd10cm_active_ver - which ICD-10-CM version is currently active.
-# Default is 2019.
-#
-# See also .show_options() .clear_options() .set_dev_options()
+#' Set initial options for the package
+#'
+#' \code{icd.data.offline} - default is TRUE, unless ICD_DATA_OFFLINE is false/no. This will only ever be turned on with explicit user authorization (or by directly setting it). Turning this on also results in data being saved in the data directory. See below.
+#'
+#' \code{icd.data.interact} - default is based on interactive mode of R, as given by \code{base::interactive()}.
+#'
+#' \code{icd.data.resource} - default is ~/.icd.data but won't write unless user gives
+#' permission
+#'
+#' \code{icd.data.absent_action} - what to do if data is missing, "stop" or "message"
+#' consider removing this. Need to automate the hell out of this, but might be
+#' useful for testing.
+#'
+#' \code{icd.data.icd10cm_active_ver} - which ICD-10-CM version is currently active.
+#' Default is 2019.
+#'
+#' See also \code{.show_options()} \code{.clear_options()} \code{.set_dev_options()}
+#' @keywords internal
 .set_init_options <- function() {
   if (!("icd.data.verbose" %in% names(options()))) {
     options(icd.data.verbose = FALSE)
@@ -30,9 +33,8 @@
   }
   # stop or message, anything else will silently continue
   if ("icd.data.absent_action" %nin% names(options())) {
-    ev <- tolower(Sys.getenv("ICD_DATA_ABSENT_ACTION"))
-    stopifnot(ev %in% c("stop", "message", ""))
-    if (ev == "" && interactive()) ev <- "stop"
+    ev <- tolower(Sys.getenv("ICD_DATA_ABSENT_ACTION", unset = "message"))
+    stopifnot(ev %in% c("message", "stop", "silent"))
     options("icd.data.absent_action" = ev)
   }
   # Which version of ICD-10-CM to use by default?
@@ -61,7 +63,19 @@
 
 .verbose <- function() {
   isTRUE(getOption("icd.data.verbose"))
-  #FALSE
+  # FALSE
+}
+
+.interactive <- function() {
+  isTRUE(getOption("icd.data.interact"))
+}
+
+.absent_action <- function() {
+  getOption(icd.data.absent_action)
+}
+
+.offline <- function() {
+  isTRUE(getOption("icd.data.offline"))
 }
 
 .env_var_is_false <- function(x) {

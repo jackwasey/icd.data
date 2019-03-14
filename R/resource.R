@@ -211,9 +211,7 @@
                                        verbose = .verbose()) {
   # for (var_name in names(.bindings)) {
   for (var_name in .binding_names) {
-    # dx_pc <- .bindings[[var_name]]
-    # for (x in dx_pc) {
-    if (verbose) message("working on ", var_name)
+    if (verbose) message("Making getters and fetchers for ", var_name)
     getter_name <- .get_getter_name(var_name)
     if (verbose) message("assigning: ", getter_name)
     assign(getter_name,
@@ -352,15 +350,8 @@ icd_data_dir <- function(must_work = FALSE, ...) {
   NULL
 }
 
-.interactive <- function() {
-  isTRUE(getOption("icd.data.interact"))
-}
-
-.confirm_download <- function(must_work = TRUE,
+.confirm_download <- function(absent_action = .absent_action(),
                               interact = .interactive()) {
-  message("DEBUG: interact = ", interact)
-  message("DEBUG: interactive() = ", interactive())
-  message("DEBUG: .interactive() = ", .interactive())
   if (isFALSE(getOption("icd.data.offline"))) return(TRUE)
   ok <- FALSE
   if (interact) {
@@ -371,9 +362,11 @@ icd_data_dir <- function(must_work = FALSE, ...) {
     )
   }
   options("icd.data.offline" = !ok)
-  if (must_work && !ok) {
-    stop("Unable to get permission to download data")
-  }
+  msg <- "Unable to get permission to download data"
+  switch(absent_action,
+    "stop" = stop(msg),
+    "message" = message(msg)
+  )
   ok
 }
 .rds_path <- function(var_name) {

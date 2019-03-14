@@ -225,18 +225,16 @@
   dat[!duplicated(dat$code), ]
 }
 
-.parse_icd10who2016 <- function(must_work = TRUE, ...) {
-  ok <- .confirm_download(must_work = must_work)
-  if (!ok) return()
+.parse_icd10who2016 <- function(...) {
+  if (!.confirm_download()) return()
   .dl_icd10who_finalize(
     .dl_icd10who(year = 2016, lang = "en", ...),
     2016, "en"
   )
 }
 
-.parse_icd10who2008fr <- function(must_work = TRUE, ...) {
-  ok <- .confirm_download(must_work = must_work)
-  if (!ok) return()
+.parse_icd10who2008fr <- function(...) {
+  if (!.confirm_download()) return()
   .dl_icd10who_finalize(
     .dl_icd10who(year = 2008, lang = "fr", ...),
     2008, "fr"

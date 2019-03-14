@@ -61,10 +61,9 @@
 .download_to_data_raw <-
   function(url,
              file_name = regmatches(url, regexpr("[^/]*$", url)),
-             offline = getOption("icd.data.offline"),
+             offline = .offline(),
              data_raw_path = icd_data_dir(),
              ...) {
-    .confirm_download()
     stopifnot(is.character(url), length(url) == 1)
     stopifnot(is.character(file_name), length(file_name) == 1)
     stopifnot(is.logical(offline), length(offline) == 1)
@@ -79,6 +78,7 @@
     )
     if (file.exists(save_path)) return(f_info)
     if (offline) return()
+    if (!.confirm_download()) return()
     curl_res <- try(
       utils::download.file(
         url = url,

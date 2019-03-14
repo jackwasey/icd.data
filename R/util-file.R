@@ -79,7 +79,7 @@
   invisible(get(var_name, envir = envir))
 }
 
-#' unzip a single file from URL
+#' Unzip a single file from URL
 #'
 #' take a single file from zip located at a given URL, unzip into temporary
 #' directory, and copy to the given \code{save_path}
@@ -98,20 +98,22 @@
                           save_path,
                           insecure = TRUE,
                           verbose = FALSE,
+                          force = FALSE,
+                          absent_action = .absent_action(),
                           ...) {
   stopifnot(is.character(url))
   stopifnot(is.character(file_name))
   stopifnot(is.character(save_path))
+  if (!force && file.exists(save_path)) return(TRUE)
+  if (!.confirm_download()) return(FALSE)
   zipfile <- tempfile(fileext = ".zip")
   on.exit(unlink(zipfile), add = TRUE)
   extra <- ifelse(insecure, "--insecure --silent", NULL)
-  .confirm_download()
   dl_code <- utils::download.file(
     url = url,
     destfile = zipfile,
     quiet = !verbose,
     method = "curl",
-    # mode = "wb", # not used for method curl
     extra = extra,
     ...
   )

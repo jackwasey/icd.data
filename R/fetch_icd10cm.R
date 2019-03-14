@@ -16,8 +16,7 @@
 #' @keywords internal
 #' @noRd
 .icd10cm_get_flat_file <- function(year, verbose = .verbose(), ...) {
-  ok <- .confirm_download()
-  if (!ok) return()
+  if (!.confirm_download()) return()
   if (verbose) message("Getting flat file for year: ", year)
   y <- icd10cm_sources[[as.character(year)]]
   .unzip_to_data_raw(
@@ -62,7 +61,6 @@
 #' @noRd
 .dl_icd10cm_ver <- function(ver,
                             dx,
-                            save_data = TRUE,
                             verbose = .verbose(),
                             ...) {
   stopifnot(is.numeric(ver) || is.character(ver), length(ver) == 1)
@@ -96,17 +94,15 @@
       "\nsave_name = ", save_name
     )
   }
-  .confirm_download()
+  if (!.confirm_download()) return()
   message("Please wait a moment to download (or use cached) ~1-10MB of data...")
-  if (save_data) {
-    fp <- .unzip_to_data_raw(
-      url = url,
-      file_name = file_name,
-      verbose = verbose,
-      save_name = save_name,
-      ...
-    )
-  }
+  fp <- .unzip_to_data_raw(
+    url = url,
+    file_name = file_name,
+    verbose = verbose,
+    save_name = save_name,
+    ...
+  )
   fp
 }
 

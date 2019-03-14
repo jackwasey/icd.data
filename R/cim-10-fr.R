@@ -1,6 +1,5 @@
 .dl_icd10fr2019 <- function(save_data = TRUE, ...) {
-  ok <- .confirm_download()
-  if (!ok) return()
+  if (!.confirm_download()) return()
   .unzip_to_data_raw(
     url = paste(
       sep = "/",
