@@ -13,7 +13,6 @@
   on.exit(options(old_opt))
   .generate_sysdata(save_data = save_data, verbose = verbose)
   load(file.path("R", "sysdata.rda"))
-  # .icd9cm_parse_leaf_descs
   .icd9cm_parse_leaf_desc_ver(
     ver = "32",
     save_data = save_data,

@@ -286,7 +286,7 @@ Now just making icd9cm_billable[[\"32\"]]")
 .icd9cm_gen_chap_hier <- function(
                                   save_data = FALSE,
                                   verbose = FALSE,
-                                  offline = getOption("icd.data.offline"),
+                                  offline = .offline(),
                                   perl = TRUE,
                                   use_bytes = TRUE) {
   # TODO: Someday change 'billable' to 'leaf', and make consistent ICD-9 and

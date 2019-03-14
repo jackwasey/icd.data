@@ -78,8 +78,8 @@
     if (!missing(x)) .stop_binding_ro()
     dat <- do.call(fetcher_name, args = list())
     if (!is.null(dat)) return(dat)
+    .absent_action_switch(paste(var_name, "not available."))
     .message_who()
-    .stop_on_absent(paste(var_name, "not available."))
   }
   f_env <- environment(binding_fun)
   f_env$fetcher_name <- fetcher_name
@@ -168,8 +168,7 @@ lockBinding("icd9cm_leaf_v32", environment())
     file.path(\"~/.icd.data\")
 
     See:
-    icd_data_dir(),
-    icd_setup_data_dir(\"new/path/to/dir\")"
+    icd_data_setup()"
     )
   }
 }

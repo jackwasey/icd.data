@@ -27,9 +27,8 @@
                      edition = "icd10",
                      year = 2016,
                      lang = "en",
-                     offline = getOption("icd.data.offline", TRUE),
+                     offline = .offline(),
                      verbose = .verbose()) {
-  if (offline) stop("Offline, so unable to attempt WHO data download.")
   httr_retry <- httr::RETRY
   if (.have_memoise()) {
     httr_retry <- memoise::memoise(
@@ -42,6 +41,12 @@
   edition <- match.arg(edition)
   who_base <- "https://apps.who.int/classifications"
   json_url <- paste(who_base, edition, "browse", year, lang, resource, sep = "/")
+  # TODO: this stops us using the memoised data, even if available. Seems an unlikely situation, except maybe for local testing. memoise::has_cache(f, ...) lets us test whether a memoise call is cached already.
+  if (.offline() || !.interactive()) {
+    msg <- "Offline, so unable to attempt WHO data download."
+    .absent_action_switch(msg)
+    return(NULL)
+  }
   if (verbose > 1) message("Getting WHO data with JSON: ", json_url)
   http_response <- httr_retry("GET", json_url)
   if (http_response$status_code >= 400) {
@@ -105,7 +110,7 @@
                          verbose = .verbose(),
                          hier_code = character(),
                          hier_desc = character(),
-                         offline = getOption("icd.data.offline", TRUE),
+                         offline = .offline(),
                          ...) {
   if (verbose > 1) print(hier_code)
   if (verbose > 1) message(".who_api_tree with concept_id = ", concept_id)

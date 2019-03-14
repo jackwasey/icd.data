@@ -13,7 +13,7 @@
 #' @keywords internal datagen
 #' @noRd
 .parse_icd10cm_all <- function(save_data = FALSE,
-                               offline = getOption("icd.data.offline"),
+                               offline = .offline(),
                                verbose = .verbose(),
                                twentysixteen = FALSE,
                                ...) {
@@ -37,18 +37,22 @@
 }
 
 .parse_icd10cm_year <- function(year = 2019,
-                                save_data = TRUE,
+                                must_work = FALSE,
                                 verbose = .verbose(),
                                 ...) {
-  message("Please wait a few moments to parse data...")
   stopifnot(is.numeric(year) || is.character(year))
   year <- as.character(year)
-  stopifnot(is.logical(save_data) && length(save_data) == 1L)
+  stopifnot(is.logical(must_work) && length(must_work) == 1L)
   stopifnot(is.logical(verbose) && length(verbose) == 1L)
   stopifnot(as.character(year) %in% names(icd10cm_sources))
   if (verbose) message("Getting flat file for year: ", year)
   f_info <- .icd10cm_get_flat_file(year = year, verbose = verbose, ...)
-  stopifnot(!is.null(f_info))
+  if (is.null(f_info)) {
+  if (must_work)
+    stop("Unable to get data to parse ICD-10-CM year: ", year)
+    return(NULL)
+  }
+  message("Please wait a few moments to parse data...")
   # readLines may muck up encoding, resulting in weird factor order generation
   # later?
   x <- readLines(con = f_info$file_path, encoding = "ASCII")
@@ -108,10 +112,8 @@
   class(dat$code) <- c("icd10cm", "icd10", "character")
   row.names(dat) <- NULL
   assign(paste0("icd10cm", year), value = dat)
-  if (save_data) {
     # I don't know why parent.frame() doesn't work
     .save_in_resource_dir(paste0("icd10cm", year))
     if (year == "2016") .save_in_data_dir("icd10cm2016")
-  }
   invisible(dat)
 }

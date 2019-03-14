@@ -24,7 +24,6 @@
                                file_name,
                                force = FALSE,
                                verbose = FALSE,
-                               offline = getOption("icd.data.offline"),
                                data_raw_path = icd_data_dir(),
                                save_name = file_name,
                                ...) {
@@ -32,7 +31,6 @@
   stopifnot(is.character(file_name), length(file_name) == 1)
   stopifnot(is.logical(force), length(force) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
-  stopifnot(is.logical(offline), length(offline) == 1)
   if (verbose) message(url)
   if (!dir.exists(data_raw_path)) {
     if (verbose) message("Setting download path to a new temporary directory")
@@ -46,7 +44,8 @@
     )
   }
   if (force || !file.exists(file_path)) {
-    if (offline) return()
+    if (.offline()) return()
+    .confirm_download()
     ok <- .unzip_single(
       url = url,
       file_name = file_name,
@@ -61,13 +60,12 @@
 .download_to_data_raw <-
   function(url,
              file_name = regmatches(url, regexpr("[^/]*$", url)),
-             offline = .offline(),
              data_raw_path = icd_data_dir(),
              ...) {
     stopifnot(is.character(url), length(url) == 1)
     stopifnot(is.character(file_name), length(file_name) == 1)
-    stopifnot(is.logical(offline), length(offline) == 1)
-    if (!dir.exists(data_raw_path)) data_raw_path <- tempdir()
+    if (!is.null(data_raw_path) &&
+        !dir.exists(data_raw_path)) data_raw_path <- tempdir()
     save_path <- file.path(
       data_raw_path,
       file_name
@@ -76,8 +74,9 @@
       file_path = save_path,
       file_name = file_name
     )
-    if (file.exists(save_path)) return(f_info)
-    if (offline) return()
+    if (!is.null(data_raw_path) &&
+        file.exists(save_path)) return(f_info)
+    if (.offline()) return()
     if (!.confirm_download()) return()
     curl_res <- try(
       utils::download.file(

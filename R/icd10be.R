@@ -1,18 +1,18 @@
+.icd10be_site <- "https://www.health.belgium.be"
+.icd10be_url_path <- "sites/default/files/uploads/fields/fpshealth_theme_file"
 .dl_icd10be2017 <- function(save_data = TRUE,
                             dx = TRUE,
-                            must_work = TRUE,
+                            must_work = FALSE,
                             verbose = .verbose(),
                             ...) {
-  site <- "https://www.health.belgium.be"
-  site_path <- "sites/default/files/uploads/fields/fpshealth_theme_file"
   site_file_2017 <-
     "fy2017_reflist_icd-10-be.xlsx_last_updatet_28-07-2017_1.xlsx"
   if (verbose) message("Downloading icd10be2017 data")
   fnp <- .download_to_data_raw(
-    paste(site,
-      site_path,
-      site_file_2017,
-      sep = "/"
+    paste(.icd10be_site,
+          .icd10be_url_path,
+          site_file_2017,
+          sep = "/"
     ),
     ...
   )
@@ -20,16 +20,21 @@
   fnp
 }
 
-.dl_icd10be2014 <- function(save_data = TRUE,
-                            dx = TRUE,
+.dl_icd10be2014 <- function(dx = TRUE,
                             verbose = .verbose(),
                             ...) {
-  site <- "https://www.health.belgium.be"
-  site_path <- "sites/default/files/uploads/fields/fpshealth_theme_file"
+  if (.offline() && !.interactive()) {
+    msg <- "Offline, so unable to attempt Belgian data download."
+    .absent_action_switch(msg)
+    return(NULL)
+  }
   site_file <- "fy2014_reflist_icd-10-be.xlsx"
   if (verbose) message("Downloading or getting cached icd10be2014 data")
   .download_to_data_raw(
-    paste(site, site_path, site_file, sep = "/"),
+    paste(.icd10be_site,
+          .icd10be_url_path,
+          site_file,
+          sep = "/"),
     ...
   )
 }
@@ -55,18 +60,17 @@
 #' @seealso \code{link{parse_icd10be2014_be}}
 #' @keywords internal
 #' @noRd
-.parse_icd10be2017 <- function(save_data = TRUE,
-                               dx = TRUE,
-                               ...) {
+.parse_icd10be2017 <- function(dx = TRUE, ...) {
   # MS Excel sheet with French English and Dutch translations of ICD-10-CM.
   # Currently all the codes are identical to ICD-10-CM US version.
   sheet_2017 <- "FY2017"
-  fnp <- .dl_icd10be2017(save_data = save_data, ...)
+  fnp <- .dl_icd10be2017(...)
+  if (is.null(fnp)) return()
   raw_dat <- readxl::read_xlsx(fnp$file_path,
-    sheet = sheet_2017,
-    col_names = TRUE,
-    guess_max = 1e6,
-    progress = FALSE
+                               sheet = sheet_2017,
+                               col_names = TRUE,
+                               guess_max = 1e6,
+                               progress = FALSE
   )
   raw_dat <- raw_dat[c(
     "ICDCODE",
@@ -107,10 +111,8 @@
   class(icd10be2017_pc$code) <- c("icd10be_pc", "character")
   row.names(icd10be2017) <- NULL
   row.names(icd10be2017_pc) <- NULL
-  if (save_data) {
-    .save_in_resource_dir(icd10be2017)
-    .save_in_resource_dir(icd10be2017_pc)
-  }
+  .save_in_resource_dir(icd10be2017)
+  .save_in_resource_dir(icd10be2017_pc)
   if (dx) {
     invisible(icd10be2017)
   } else {
@@ -125,16 +127,15 @@
 #' @seealso \code{link{parse_icd10be2014_be}}
 #' @keywords internal
 #' @noRd
-.parse_icd10be2014 <- function(save_data = TRUE,
-                               dx = TRUE,
-                               ...) {
+.parse_icd10be2014 <- function(dx = TRUE, ...) {
   # MS Excel sheet with French English and Dutch translations of ICD-10-CM.
-  fnp <- .dl_icd10be2014(parse = FALSE, save_data = save_data, ...)
+  fnp <- .dl_icd10be2014(...)
+  if (is.null(fnp)) return()
   raw_dat <- readxl::read_xlsx(fnp$file_path,
-    sheet = "FY2014_ICD10BE",
-    col_names = TRUE,
-    guess_max = 1e6,
-    progress = FALSE
+                               sheet = "FY2014_ICD10BE",
+                               col_names = TRUE,
+                               guess_max = 1e6,
+                               progress = FALSE
   )
   raw_dat <- raw_dat[c(
     "ICDCODE",
@@ -180,10 +181,8 @@
   class(icd10be2014_pc$code) <- c("icd10be_pc", "character")
   row.names(icd10be2014) <- NULL
   row.names(icd10be2014_pc) <- NULL
-  if (save_data) {
-    .save_in_resource_dir(icd10be2014)
-    .save_in_resource_dir(icd10be2014_pc)
-  }
+  .save_in_resource_dir(icd10be2014)
+  .save_in_resource_dir(icd10be2014_pc)
   if (dx) {
     invisible(icd10be2014)
   } else {

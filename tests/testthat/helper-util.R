@@ -3,10 +3,10 @@ rtf_year_ok <- function(year, ...) {
 }
 
 skip_if_offline <- function() {
-  if (isTRUE(getOption("icd.data.offline"))) {
+  if (.offline()) {
     skip("Offline")
   }
-  if (!isTRUE(getOption("icd.data.interact"))) {
+  if (!.interactive()) {
     skip("Not interactive")
   }
 }

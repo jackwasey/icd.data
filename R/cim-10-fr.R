@@ -20,8 +20,15 @@
 #' @template save_data
 #' @keywords internal
 #' @noRd
-.parse_icd10fr2019 <- function(save_data = TRUE, ...) {
+.parse_icd10fr2019 <- function(save_data = TRUE,
+                               must_work = FALSE,
+                               ...) {
   fp <- .dl_icd10fr2019(save_data = save_data, ...)
+  if (is.null(fp)) {
+    if (must_work)
+      stop("Unable to get data to parse ICD-10-FR (CIM-10-FR) year: ", year)
+    return(NULL)
+  }
   cim_raw <- read.delim(
     fileEncoding = "Latin1",
     fp$file_path,

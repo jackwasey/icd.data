@@ -49,6 +49,8 @@
   if (verbose) message("Trying icd_data_env environment")
   if (.exists(var_name)) return(TRUE)
   fp <- .rds_path(var_name)
+  if (verbose) message("Checking if we have file path for exists")
+  if (is.null(fp)) return(FALSE)
   if (verbose) message("Trying file at: ", fp)
   return(file.exists(fp))
   if (verbose) message(var_name, " not seen in cache env or dir.")
@@ -60,17 +62,19 @@
                             verbose = .verbose()) {
   if (verbose) {
     message(
-      "Trying to get ", sQuote(var_name),
-      " from cache env or dir"
+      "Trying to get ", sQuote(var_name), " from cache env or dir"
     )
   }
   if (!.exists_in_cache(var_name = var_name, verbose = verbose)) {
-    if (must_work) stop("Unable to get cached data for: ", var_name)
+    msg <- paste("Unable to get cached data for:", var_name)
+    .absent_action_switch(msg, must_work = must_work)
     return()
   }
   if (verbose) message("Trying icd_data_env environment")
   if (.exists(var_name)) return(.get(var_name))
   fp <- .rds_path(var_name)
+  if (verbose) message("Checking if we have file path for get")
+  if (is.null(fp)) return()
   if (verbose) message("Getting file at: ", fp)
   val <- readRDS(fp)
   .assign(var_name, val)
@@ -99,9 +103,9 @@
   }
   if (raw) {
     raw_files <- list.files(icd_data_dir(),
-      pattern = "(\\.txt$)|(\\.xlsx$)",
-      ignore.case = TRUE,
-      full.names = TRUE
+                            pattern = "(\\.txt$)|(\\.xlsx$)",
+                            ignore.case = TRUE,
+                            full.names = TRUE
     )
     message("Deleting:")
     print(raw_files)
@@ -112,7 +116,7 @@
     message("Deleting:")
     print(rds_files)
     unlink(rds_files,
-      recursive = FALSE
+           recursive = FALSE
     )
   }
 }
@@ -121,13 +125,13 @@
   force(var_name)
   force(verbose)
   getter_fun <- function(alt = NULL,
-                           must_work = TRUE,
-                           msg = paste("Unable to find", var_name)) {
+                         must_work = TRUE,
+                         msg = paste("Unable to find", var_name)) {
     if (verbose) message("Starting getter")
     stopifnot(is.character(var_name))
     dat <- .get_from_cache(var_name,
-      must_work = FALSE,
-      verbose = verbose
+                           must_work = FALSE,
+                           verbose = verbose
     )
     if (!is.null(dat)) return(dat)
     if (must_work) {
@@ -151,35 +155,38 @@
   force(verbose)
   parse_fun_name <- .get_parser_name(var_name)
   fetcher_fun <- function(alt = NULL,
-                            must_work = TRUE,
-                            msg = paste("Unable to find", var_name)) {
-    if (verbose) message("Starting fetcher")
+                          must_work = TRUE,
+                          msg = paste("Unable to find", var_name)) {
+    if (verbose) message("Starting fetcher for ", var_name)
     # TODO: call the specific/generated getter instead?
-    dat <- .get_from_cache(var_name,
-      must_work = FALSE,
-      verbose = verbose
+    dat <- .get_from_cache(var_name = var_name,
+                           must_work = FALSE,
+                           verbose = verbose
     )
     if (!is.null(dat)) return(dat)
-    if (verbose) message("Trying to call parse function")
-    if (verbose) message("name is ", sQuote(parse_fun_name))
+    if (verbose) message("Trying to find parse function: ",
+                         sQuote(parse_fun_name))
     fr <- environment()
     if (exists(parse_fun_name, fr, inherits = TRUE)) {
       if (verbose) message("Found parse function. Calling it.")
       out <- do.call(get(parse_fun_name,
-        envir = fr,
-        inherits = TRUE
+                         envir = fr,
+                         inherits = TRUE
       ),
       args = list()
       )
-      .save_in_resource_dir(out, var_name = var_name)
+      if (verbose && is.null(out)) message("Returning NULL")
+      if (!is.null(out) && !.offline()) {
+        .save_in_resource_dir(x = out, var_name = var_name)
+      }
       return(out)
     } else {
       stop("No parse function: ", parse_fun_name)
     }
     # Parse function should have saved the data in env and file caches
     dat <- .get_from_cache(var_name,
-      must_work = FALSE,
-      verbose = verbose
+                           must_work = FALSE,
+                           verbose = verbose
     )
     if (!is.null(dat)) return(dat)
     if (must_work) {
@@ -215,14 +222,14 @@
     getter_name <- .get_getter_name(var_name)
     if (verbose) message("assigning: ", getter_name)
     assign(getter_name,
-      .make_getter(var_name, verbose),
-      envir = final_env
+           .make_getter(var_name, verbose),
+           envir = final_env
     )
     fetcher_name <- .get_fetcher_name(var_name)
     if (verbose) message("assigning: ", fetcher_name)
     assign(fetcher_name,
-      .make_fetcher(var_name, verbose),
-      envir = final_env
+           .make_fetcher(var_name, verbose),
+           envir = final_env
     )
   }
 }
@@ -247,8 +254,8 @@
                    ...) {
   if (.exists_in_cache(var_name, verbose = verbose)) {
     .get_from_cache(var_name,
-      must_work = TRUE,
-      verbose = verbose
+                    must_work = TRUE,
+                    verbose = verbose
     )
   } else {
     parser <- .get_parser_fun(var_name)
@@ -261,7 +268,7 @@
 }
 
 .available <- function(var_name, verbose = .verbose(), ...) {
-  with_offline(
+  with_offline(offline = TRUE, {
     !is.null(
       .fetch(
         var_name = var_name,
@@ -270,65 +277,11 @@
         ...
       )
     )
+  }
   )
 }
 
 .icd_data_default <- file.path("~", ".icd.data")
-
-#' Get or set the resource directory for on-demand downloads, and cached data
-#'
-#' For getting the path, first the option \code{icd.data.resource} is tried,
-#' otherwise \code{\link{icd_setup_data_dir}} is called.
-#'
-#' For setting, \code{path} is created if it does not exist.
-#' @param path Path to desired directory
-#' @param interact Whether to prompt, defaults to \code{interactive()}
-#' @param force Whether to set the default path of \code{~/.icd.data} regardless
-#'   of user interactivity.
-#' @template verbose
-#' @param must_work Single logical, default is \code{FALSE}
-#' @param ... Arguments passed to \code{\link{icd_setup_data_dir}} if this is
-#'   required.
-#' @return The path to the resource directory, or \code{NULL} if it could not be
-#'   found.
-#' @examples
-#' icd.data:::.set_data_dir(td <- tempdir())
-#' icd_data_dir()
-#' unlink(td)
-#' try(icd_data_dir())
-#' @export
-icd_setup_data_dir <- function(path = NULL,
-                               interact = .interactive(),
-                               force = TRUE,
-                               verbose = .verbose()) {
-  for (trypath in c(
-    path,
-    getOption("icd.data.resource", default = ""),
-    Sys.getenv("ICD_DATA_PATH"),
-    file.path(Sys.getenv("HOME"), ".icd.data"),
-    path.expand(.icd_data_default)
-  )) {
-    if (verbose) message("Trying path: ", trypath)
-    if (!is.null(trypath) && dir.exists(trypath)) {
-      options("icd.data.resource" = trypath)
-      return(trypath)
-    }
-  }
-  # ask if we can create the directory, or use temp. Don't defer this until
-  # later as it causes a lot of problems with the active bindings.
-  if (force) dir.create(path.expand(.icd_data_default))
-  if (!interact) return(NULL)
-  ok <- utils::askYesNo(
-    "For use of WHO, French, Belgian, and some versions of US ICD-10-CM, icd.data needs to download and process data. The data occupies a few MB per ICD edition. Is it alright to create a directory \".icd.data\" in your home directory for this purpose?"
-  ) # nolint
-  if (!isTRUE(ok)) {
-    temp_dir <- tempdir()
-    message("Using a temporary directory: ", temp_dir)
-    return(.set_data_dir(temp_dir))
-  }
-  options("icd.data.offline" = FALSE)
-  invisible(.set_data_dir(.icd_data_default))
-}
 
 .set_data_dir <- function(path = .icd_data_default) {
   if (!dir.exists(path)) {
@@ -338,21 +291,24 @@ icd_setup_data_dir <- function(path = NULL,
   invisible(path)
 }
 
-#' @rdname icd_setup_data_dir
+#' @describeIn icd_data_setup Return the currently active data directory. If missing, it will return \code{NULL} and, depending on \code{getOption("icd.data.absent_action")}, will stop, give a message, or do nothing.
 #' @export
-icd_data_dir <- function(must_work = FALSE, ...) {
+icd_data_dir <- function() {
   o <- getOption("icd.data.resource")
   if (!is.null(o)) return(o)
-  if (!dir.exists(o)) return(icd_setup_data_dir(...))
-  if (must_work) {
-    stop("The ", sQuote("icd.data.resource"), " option is not set.")
-  }
+  icd_data_setup()
+  o <- getOption("icd.data.resource")
+  if (!is.null(o)) return(o)
+  msg <- paste("The", sQuote("icd.data.resource"), "option is not set.")
+  #.absent_action_switch(msg)
+  #warning(msg)
+  #TODO: argh!! .absent_action_switch(msg)
   NULL
 }
 
 .confirm_download <- function(absent_action = .absent_action(),
                               interact = .interactive()) {
-  if (isFALSE(getOption("icd.data.offline"))) return(TRUE)
+  if (!.offline()) return(TRUE)
   ok <- FALSE
   if (interact) {
     ok <- isTRUE(
@@ -362,15 +318,17 @@ icd_data_dir <- function(must_work = FALSE, ...) {
     )
   }
   options("icd.data.offline" = !ok)
-  msg <- "Unable to get permission to download data"
-  switch(absent_action,
-    "stop" = stop(msg),
-    "message" = message(msg)
-  )
+  msg <- "Unable to get permission to download data. If any online resrouces are needed by 'icd' or 'icd.data', you will be prompted again."
+  .absent_action_switch(msg)
   ok
 }
+
 .rds_path <- function(var_name) {
-  file.path(icd_data_dir(), paste0(var_name, ".rds"))
+  fp <- file.path(icd_data_dir(), paste0(var_name, ".rds"))
+  if (length(fp) == 0)
+    NULL
+  else
+    fp
 }
 
 #' Check or get data from environment, not file cache

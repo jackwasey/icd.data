@@ -27,7 +27,7 @@
     names(chapters),
     function(nm) {
       chap <- chapters[[nm]]
-      out <- data.frame(
+      data.frame(
         erm(
           icd::as.icd10cm(chap["start"]),
           icd::as.icd10cm(chap["end"]),

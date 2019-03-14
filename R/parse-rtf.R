@@ -51,7 +51,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
                             ...,
                             save_data = FALSE,
                             verbose = FALSE,
-                            offline = getOption("icd.data.offline")) {
+                            offline = .offline()) {
   year <- as.character(year)
   stopifnot(is.logical(save_data), length(save_data) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)

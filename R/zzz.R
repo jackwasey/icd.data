@@ -2,15 +2,27 @@
 
 .onLoad <- function(libname, pkgname) {
   .set_init_options()
-  # ask user if possible, and set offline option to false if user agrees
-  icd_setup_data_dir()
+  # be silent for package loading, which CRAN check does multiple times
+  .set_check_options()
+  for (trypath in c(
+    getOption("icd.data.resource", default = ""),
+    Sys.getenv("ICD_DATA_PATH"),
+    file.path(Sys.getenv("HOME"), ".icd.data"),
+    path.expand(.icd_data_default)
+  )) {
+    if (!is.null(trypath) && dir.exists(trypath)) {
+      options("icd.data.resource" = trypath)
+    }
+  }
   # must make bindings on load, not attach (when namespace is sealed)
   .make_active_bindings(asNamespace(pkgname), verbose = .verbose())
 }
 
 .onAttach <- function(libname, pkgname) {
-  # might be done already, but try again, as we may now be interactive
-  icd_setup_data_dir()
+  .set_init_options()
+  if (.interactive())
+    options("icd.data.absent_action" = "stop")
+  icd_data_setup()
 }
 
 release_questions <- function() {
@@ -32,6 +44,7 @@ utils::globalVariables(c(
   "icd10_sub_chapters",
   "dl_fun_name",
   ".binding_namess",
+  ".icd_data_default",
   # names(.bindings)
   .binding_names
 ))
