@@ -19,6 +19,7 @@
 #' @param ... additional arguments passed to \code{utils::download.file}
 #' @return path of unzipped file in the raw data directory
 #' @keywords internal
+#' @noRd
 .unzip_to_data_raw <- function(url,
                                file_name,
                                force = FALSE,

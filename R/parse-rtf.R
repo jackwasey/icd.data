@@ -19,6 +19,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #' @param year character vector of length one, e.g. "2011"
 #' @param offline single logical value
 #' @keywords internal datagen
+#' @noRd
 .rtf_fetch_year <- function(year, verbose = FALSE, ...) {
   year <- as.character(year)
   rtf_dat <- icd9cm_sources[icd9cm_sources$f_year == year, ]
@@ -44,6 +45,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #' @source \url{https://www.cdc.gov/nchs/icd/icd9cm.htm} Navigate to
 #' 'Dtab12.zip' in the 2011 data. and similar files run from 1996 to 2011.
 #' @keywords internal datagen
+#' @noRd
 .rtf_parse_year <- function(
                             year = "2011",
                             ...,
@@ -344,6 +346,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #' use the lookup table of fourth digit
 #'
 #' @keywords internal datagen
+#' @noRd
 .rtf_lookup_fourth <- function(out, lookup_fourth, verbose = FALSE) {
   .rtf_lookup_fourth_alt_env(
     out = out,
@@ -509,6 +512,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #'
 #' First: c cedilla, e grave, e acute Then:  n tilde, o umlaut
 #' @keywords internal datagen
+#' @noRd
 .rtf_fix_unicode <- function(filtered, ...) {
   filtered <- gsub("\\\\'e7", "\u00e7", filtered, ...) # c cedilla
   filtered <- gsub("\\\\'e8", "\u00e8", filtered, ...) # e gravel

@@ -5,6 +5,7 @@
 #' comorbidity mappings from the source SAS data. Elixhauser and Quan/Elixhauser
 #' mappings are generated from transcribed codes.
 #' @keywords internal datagen
+#' @noRd
 .update_everything <- function(save_data = TRUE,
                                offline = FALSE,
                                verbose = .verbose()) {

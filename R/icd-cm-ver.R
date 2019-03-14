@@ -94,6 +94,7 @@ get_icd10cm_available <- function(
 #' head(icd10cm_latest)
 #' }
 #' @keywords internal datasets
+#' @noRd
 .get_icd10cm_latest <- function() {
   var_name <- "icd10cm2019"
   if (exists(var_name)) return(get(var_name))
@@ -128,6 +129,7 @@ with_offline <- function(code) {
 #' @param interact Control whether functions thinks it is in interactive mode,
 #'   for testing.
 #' @keywords internal
+#' @noRd
 .get_icd10cm_ver <- function(
                              ver,
                              dx,
@@ -145,16 +147,6 @@ with_offline <- function(code) {
     assign(var_name, dat, envir = .icd_data_env)
     return(dat)
   }
-  #   if (!can_download) {
-  #     if (must_work) {
-  #       stop("No consent to download data. Declined, or not interactive mode.
-  # You may wish to use:
-  # set_resource_path(\"/path/you/desire/\")
-  # to control where data is downloaded.")
-  #     } else {
-  #       return(invisible())
-  #     }
-  #  }
   if (dx) {
     dat <- .parse_icd10cm_year(
       year = ver,

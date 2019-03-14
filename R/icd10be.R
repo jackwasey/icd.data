@@ -54,6 +54,7 @@
 #' @param ... passed to `download_to_data_raw`, e.g., `offline = FALSE`.
 #' @seealso \code{link{parse_icd10be2014_be}}
 #' @keywords internal
+#' @noRd
 .parse_icd10be2017 <- function(save_data = TRUE,
                                dx = TRUE,
                                ...) {
@@ -123,6 +124,7 @@
 #' @param ... passed to `.download_to_data_raw`, e.g., `offline = FALSE`.
 #' @seealso \code{link{parse_icd10be2014_be}}
 #' @keywords internal
+#' @noRd
 .parse_icd10be2014 <- function(save_data = TRUE,
                                dx = TRUE,
                                ...) {
@@ -192,6 +194,7 @@
 .parse_icd10be2017_pc <- function(...) {
   .parse_icd10be2017(dx = FALSE, ...)
 }
+
 .parse_icd10be2014_pc <- function(...) {
   .parse_icd10be2014(dx = FALSE, ...)
 }

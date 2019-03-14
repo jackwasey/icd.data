@@ -375,6 +375,7 @@ Now just making icd9cm_billable[[\"32\"]]")
 #' @template short_code
 #' @template verbose
 #' @keywords internal datagen
+#' @noRd
 .icd9_get_chapters <- function(x, short_code, verbose = FALSE) {
   # set up comorbidity maps for chapters/sub/major group, then loop through each
   # ICD-9 code, loop through each comorbidity and lookup code in the map for

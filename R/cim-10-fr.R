@@ -20,6 +20,7 @@
 #' as is.
 #' @template save_data
 #' @keywords internal
+#' @noRd
 .parse_icd10fr2019 <- function(save_data = TRUE, ...) {
   fp <- .dl_icd10fr2019(save_data = save_data, ...)
   cim_raw <- read.delim(

@@ -14,6 +14,7 @@
 #' @template verbose
 #' @param ... passed through, e.g., `offline = FALSE`
 #' @keywords internal
+#' @noRd
 .icd10cm_get_flat_file <- function(year, verbose = .verbose(), ...) {
   ok <- .confirm_download()
   if (!ok) return()
@@ -34,6 +35,7 @@
 #' YEAR-ICD10-Code-Descriptions has flat files, YEAR-ICD10-Code-Tables-Index has
 #' XML
 #' @keywords internal
+#' @noRd
 .dl_icd10cm_all <- function(verbose = FALSE, ...) {
   for (year in names(icd10cm_sources)) {
     for (dx in c(TRUE, FALSE)) {

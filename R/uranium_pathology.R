@@ -12,6 +12,7 @@
 #' generate_uranium_pathology(save_data = TRUE)
 #' }
 #' @keywords internal datagen
+#' @noRd
 .generate_uranium_pathology <- function(save_data = TRUE,
                                         offline = getOption("icd.data.offline")) {
   stopifnot(length(utils::find("odbcConnectAccess2007")) > 0)

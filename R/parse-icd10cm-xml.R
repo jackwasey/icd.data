@@ -21,6 +21,7 @@
 #' putative sub-chapter.
 #' @template save_data
 #' @keywords internal datagen
+#' @noRd
 .icd10cm_extract_sub_chapters <- function(save_data = FALSE, ...) {
   stopifnot(is.logical(save_data))
   f_info <- .icd10cm_get_xml_file(...)

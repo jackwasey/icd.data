@@ -3,6 +3,7 @@
 #' Following Hadley Wickham recommendations in R Packages, this should be in
 #' \code{inst/extdata}. \pkg{devtools} overrides \code{system.file}.
 #' @keywords internal
+#' @noRd
 .get_raw_data_path <- function(file_name) {
   message("Using package raw data path, not resource directory.")
   dr <- system.file("data-raw", package = "icd.data")
@@ -31,6 +32,7 @@
 #' @param envir environment in which to look for the variable to save
 #' @return invisibly returns the data
 #' @keywords internal
+#' @noRd
 .save_in_data_dir <- function(var_name,
                               suffix = "",
                               compress = "gzip",
@@ -90,6 +92,7 @@
 #' @template verbose
 #' @param ... additional arguments passed to \code{utils::download.file}
 #' @keywords internal
+#' @noRd
 .unzip_single <- function(url,
                           file_name,
                           save_path,

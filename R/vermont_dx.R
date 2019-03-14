@@ -7,6 +7,7 @@
 #' generate_vermont_dx(save_data = TRUE)
 #' }
 #' @keywords internal datagen
+#' @noRd
 .generate_vermont_dx <- function(save_data) {
   # This is indeed in data-raw, because not available to download anymore
   vermont_fp <- .get_raw_data_path("VTINP13.TXT")

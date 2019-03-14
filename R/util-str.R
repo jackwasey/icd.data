@@ -15,6 +15,7 @@
 #' @param swap logical scalar, whether to swap the names and values. Default is
 #'   not to swap, so the first match becomes the name.
 #' @keywords internal manip
+#' @noRd
 .str_pair_match <- function(string, pattern, pos, swap = FALSE, ...) {
   stopifnot(is.character(string))
   stopifnot(is.character(pattern))
@@ -49,6 +50,7 @@
 }
 
 #' @describeIn dot-str_pair_match Return all matches for regular expression
+#' @noRd
 .str_match_all <- function(string, pattern, ...) {
   string <- as.character(string)
   regmatches(x = string, m = regexec(pattern = pattern, text = string, ...))
@@ -64,6 +66,7 @@
 #'   slightly quicker \code{TRUE}
 #' @return character vector of same length as input
 #' @keywords internal
+#' @noRd
 .strip <- function(x, pattern = " ", use_bytes = TRUE) {
   gsub(
     pattern = pattern, replacement = "", x = x,

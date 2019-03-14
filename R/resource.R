@@ -4,6 +4,7 @@
 #' \code{.rds} file. It does not try to download or parse data. For that, see
 #' \code{\link{.get_parser_name}}
 #' @keywords internal
+#' @noRd
 .get_getter_name <- function(var_name) {
   paste0(".get_", paste0(var_name))
 }
@@ -15,6 +16,7 @@
 #' Parse ICD data (downloading data if needed)
 #' @seealso \code{\link{.get}}, \code{.get_getter_name} and \code{.get_parser_icd10cm_name}
 #' @keywords internal
+#' @noRd
 .get_parser_name <- function(var_name) {
   paste0(".parse_", var_name)
 }
@@ -30,16 +32,15 @@
 #' Get name or function for fetching a specific ICD data set
 #' @seealso \code{\link{.fetch}}
 #' @keywords internal
+#' @noRd
 .get_fetcher_name <- function(var_name) {
   paste0(".fetch_", var_name)
 }
 
-#' @rdname dot-get_fetcher_name
 .get_fetcher_fun <- function(var_name) {
   match.fun(.get_fetcher_name(var_name))
 }
 
-#' @rdname dot-get_getter_name
 .exists_in_cache <- function(var_name, verbose = .verbose()) {
   if (verbose) {
     message("Seeing if ", sQuote(var_name), " exists in cache env or dir")
@@ -54,7 +55,6 @@
   FALSE
 }
 
-#' @rdname dot-get_getter_name
 .get_from_cache <- function(var_name,
                             must_work = TRUE,
                             verbose = .verbose()) {
@@ -242,6 +242,7 @@
 #' @template verbose
 #' @param ... E.g., \code{dx = FALSE} or \code{offline = TRUE}
 #' @keywords internal
+#' @noRd
 .fetch <- function(var_name,
                    must_work = TRUE,
                    verbose = .verbose(),
@@ -261,7 +262,6 @@
   }
 }
 
-#' @rdname dot-fetch
 .available <- function(var_name, verbose = .verbose(), ...) {
   with_offline(
     !is.null(
@@ -382,18 +382,17 @@ icd_data_dir <- function(must_work = FALSE, ...) {
 
 #' Check or get data from environment, not file cache
 #'
-#' @seealso \code{\link{.get_getter_name}}
+#' @seealso \code{\link{.get_getter_name}} .assign and .ls
 #' @keywords internal
+#' @noRd
 .exists <- function(var_name) {
   exists(x = var_name, envir = .icd_data_env)
 }
 
-#' @rdname dot-exists
 .get <- function(var_name) {
   get(x = var_name, envir = .icd_data_env)
 }
 
-#' @rdname dot-exists
 .assign <- function(var_name, value) {
   assign(
     x = var_name,
@@ -402,7 +401,6 @@ icd_data_dir <- function(must_work = FALSE, ...) {
   )
 }
 
-#' @rdname dot-exists
 .ls <- function() {
   ls(.icd_data_env, all.names = TRUE)
 }
@@ -411,6 +409,7 @@ icd_data_dir <- function(must_work = FALSE, ...) {
 #' @examples
 #' icd.data:::.ls_icd_data()
 #' @keywords datasets internal
+#' @noRd
 .ls_icd_data <- function() {
   utils::data(package = "icd.data")$results[, "Item"]
 }

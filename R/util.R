@@ -2,6 +2,7 @@
 #' @param x vector, typically numeric or a factor
 #' @return character vector
 #' @keywords internal
+#' @noRd
 .as_char_no_warn <- function(x) {
   if (is.character(x)) return(x)
   old <- options(warn = -1)
@@ -173,6 +174,7 @@ is_non_ascii <- function(x)
 #' directly, which is what \code{.fetch_who_api_chapters()} does, but this is
 #' at least as good.
 #' @keywords internal
+#' @noRd
 .get_chapters_fr <- function(save_data = FALSE) {
   icd10_chapters_fr <- .get_chapter_ranges_from_flat(
     flat_hier = icd10who2008fr,

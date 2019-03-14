@@ -11,6 +11,7 @@
 #'   \href{https://www.cms.gov/Medicare/Coding/ICD10/downloads/icd-10quickrefer.pdf}{CMS ICD-10 Quick Reference}
 #'   \href{https://www.cdc.gov/nchs/icd/icd10cm.htm#FY\%202019\%20release\%20of\%20ICD-10-CM}{CDC copy of ICD-10-CM for 2019}
 #' @keywords internal datagen
+#' @noRd
 .parse_icd10cm_all <- function(save_data = FALSE,
                                offline = getOption("icd.data.offline"),
                                verbose = .verbose(),

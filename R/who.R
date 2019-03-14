@@ -22,6 +22,7 @@
 #' @return
 #' \code{.who_api} returns the JSON data, or fails with NULL
 #' @keywords internal datasets
+#' @noRd
 .who_api <- function(resource,
                      edition = "icd10",
                      year = 2016,
@@ -56,6 +57,7 @@
 #' Of note, the `WHO` package does not provide access to classifications, just
 #' WHO summary data.
 #' @keywords internal
+#' @noRd
 .who_api_chapter_names <- function(ver = "icd10",
                                    year = 2016,
                                    lang = "en",
@@ -95,6 +97,7 @@
 #' @param verbose logical
 #' @param ... further arguments passed to self recursively, or `.who_api`
 #' @keywords internal
+#' @noRd
 .dl_icd10who <- function(concept_id = NULL,
                          year = 2016,
                          lang = "en",
