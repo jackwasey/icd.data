@@ -14,6 +14,7 @@ r:
 env:
   global:
     - R_CHECK_ARGS="--install-args=--build"
+    - ICD_DATA_INTERACT=FALSE
   matrix:
    - ICD_DATA_OFFLINE=TRUE
    - ICD_DATA_OFFLINE=FALSE
