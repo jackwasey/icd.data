@@ -29,15 +29,3 @@
   )
   .icd10cm_extract_sub_chapters(save_data = save_data)
 }
-
-.fetch_all_data <- function(offline = FALSE, verbose = .verbose()) {
-  .parse_icd10cm_all(
-    save_data = TRUE,
-    verbose = verbose,
-    twentysixteen = FALSE
-  )
-  .icd10cm_parse_cms_pcs_all(save_data = TRUE)
-  .parse_icd10fr2019() # save data?
-  .fetch_icd10be2014()
-  .fetch_icd10be2017()
-}

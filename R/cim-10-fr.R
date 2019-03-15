@@ -9,6 +9,7 @@
       "telecharger/gratuit/11616/456"
     ),
     file_name = "LIBCIM10MULTI.TXT",
+    dl_msg = "Downloading ICD-10-FR (CIM-10-FR)",
     ...
   )
 }
@@ -17,16 +18,14 @@
 #'
 #' The short descriptions are capitalized, with accented characters, so leaving
 #' as is.
-#' @template save_data
 #' @keywords internal
 #' @noRd
-.parse_icd10fr2019 <- function(save_data = TRUE,
-                               must_work = FALSE,
+.parse_icd10fr2019 <- function(must_work = FALSE,
                                ...) {
-  fp <- .dl_icd10fr2019(save_data = save_data, ...)
+  fp <- .dl_icd10fr2019(...)
   if (is.null(fp)) {
     if (must_work)
-      stop("Unable to get data to parse ICD-10-FR (CIM-10-FR) year: ", year)
+      stop("Unable to get data to parse ICD-10-FR (CIM-10-FR) 2019")
     return(NULL)
   }
   cim_raw <- read.delim(

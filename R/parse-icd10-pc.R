@@ -11,7 +11,7 @@
 }
 
 .icd10cm_parse_cms_pcs_year <- function(year,
-                                        save_data = FALSE,
+                                        must_work = FALSE,
                                         verbose = .verbose()) {
   year <- as.character(year)
   fp <- .parse_icd10cm_year(
@@ -47,8 +47,6 @@
   out$long_desc <- trimws(as.character(out$long_desc))
   out <- out[order(out$code), ]
   var_name <- paste0("icd10cm", year, "_pc")
-  if (save_data) {
-    .save_in_resource_dir(var_name = var_name, x = out)
-  }
+  .save_in_resource_dir(var_name = var_name, x = out)
   invisible(out)
 }

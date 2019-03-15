@@ -5,6 +5,7 @@
     url = paste0(s$base_url, s$dx_xml_zip),
     file_name = s$dx_xml,
     save_name = .get_versioned_raw_file_name(s$dx_xml, ver),
+    dl_msg = "Downloading ICD-10-CM 2019 XML",
     ...
   )
 }

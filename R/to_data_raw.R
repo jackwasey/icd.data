@@ -1,8 +1,7 @@
 #' Unzip file to raw data directory
 #'
 #' Get a zip file from a URL, extract contents, and save file in the raw data
-#' directory. If the file already exists there, it is only retrieved if
-#' \code{force} is set to \code{TRUE}. If \code{offline} is \code{FALSE}, then
+#' directory. If the file already exists, the path and filename are returned without downloading. If \code{offline} is \code{FALSE}, then
 #' \code{NULL} is returned if the file isn't already downloaded.
 #'
 #' The file name is changed to a conservative cross platform name using
@@ -10,8 +9,6 @@
 #'
 #' @param url URL of a zip file
 #' @param file_name file name of a single file in that zip
-#' @param force logical, if TRUE, then download even if already in the raw data
-#'   directory
 #' @template verbose
 #' @template offline
 #' @param data_raw_path path where the raw directory is
@@ -22,20 +19,16 @@
 #' @noRd
 .unzip_to_data_raw <- function(url,
                                file_name,
-                               force = FALSE,
                                verbose = FALSE,
                                data_raw_path = icd_data_dir(),
                                save_name = file_name,
+                               dl_msg = NULL,
                                ...) {
   stopifnot(is.character(url), length(url) == 1)
   stopifnot(is.character(file_name), length(file_name) == 1)
-  stopifnot(is.logical(force), length(force) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
   if (verbose) message(url)
-  if (!dir.exists(data_raw_path)) {
-    if (verbose) message("Setting download path to a new temporary directory")
-    data_raw_path <- tempdir()
-  }
+  stopifnot(dir.exists(data_raw_path))
   file_path <- file.path(data_raw_path, save_name)
   if (verbose) {
     sprintf(
@@ -43,9 +36,9 @@
       file_path, file_name, save_name
     )
   }
-  if (force || !file.exists(file_path)) {
-    if (.offline()) return()
-    .confirm_download()
+  if (!file.exists(file_path)) {
+    if (!.confirm_download()) return()
+    if (!is.null(dl_msg)) message(dl_msg)
     ok <- .unzip_single(
       url = url,
       file_name = file_name,
@@ -59,9 +52,10 @@
 
 .download_to_data_raw <-
   function(url,
-             file_name = regmatches(url, regexpr("[^/]*$", url)),
-             data_raw_path = icd_data_dir(),
-             ...) {
+           file_name = regmatches(url, regexpr("[^/]*$", url)),
+           data_raw_path = icd_data_dir(),
+           dl_msg = NULL,
+           ...) {
     stopifnot(is.character(url), length(url) == 1)
     stopifnot(is.character(file_name), length(file_name) == 1)
     if (!is.null(data_raw_path) &&
@@ -78,6 +72,7 @@
         file.exists(save_path)) return(f_info)
     if (.offline()) return()
     if (!.confirm_download()) return()
+    if (!is.null(dl_msg)) message(dl_msg)
     curl_res <- try(
       utils::download.file(
         url = url,

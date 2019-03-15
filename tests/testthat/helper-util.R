@@ -12,7 +12,7 @@ skip_if_offline <- function() {
 }
 
 skip_on_no_rtf <- function(test_year) {
-  if (!.rtf_year_ok(test_year)) {
+  if (!rtf_year_ok(test_year)) {
     testthat::skip(paste(
       test_year,
       "ICD-9-CM codes unavailable offline for testsing"

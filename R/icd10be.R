@@ -3,17 +3,15 @@
 .dl_icd10be2017 <- function(save_data = TRUE,
                             dx = TRUE,
                             must_work = FALSE,
-                            verbose = .verbose(),
                             ...) {
   site_file_2017 <-
     "fy2017_reflist_icd-10-be.xlsx_last_updatet_28-07-2017_1.xlsx"
-  if (verbose) message("Downloading icd10be2017 data")
   fnp <- .download_to_data_raw(
     paste(.icd10be_site,
           .icd10be_url_path,
           site_file_2017,
-          sep = "/"
-    ),
+          sep = "/"),
+    dl_msg = "Downloading icd10be2017 data",
     ...
   )
   if (must_work && is.null(fnp)) stop("Cannot download ICD-10-BE 2017 raw data")
@@ -35,6 +33,7 @@
           .icd10be_url_path,
           site_file,
           sep = "/"),
+    dl_msg = "Downloading icd10be2014 data",
     ...
   )
 }

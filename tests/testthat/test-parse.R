@@ -151,7 +151,7 @@ test_year <- "2011"
 # subsequent tests are skipped.
 if (rtf_year_ok(test_year)) {
   rtf_dat <- icd9cm_sources[icd9cm_sources$f_year == test_year, ]
-  f_info_short <- unzip_to_data_raw(rtf_dat$rtf_url,
+  f_info_short <- .unzip_to_data_raw(rtf_dat$rtf_url,
     file_name = rtf_dat$rtf_filename
   )
   rtf <- .rtf_parse_lines(readLines(f_info_short$file_path, warn = FALSE),
@@ -195,7 +195,7 @@ if (rtf_year_ok(test_year)) {
   test_that("majors extracted from web page are the same as those from RTF", {
     # why is this even a list not a named vector?
     webmajors <- unlist(icd9_majors)
-    work <- swap_names_vals(rtf)
+    work <- .swap_names_vals(rtf)
     rtfmajors <- work[is_major(work)]
 
     expect_identical(
@@ -217,14 +217,14 @@ if (rtf_year_ok(test_year)) {
   test_that("all leaf codes from TXT are in flat file extract", {
     skip_flat_icd9_avail("32")
     skip_if_not_installed("icd", "3.4")
-    v32 <- icd9cm_parse_leaf_desc_ver(
+    v32 <- .icd9cm_parse_leaf_desc_ver(
       ver = "32",
       save_data = FALSE
     )
     leaves <- icd::short_to_decimal(v32$code)
     expect_true(all(leaves %in% nrtf))
     rtf_leaves <- sort(
-      swap_names_vals(
+      .swap_names_vals(
         rtf[nrtf %in% icd::short_to_decimal(v32$code)]
       )
     )

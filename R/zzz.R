@@ -19,16 +19,23 @@
 }
 
 .onAttach <- function(libname, pkgname) {
+  if (interactive() && !.all_cached()) {
+    packageStartupMessage(
+      "    icd.data downloads and caches data when requested.
+setup_icd_data()
+    will set up the cache and enable automated downloads. Use:
+download_icd_data()
+    to cache everything at once.")
+  }
   .set_init_options()
-  if (.interactive())
-    options("icd.data.absent_action" = "stop")
-  icd_data_setup()
 }
 
 release_questions <- function() {
   c(
     "codetools::checkUsagePackage('icd.data', all = TRUE)",
-    "styler::style_pkg()"
+    "styler::style_pkg()",
+    "r-hub, travis, appveyor (all should pass tests without downloading data",
+    "local install, all tests pass with data all downloaded and parsed"
   )
 }
 

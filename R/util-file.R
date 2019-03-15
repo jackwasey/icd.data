@@ -98,17 +98,18 @@
                           save_path,
                           insecure = TRUE,
                           verbose = FALSE,
-                          force = FALSE,
                           absent_action = .absent_action(),
+                          dl_msg = NULL,
                           ...) {
   stopifnot(is.character(url))
   stopifnot(is.character(file_name))
   stopifnot(is.character(save_path))
-  if (!force && file.exists(save_path)) return(TRUE)
+  if (file.exists(save_path)) return(TRUE)
   if (!.confirm_download()) return(FALSE)
   zipfile <- tempfile(fileext = ".zip")
   on.exit(unlink(zipfile), add = TRUE)
   extra <- ifelse(insecure, "--insecure --silent", NULL)
+  if (!is.null(dl_msg)) message(dl_msg)
   dl_code <- utils::download.file(
     url = url,
     destfile = zipfile,

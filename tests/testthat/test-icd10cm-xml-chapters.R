@@ -3,7 +3,7 @@ context("icd10 XML parse")
 test_that("icd10 sub-chapters are recreated exactly", {
   skip_icd10cm_xml_avail()
   expect_identical(
-    icd10cm_extract_sub_chapters(save_data = FALSE),
+    .icd10cm_extract_sub_chapters(save_data = FALSE),
     icd10_sub_chapters
   )
 })

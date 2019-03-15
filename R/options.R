@@ -28,14 +28,13 @@
   if (!("icd.data.offline" %in% names(options()))) {
     options("icd.data.offline" = !.env_var_is_false("ICD_DATA_OFFLINE"))
   }
-  if (!("icd.data.interact" %in% names(options()))) {
-    options("icd.data.interact" =
-              !.env_var_is_false("ICD_DATA_INTERACT") ||
-              interactive())
-  }
+  # don't check interactive option, as it will never change if already set -ve for package loading
+  options("icd.data.interact" =
+            !.env_var_is_false("ICD_DATA_INTERACT") ||
+            interactive())
   # stop or message, anything else will silently continue
   if ("icd.data.absent_action" %nin% names(options())) {
-    ev <- tolower(Sys.getenv("ICD_DATA_ABSENT_ACTION", unset = "message"))
+    ev <- tolower(Sys.getenv("ICD_DATA_ABSENT_ACTION", unset = "stop"))
     stopifnot(ev %in% c("message",
                         "stop",
                         "warning",
@@ -105,9 +104,12 @@
        resource = .icd_data_default)
 }
 
-.verbose <- function() {
-  isTRUE(getOption("icd.data.verbose"))
-  # FALSE
+.verbose <- function(x) {
+  if (missing(x))
+    return(isTRUE(getOption("icd.data.verbose")))
+  else
+    options(icd.data.verbose = x)
+  x
 }
 
 .interactive <- function() {
@@ -195,9 +197,9 @@ with_absent_action <- function(absent_action = c("message",
 #' @param path Path to a directory where cached online raw and parsed data will be cached. It will be created if it doesn't exist.
 #' @examples
 #' \dontrun{
-#' icd_data_setup()
-#' icd_data_setup("/var/cache/icd.data")
-#' icd_data_setup(path = ".local/icd.data")
+#' setup_icd_data()
+#' setup_icd_data("/var/cache/icd.data")
+#' setup_icd_data(path = ".local/icd.data")
 #' }
 #' # or use an unexported function to set or reset:
 #' icd.data:::.set_data_dir(td <- tempdir())
@@ -209,19 +211,21 @@ with_absent_action <- function(absent_action = c("message",
 #'   found.
 #' @return Invisiblly returns the data path which was set, or NULL if not done.
 #' @export
-icd_data_setup <- function(path = .icd_data_default) {
-  if (.offline() || !.interactive()) return(invisible())
-  ok <- utils::askYesNo(
-    paste("For use of WHO, French, Belgian, and some versions of US ICD-10-CM, icd.data needs to download and process data. The data occupies a few MB per ICD edition. Is it alright to create a directory data cache directory for this purpose? You may customize the location using 'icd_data_setup(\"/path/to/dir/\")'. Currently selected path is: ", path)
-  ) # nolint
-  if (!isTRUE(ok)) return(invisible())
+setup_icd_data <- function(path = .icd_data_default) {
   options("icd.data.offline" = FALSE)
-  if (!.confirm_download(absent_action = "silent")) {
-  } else {
-    message("Using the data cache directory: ", path)
-    if (!dir.exists(path)) {
-      stopifnot(dir.create(path))
-    }
+  message("Using the icd data cache: ", path)
+  if (!dir.exists(path)) {
+    stopifnot(dir.create(path))
   }
   path
+}
+
+download_icd_data <- function() {
+  message("Downloading, caching and parsing all ICD data")
+  message("This will take a few minutes.")
+  options("icd.data.offline" = FALSE)
+  for (b in .binding_names) {
+    message("Working on: ", b)
+    get(b)
+  }
 }

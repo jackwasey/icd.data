@@ -42,18 +42,21 @@
 }
 
 .exists_in_cache <- function(var_name, verbose = .verbose()) {
-  if (verbose) {
+  if (verbose > 1) {
     message("Seeing if ", sQuote(var_name), " exists in cache env or dir")
   }
   stopifnot(is.character(var_name))
-  if (verbose) message("Trying icd_data_env environment")
-  if (.exists(var_name)) return(TRUE)
+  if (verbose > 1) message("Trying icd_data_env environment")
+  if (.exists(var_name)) {
+    if (verbose) message(sQuote(var_name), " found in cache.")
+    return(TRUE)
+  }
   fp <- .rds_path(var_name)
-  if (verbose) message("Checking if we have file path for exists")
+  if (verbose > 1) message("Checking if we have file path for exists")
   if (is.null(fp)) return(FALSE)
-  if (verbose) message("Trying file at: ", fp)
+  if (verbose > 1) message("Trying file at: ", fp)
   return(file.exists(fp))
-  if (verbose) message(var_name, " not seen in cache env or dir.")
+  if (verbose > 1) message(var_name, " not seen in cache env or dir.")
   FALSE
 }
 
@@ -79,6 +82,12 @@
   val <- readRDS(fp)
   .assign(var_name, val)
   val
+}
+
+.all_cached <- function() {
+  all(
+    vapply(.binding_names, .exists_in_cache, logical(1))
+  )
 }
 
 .clean_env <- function() {
@@ -291,7 +300,7 @@
   invisible(path)
 }
 
-#' @describeIn icd_data_setup Return the currently active data directory. If missing, it will return \code{NULL} and, depending on \code{getOption("icd.data.absent_action")}, will stop, give a message, or do nothing.
+#' @describeIn setup_icd_data Return the currently active data directory. If missing, it will return \code{NULL} and, depending on \code{getOption("icd.data.absent_action")}, will stop, give a message, or do nothing.
 #' @export
 icd_data_dir <- function() {
   o <- getOption("icd.data.resource")
@@ -300,6 +309,7 @@ icd_data_dir <- function() {
   o <- getOption("icd.data.resource")
   if (!is.null(o)) return(o)
   msg <- paste("The", sQuote("icd.data.resource"), "option is not set.")
+  if (.verbose()) message(msg)
   #.absent_action_switch(msg)
   #warning(msg)
   #TODO: argh!! .absent_action_switch(msg)
@@ -311,14 +321,15 @@ icd_data_dir <- function() {
   if (!.offline()) return(TRUE)
   ok <- FALSE
   if (interact) {
+    message("icd.data needs to download and/or parse data.")
     ok <- isTRUE(
       utils::askYesNo(
-        "For some data, icd.data needs to download it on demand. May I download a few MB per ICD edition, as needed?" # nolint
+        "May I download and cache a few MB per ICD edition as needed?" # nolint
       ) # nolint
     )
   }
   options("icd.data.offline" = !ok)
-  msg <- "Unable to get permission to download data. If any online resrouces are needed by 'icd' or 'icd.data', you will be prompted again."
+  msg <- "Unable to get permission to download data."
   .absent_action_switch(msg)
   ok
 }

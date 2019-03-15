@@ -168,7 +168,7 @@ lockBinding("icd9cm_leaf_v32", environment())
     file.path(\"~/.icd.data\")
 
     See:
-    icd_data_setup()"
+    setup_icd_data()"
     )
   }
 }
