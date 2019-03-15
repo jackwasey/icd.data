@@ -112,9 +112,9 @@
   }
   if (raw) {
     raw_files <- list.files(icd_data_dir(),
-                            pattern = "(\\.txt$)|(\\.xlsx$)",
-                            ignore.case = TRUE,
-                            full.names = TRUE
+      pattern = "(\\.txt$)|(\\.xlsx$)",
+      ignore.case = TRUE,
+      full.names = TRUE
     )
     message("Deleting:")
     print(raw_files)
@@ -125,7 +125,7 @@
     message("Deleting:")
     print(rds_files)
     unlink(rds_files,
-           recursive = FALSE
+      recursive = FALSE
     )
   }
 }
@@ -134,13 +134,13 @@
   force(var_name)
   force(verbose)
   getter_fun <- function(alt = NULL,
-                         must_work = TRUE,
-                         msg = paste("Unable to find", var_name)) {
+                           must_work = TRUE,
+                           msg = paste("Unable to find", var_name)) {
     if (verbose) message("Starting getter")
     stopifnot(is.character(var_name))
     dat <- .get_from_cache(var_name,
-                           must_work = FALSE,
-                           verbose = verbose
+      must_work = FALSE,
+      verbose = verbose
     )
     if (!is.null(dat)) return(dat)
     if (must_work) {
@@ -164,23 +164,28 @@
   force(verbose)
   parse_fun_name <- .get_parser_name(var_name)
   fetcher_fun <- function(alt = NULL,
-                          must_work = TRUE,
-                          msg = paste("Unable to find", var_name)) {
+                            must_work = TRUE,
+                            msg = paste("Unable to find", var_name)) {
     if (verbose) message("Starting fetcher for ", var_name)
     # TODO: call the specific/generated getter instead?
-    dat <- .get_from_cache(var_name = var_name,
-                           must_work = FALSE,
-                           verbose = verbose
+    dat <- .get_from_cache(
+      var_name = var_name,
+      must_work = FALSE,
+      verbose = verbose
     )
     if (!is.null(dat)) return(dat)
-    if (verbose) message("Trying to find parse function: ",
-                         sQuote(parse_fun_name))
+    if (verbose) {
+      message(
+        "Trying to find parse function: ",
+        sQuote(parse_fun_name)
+      )
+    }
     fr <- environment()
     if (exists(parse_fun_name, fr, inherits = TRUE)) {
       if (verbose) message("Found parse function. Calling it.")
       out <- do.call(get(parse_fun_name,
-                         envir = fr,
-                         inherits = TRUE
+        envir = fr,
+        inherits = TRUE
       ),
       args = list()
       )
@@ -194,8 +199,8 @@
     }
     # Parse function should have saved the data in env and file caches
     dat <- .get_from_cache(var_name,
-                           must_work = FALSE,
-                           verbose = verbose
+      must_work = FALSE,
+      verbose = verbose
     )
     if (!is.null(dat)) return(dat)
     if (must_work) {
@@ -231,14 +236,14 @@
     getter_name <- .get_getter_name(var_name)
     if (verbose) message("assigning: ", getter_name)
     assign(getter_name,
-           .make_getter(var_name, verbose),
-           envir = final_env
+      .make_getter(var_name, verbose),
+      envir = final_env
     )
     fetcher_name <- .get_fetcher_name(var_name)
     if (verbose) message("assigning: ", fetcher_name)
     assign(fetcher_name,
-           .make_fetcher(var_name, verbose),
-           envir = final_env
+      .make_fetcher(var_name, verbose),
+      envir = final_env
     )
   }
 }
@@ -263,8 +268,8 @@
                    ...) {
   if (.exists_in_cache(var_name, verbose = verbose)) {
     .get_from_cache(var_name,
-                    must_work = TRUE,
-                    verbose = verbose
+      must_work = TRUE,
+      verbose = verbose
     )
   } else {
     parser <- .get_parser_fun(var_name)
@@ -286,8 +291,7 @@
         ...
       )
     )
-  }
-  )
+  })
 }
 
 .icd_data_default <- file.path("~", ".icd.data")
@@ -310,9 +314,9 @@ icd_data_dir <- function() {
   if (!is.null(o)) return(o)
   msg <- paste("The", sQuote("icd.data.resource"), "option is not set.")
   if (.verbose()) message(msg)
-  #.absent_action_switch(msg)
-  #warning(msg)
-  #TODO: argh!! .absent_action_switch(msg)
+  # .absent_action_switch(msg)
+  # warning(msg)
+  # TODO: argh!! .absent_action_switch(msg)
   NULL
 }
 
@@ -336,10 +340,11 @@ icd_data_dir <- function() {
 
 .rds_path <- function(var_name) {
   fp <- file.path(icd_data_dir(), paste0(var_name, ".rds"))
-  if (length(fp) == 0)
+  if (length(fp) == 0) {
     NULL
-  else
+  } else {
     fp
+  }
 }
 
 #' Check or get data from environment, not file cache

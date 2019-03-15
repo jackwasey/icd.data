@@ -52,14 +52,16 @@
 
 .download_to_data_raw <-
   function(url,
-           file_name = regmatches(url, regexpr("[^/]*$", url)),
-           data_raw_path = icd_data_dir(),
-           dl_msg = NULL,
-           ...) {
+             file_name = regmatches(url, regexpr("[^/]*$", url)),
+             data_raw_path = icd_data_dir(),
+             dl_msg = NULL,
+             ...) {
     stopifnot(is.character(url), length(url) == 1)
     stopifnot(is.character(file_name), length(file_name) == 1)
     if (!is.null(data_raw_path) &&
-        !dir.exists(data_raw_path)) data_raw_path <- tempdir()
+      !dir.exists(data_raw_path)) {
+      data_raw_path <- tempdir()
+    }
     save_path <- file.path(
       data_raw_path,
       file_name
@@ -69,7 +71,9 @@
       file_name = file_name
     )
     if (!is.null(data_raw_path) &&
-        file.exists(save_path)) return(f_info)
+      file.exists(save_path)) {
+      return(f_info)
+    }
     if (.offline()) return()
     if (!.confirm_download()) return()
     if (!is.null(dl_msg)) message(dl_msg)

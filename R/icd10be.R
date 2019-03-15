@@ -8,9 +8,10 @@
     "fy2017_reflist_icd-10-be.xlsx_last_updatet_28-07-2017_1.xlsx"
   fnp <- .download_to_data_raw(
     paste(.icd10be_site,
-          .icd10be_url_path,
-          site_file_2017,
-          sep = "/"),
+      .icd10be_url_path,
+      site_file_2017,
+      sep = "/"
+    ),
     dl_msg = "Downloading icd10be2017 data",
     ...
   )
@@ -30,9 +31,10 @@
   if (verbose) message("Downloading or getting cached icd10be2014 data")
   .download_to_data_raw(
     paste(.icd10be_site,
-          .icd10be_url_path,
-          site_file,
-          sep = "/"),
+      .icd10be_url_path,
+      site_file,
+      sep = "/"
+    ),
     dl_msg = "Downloading icd10be2014 data",
     ...
   )
@@ -66,10 +68,10 @@
   fnp <- .dl_icd10be2017(...)
   if (is.null(fnp)) return()
   raw_dat <- readxl::read_xlsx(fnp$file_path,
-                               sheet = sheet_2017,
-                               col_names = TRUE,
-                               guess_max = 1e6,
-                               progress = FALSE
+    sheet = sheet_2017,
+    col_names = TRUE,
+    guess_max = 1e6,
+    progress = FALSE
   )
   raw_dat <- raw_dat[c(
     "ICDCODE",
@@ -131,10 +133,10 @@
   fnp <- .dl_icd10be2014(...)
   if (is.null(fnp)) return()
   raw_dat <- readxl::read_xlsx(fnp$file_path,
-                               sheet = "FY2014_ICD10BE",
-                               col_names = TRUE,
-                               guess_max = 1e6,
-                               progress = FALSE
+    sheet = "FY2014_ICD10BE",
+    col_names = TRUE,
+    guess_max = 1e6,
+    progress = FALSE
   )
   raw_dat <- raw_dat[c(
     "ICDCODE",

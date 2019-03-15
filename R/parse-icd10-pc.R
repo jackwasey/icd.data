@@ -3,9 +3,9 @@
                                        verbose = .verbose()) {
   if (verbose) message("Parsing all ICD-10-CM procedure codes")
   lapply(names(icd10cm_sources),
-         .icd10cm_parse_cms_pcs_year,
-         save_data = save_data,
-         verbose = verbose
+    .icd10cm_parse_cms_pcs_year,
+    save_data = save_data,
+    verbose = verbose
   )
   invisible()
 }
@@ -31,14 +31,14 @@
     .get_versioned_raw_file_name(pcs_file, ver = year)
   )
   out <- utils::read.fwf(pcs_path, c(5, 8, 2, 62, 120),
-                         header = FALSE,
-                         col.names = c(
-                           "count",
-                           "code",
-                           "leaf",
-                           "short_desc",
-                           "long_desc"
-                         )
+    header = FALSE,
+    col.names = c(
+      "count",
+      "code",
+      "leaf",
+      "short_desc",
+      "long_desc"
+    )
   )
   out$count <- NULL
   out$code <- trimws(as.character(out$code))

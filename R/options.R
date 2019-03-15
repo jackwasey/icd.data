@@ -29,17 +29,21 @@
     options("icd.data.offline" = !.env_var_is_false("ICD_DATA_OFFLINE"))
   }
   # don't check interactive option, as it will never change if already set -ve for package loading
-  options("icd.data.interact" =
-            !.env_var_is_false("ICD_DATA_INTERACT") ||
-            interactive())
+  options(
+    "icd.data.interact" =
+      !.env_var_is_false("ICD_DATA_INTERACT") ||
+        interactive()
+  )
   # stop or message, anything else will silently continue
   if ("icd.data.absent_action" %nin% names(options())) {
     ev <- tolower(Sys.getenv("ICD_DATA_ABSENT_ACTION", unset = "stop"))
-    stopifnot(ev %in% c("message",
-                        "stop",
-                        "warning",
-                        "warn",
-                        "silent"))
+    stopifnot(ev %in% c(
+      "message",
+      "stop",
+      "warning",
+      "warn",
+      "silent"
+    ))
     options("icd.data.absent_action" = ev)
   }
   # Which version of ICD-10-CM to use by default?
@@ -51,14 +55,16 @@
 .set <- function(..., overwrite = FALSE) {
   f <- list(...)
   invisible(
-    lapply(names(f),
-           function(o) {
-             if (overwrite || is.null(getOption(o))) {
-               args <- list(f[[o]])
-               names(args) <- paste0("icd.data.", o)
-               do.call(options, args = args)
-             }
-           })
+    lapply(
+      names(f),
+      function(o) {
+        if (overwrite || is.null(getOption(o))) {
+          args <- list(f[[o]])
+          names(args) <- paste0("icd.data.", o)
+          do.call(options, args = args)
+        }
+      }
+    )
   )
 }
 
@@ -68,47 +74,58 @@
 
 .set_default_options <- function(hard) {
   f <- if (hard) .set_hard else .set
-  f(offline = TRUE,
+  f(
+    offline = TRUE,
     absent_action = "stop",
     icd10cm_active_ver = "2019",
     resource = .icd_data_default,
     interact = interactive(),
-    verbose = TRUE)
+    verbose = TRUE
+  )
 }
 
 .set_test_options <- function() {
-  .set_hard(interact = FALSE,
-            verbose = TRUE)
+  .set_hard(
+    interact = FALSE,
+    verbose = TRUE
+  )
 }
 
 # Simulate the empty world of CRAN and R CMD check
 .set_check_options <- function() {
-  .set_hard(interact = FALSE,
-            absent_action = "silent",
-            resource = tempdir(),
-            verbose = FALSE)
+  .set_hard(
+    interact = FALSE,
+    absent_action = "silent",
+    resource = tempdir(),
+    verbose = FALSE
+  )
 }
 
 .set_attached_options <- function() {
   .set_default_options(hard = FALSE)
-  .set(offline = TRUE,
-       absent_action = "stop",
-       resource = .icd_data_default,
-       interact = interactive())
+  .set(
+    offline = TRUE,
+    absent_action = "stop",
+    resource = .icd_data_default,
+    interact = interactive()
+  )
 }
 
 .set_dev_options <- function() {
   .set_default_options(hard = TRUE)
-  .set(offline = FALSE,
-       absent_action = TRUE,
-       resource = .icd_data_default)
+  .set(
+    offline = FALSE,
+    absent_action = TRUE,
+    resource = .icd_data_default
+  )
 }
 
 .verbose <- function(x) {
-  if (missing(x))
+  if (missing(x)) {
     return(isTRUE(getOption("icd.data.verbose")))
-  else
+  } else {
     options(icd.data.verbose = x)
+  }
   x
 }
 
@@ -123,23 +140,26 @@
 .absent_action <- function() {
   a <- getOption("icd.data.absent_action")
   # default to silent, as I think R check uses empty options for various parts of check, which ignore anything I might have wanted to set in .onLoad .
-  if (is.null(a))
+  if (is.null(a)) {
     "silent"
-  else
+  } else {
     a
+  }
 }
 
 .absent_action_switch <- function(msg, must_work = TRUE) {
   switch(.absent_action(),
-         "stop" = {
-           if (must_work)
-             stop(msg, call. = FALSE)
-           else
-             warning(msg, call. = FALSE)
-         },
-         "warning" = warning(msg, call. = FALSE),
-         "warn" = warning(msg, call. = FALSE),
-         "message" = message(msg))
+    "stop" = {
+      if (must_work) {
+        stop(msg, call. = FALSE)
+      } else {
+        warning(msg, call. = FALSE)
+      }
+    },
+    "warning" = warning(msg, call. = FALSE),
+    "warn" = warning(msg, call. = FALSE),
+    "message" = message(msg)
+  )
 }
 
 .env_var_is_false <- function(x) {
@@ -179,11 +199,13 @@ with_offline <- function(offline, code) {
   force(code)
 }
 
-with_absent_action <- function(absent_action = c("message",
-                                                 "stop",
-                                                 "warning",
-                                                 "warn",
-                                                 "silent"),
+with_absent_action <- function(absent_action = c(
+                                 "message",
+                                 "stop",
+                                 "warning",
+                                 "warn",
+                                 "silent"
+                               ),
                                code) {
   absent_action <- match.arg(absent_action)
   old <- options("icd.data.absent_action" = absent_action)

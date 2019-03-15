@@ -48,8 +48,9 @@
   if (verbose) message("Getting flat file for year: ", year)
   f_info <- .icd10cm_get_flat_file(year = year, verbose = verbose, ...)
   if (is.null(f_info)) {
-  if (must_work)
-    stop("Unable to get data to parse ICD-10-CM year: ", year)
+    if (must_work) {
+      stop("Unable to get data to parse ICD-10-CM year: ", year)
+    }
     return(NULL)
   }
   message("Please wait a few moments to parse data...")
@@ -112,8 +113,8 @@
   class(dat$code) <- c("icd10cm", "icd10", "character")
   row.names(dat) <- NULL
   assign(paste0("icd10cm", year), value = dat)
-    # I don't know why parent.frame() doesn't work
-    .save_in_resource_dir(paste0("icd10cm", year))
-    if (year == "2016") .save_in_data_dir("icd10cm2016")
+  # I don't know why parent.frame() doesn't work
+  .save_in_resource_dir(paste0("icd10cm", year))
+  if (year == "2016") .save_in_data_dir("icd10cm2016")
   invisible(dat)
 }

@@ -24,8 +24,9 @@
                                ...) {
   fp <- .dl_icd10fr2019(...)
   if (is.null(fp)) {
-    if (must_work)
+    if (must_work) {
       stop("Unable to get data to parse ICD-10-FR (CIM-10-FR) 2019")
+    }
     return(NULL)
   }
   cim_raw <- read.delim(

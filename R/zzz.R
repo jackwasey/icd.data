@@ -25,7 +25,8 @@
 setup_icd_data()
     will set up the cache and enable automated downloads. Use:
 download_icd_data()
-    to cache everything at once.")
+    to cache everything at once."
+    )
   }
   .set_init_options()
 }
