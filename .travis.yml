@@ -15,23 +15,15 @@ env:
   global:
     - ICD_DATA_INTERACT=FALSE
   matrix:
-   - ICD_DATA_OFFLINE=TRUE
-   - ICD_DATA_OFFLINE=FALSE
-   - R_CHECK_ARGS="--install-args=--no-staged-install"
-   - R_CHECK_ARGS=""
+    - ICD_DATA_OFFLINE=TRUE
+    - ICD_DATA_OFFLINE=FALSE
+#   - R_CHECK_ARGS="--install-args=--no-staged-install"
 
 matrix:
   fast_finish: true
   allow_failures:
     - r: oldrel
     - env: ICD_DATA_OFFLINE=FALSE
-    - r: devel
-      env: R_CHECK_ARGS=""
-  exclude:
-    - r: oldrel
-      env: R_CHECK_ARGS="--install-args=--no-staged-install"
-    - r: release
-      env: R_CHECK_ARGS="--install-args=--no-staged-install"
 
 r_github_packages:
   - jimhester/lintr
