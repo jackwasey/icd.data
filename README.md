@@ -11,6 +11,7 @@ Status](https://travis-ci.org/jackwasey/icd.data.svg?branch=master)](https://tra
 Status](https://ci.appveyor.com/api/projects/status/github/jackwasey/icd.data?branch=master&svg=true)](https://ci.appveyor.com/project/jackwasey/icd.data)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/icd.data)](https://cran.r-project.org/package=icd.data)
+[![Dependencies](https://tinyverse.netlify.com/badge/icd.data)](https://cran.r-project.org/package=icd.data)
 <!-- badges: end -->
 
 # icd.data
