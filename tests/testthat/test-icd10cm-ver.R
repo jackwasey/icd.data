@@ -4,7 +4,7 @@ test_that("active version set to latest version", {
   with_icd10cm_version(
     ver = "2019",
     expect_identical(
-      icd10cm_active,
+      get_icd10cm_active(),
       icd10cm_latest
     )
   )
@@ -27,7 +27,8 @@ test_that("temporarily set active version", {
 })
 
 test_that("basic Belgian", {
-  skip_if_offline()
+  skip_missing_dat("icd10be2014")
+  skip_missing_dat("icd10be2017")
   expect_true(inherits(icd10be2014$code, "icd10be"))
   expect_true(inherits(icd10be2017$code, "icd10be"))
   skip("further Belgian code checks/comparisons")

@@ -1,5 +1,13 @@
 rtf_year_ok <- function(year, ...) {
-  !is.null(.rtf_fetch_year(year, offline = TRUE, ...))
+  !is.null(
+    with_offline(
+      offline = TRUE,
+      with_interact(
+        interact = FALSE,
+        .rtf_fetch_year(year, offline = TRUE, ...)
+      )
+    )
+  )
 }
 
 skip_if_offline <- function() {
@@ -52,7 +60,17 @@ skip_icd10cm_flat_avail <- function(year, dx = TRUE) {
 
 skip_icd10cm_xml_avail <- function() {
   msg <- "skipping test because XML file ICD-10-CM source not available"
-  if (is.null(.icd10cm_get_xml_file(offline = TRUE))) testthat::skip(msg)
+  if (is.null(
+    with_offline(
+      offline = TRUE,
+      with_interact(
+        interact = FALSE,
+        .icd10cm_get_xml_file()
+      )
+    )
+  )) {
+    testthat::skip(msg)
+  }
 }
 
 skip_flat_icd9_avail_all <- function() {
@@ -262,5 +280,11 @@ skip_missing_icd10who <- function(ver = "2016", lang = "en") {
     }
   } else {
     stop("Unavailable year/language combination for WHO codes sought.")
+  }
+}
+
+skip_missing_dat <- function(var_name) {
+  if (!.exists_in_cache(var_name)) {
+    skip(paste(var_name, "not available"))
   }
 }

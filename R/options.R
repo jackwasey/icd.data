@@ -48,7 +48,7 @@
   }
   # Which version of ICD-10-CM to use by default?
   if (!("icd.data.icd10cm_active_ver" %in% names(options()))) {
-    set_icd10cm_active_ver(2019, check_exists = FALSE)
+    set_icd10cm_active_ver("2019", check_exists = FALSE)
   }
 }
 
@@ -199,6 +199,12 @@ with_offline <- function(offline, code) {
   force(code)
 }
 
+with_interact <- function(interact, code) {
+  old <- options("icd.data.interact" = interact)
+  on.exit(options(old))
+  force(code)
+}
+
 with_absent_action <- function(absent_action = c(
                                  "message",
                                  "stop",
@@ -231,7 +237,7 @@ with_absent_action <- function(absent_action = c(
 #' try(icd_data_dir())
 #' @return The path to the resource directory, or \code{NULL} if it could not be
 #'   found.
-#' @return Invisiblly returns the data path which was set, or NULL if not done.
+#' @return Invisibly returns the data path which was set, or NULL if not done.
 #' @export
 setup_icd_data <- function(path = .icd_data_default) {
   options("icd.data.offline" = FALSE)
@@ -239,7 +245,7 @@ setup_icd_data <- function(path = .icd_data_default) {
   if (!dir.exists(path)) {
     stopifnot(dir.create(path))
   }
-  path
+  invisible(path)
 }
 
 download_icd_data <- function() {

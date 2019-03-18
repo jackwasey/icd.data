@@ -5,8 +5,13 @@
 \alias{icd10cm_active}
 \title{The currently active version of ICD-10-CM in this package.}
 \description{
-The default is the latest version, but it may be set using
-`set_icd10cm_ver()`
+This is work in progress, so not exported. The default is the latest version,
+however, depending on the context, it seems not to respect the R option, e.g.
+during testing. `set_icd10cm_ver()` may be used to set the active version,
+and `get_icd10cm_ver()` gives the current setting. `get_icd10cm_version(ver =
+"2015")` will return the 2015 version. `get_icd10cm_active()` will return the
+currently active version, as set by the option, then default being the most
+recent available.
 }
 \details{
 This is an active binding, so is exported explicitly
@@ -15,5 +20,8 @@ This is an active binding, so is exported explicitly
 \dontrun{
 set_icd10cm_active_ver("2016")
 }
+}
+\seealso{
+get_icd10cm_version get_icd10cm_ver set_icd10cm_ver
 }
 \keyword{datasets}

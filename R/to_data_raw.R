@@ -19,7 +19,7 @@
 #' @noRd
 .unzip_to_data_raw <- function(url,
                                file_name,
-                               verbose = FALSE,
+                               verbose = .verbose(),
                                data_raw_path = icd_data_dir(),
                                save_name = file_name,
                                dl_msg = NULL,
@@ -37,6 +37,12 @@
     )
   }
   if (!file.exists(file_path)) {
+    if (verbose) {
+      message(
+        "Unable to find downloaded file at: ",
+        file_path, ". Attempting download..."
+      )
+    }
     if (!.confirm_download()) return()
     if (!is.null(dl_msg)) message(dl_msg)
     ok <- .unzip_single(

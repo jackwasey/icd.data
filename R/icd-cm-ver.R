@@ -6,7 +6,7 @@
 set_icd10cm_active_ver <- function(ver, check_exists = TRUE) {
   old_v <- get_icd10cm_active_ver()
   v <- as.character(ver)
-  stopifnot(grepl("^[[:digit:]]{4}$", as.character(v)))
+  stopifnot(grepl("^[[:digit:]]{4}$", v))
   stopifnot(v %in% names(icd10cm_sources))
   v_name <- paste0("icd10cm", v)
   if (check_exists &&
@@ -37,20 +37,32 @@ get_icd10cm_active_ver <- function() {
 #' When called without an argument, it returns the curerntly active version as
 #' set by \code{set_icd10cm_active_ver()}
 #' @template ver
+#' @template verbose
 #' @examples
 #' \dontrun{
 #' get_icd10cm_version("2018")
 #' }
 #' @export
-get_icd10cm_version <- function(ver = get_icd10cm_active_ver()) {
+get_icd10cm_version <- function(ver,
+                                verbose = .verbose()) {
   ver <- as.character(ver)
   stopifnot(grepl("^[[:digit:]]{4}$", ver))
   # don't use :: so we don't trigger every active binding at once!
   var_name <- paste0("icd10cm", ver)
-  if (exists(var_name, envir = .icd_data_env)) {
-    return(get(var_name, envir = .icd_data_env))
+  if (verbose) message("Trying package data env first")
+  if (.exists(var_name)) {
+    return(.get(var_name))
   }
-  getExportedValue("icd.data", var_name)
+  if (verbose) message("Resorting to normal package data")
+  out <- getExportedValue("icd.data", var_name)
+  .assign(var_name, out)
+  out
+}
+
+#' @describeIn get_icd10cm_version Get the currently active version of ICD-10-CM.
+#' @export
+get_icd10cm_active <- function() {
+  get_icd10cm_version(ver = get_icd10cm_active_ver())
 }
 
 #' Get the ICD-10-CM versions available in this package

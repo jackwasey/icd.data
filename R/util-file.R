@@ -109,7 +109,7 @@
   zipfile <- tempfile(fileext = ".zip")
   on.exit(unlink(zipfile), add = TRUE)
   extra <- ifelse(insecure, "--insecure --silent", NULL)
-  if (!is.null(dl_msg)) message(dl_msg)
+  if (verbose && !is.null(dl_msg)) message(dl_msg)
   dl_code <- utils::download.file(
     url = url,
     destfile = zipfile,

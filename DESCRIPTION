@@ -2,21 +2,24 @@ Package: icd.data
 Title: International Classification of Diseases (ICD) Data
 Version: 1.1.2
 Authors@R:
-    person(given = "Jack O. Wasey",
-           role = c("aut", "cre", "cph"),
-           email = "jack@jackwasey.com")
+    c(person(given = "Jack O. Wasey",
+             role = c("aut", "cre", "cph"),
+             email = "jack@jackwasey.com"),
+      person(given = "R Core Team",
+             role = c("aut", "cph"),
+             comment = "utils::askYesNo backport for older R versions."))
 Description: ICD-9 and ICD-10 definitions from the United States
     Center for Medicare and Medicaid Services (CMS) are included in this
     package. A function is provided to extract the WHO ICD-10 definitions
     from the public interface, but the data themselves may not currently
-    be redistributed.  The function 'fetch_icd10who2016()' and
-    'fetch_icd10who2008fr' should be run once after installing this
-    package. There are diagnostic and procedure codes, and lists of the
-    chapter and sub-chapter headings and the ranges of ICD codes they
-    encompass. There are also two sets of sample patient data with ICD-9
-    and ICD-10 codes representing real patients and spanning common
-    structures of patient data. These data are used by the 'icd' package
-    for finding comorbidities and working with ICD codes.
+    be redistributed. There are diagnostic and procedure codes, and lists
+    of the chapter and sub-chapter headings and the ranges of ICD codes
+    they encompass. There are also two sets of sample patient data with
+    ICD-9 and ICD-10 codes representing real patients and spanning common
+    structures of patient data. Much of the data is downloaded and parsed
+    on demand. This can all be done at once, or piecemeal as data is used.
+    These data are used by the 'icd' package for finding comorbidities and
+    working with ICD codes.
 License: GPL-3
 Depends: 
     R (>= 3.4.0)

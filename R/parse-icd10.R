@@ -36,7 +36,7 @@
   invisible(out)
 }
 
-.parse_icd10cm_year <- function(year = 2019,
+.parse_icd10cm_year <- function(year,
                                 must_work = FALSE,
                                 verbose = .verbose(),
                                 ...) {

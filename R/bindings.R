@@ -88,10 +88,6 @@
   binding_fun
 }
 
-skip_if_no_dat <- function() {
-  # testthat::skip
-}
-
 # Dynamic
 .icd9cm2011_binding <- function(x) {
   if (!missing(x)) .stop_binding_ro()
@@ -103,7 +99,13 @@ lockBinding("icd9cm2011", environment())
 
 .icd10cm_active_binding <- function(x) {
   if (!missing(x)) .stop_binding_ro()
-  get_icd10cm_version()
+  if (.verbose()) {
+    message(
+      "Binding getting icd10cm_active, version is: ",
+      getOption("icd.data.icd10cm_active_ver")
+    )
+  }
+  get_icd10cm_active()
 }
 makeActiveBinding("icd10cm_active", .icd10cm_active_binding, environment())
 lockBinding("icd10cm_active", environment())

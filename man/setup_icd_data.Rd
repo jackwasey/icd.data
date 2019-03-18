@@ -16,7 +16,7 @@ icd_data_dir()
 The path to the resource directory, or \code{NULL} if it could not be
   found.
 
-Invisiblly returns the data path which was set, or NULL if not done.
+Invisibly returns the data path which was set, or NULL if not done.
 }
 \description{
 This must be called by the user, as prompted on package attach with \code{library(icd.data)}. \code{icd.data} is a dependency (not an import) of \code{icd}, so that \code{icd} can function more smoothly, avoiding prompting during commands, although this should still be possible, and will happen if the user initially declines permission to download and cache data.

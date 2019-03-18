@@ -5,7 +5,7 @@
 * Belgian ICD-10 codes, data has columns for French, Dutch and English translations.
 * Includes ICD-10-CM 2019 with more than 2000 new codes. The most recent available ICD-10-CM version is also made available using icd.data::icd10cm_latest when an specific annual version is not needed.
 * ICD-10-CM for all year fro 2014 to 2019, with functions to select which to use. Default is currently 2019.
-* icd10cm_latest and icd10cm_active return the appropriate data
+* icd10cm_latest and get_icd10cm_active() return the appropriate data. Note that currently `icd10cm_active` is not exported.
 * Added capability for each user to download the WHO ICD-10 data on first use.
 * Moved data creation code from 'icd' package to 'icd.data'
 * Expand Vermont data from 1,000 to about 50,000 rows

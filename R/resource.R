@@ -99,7 +99,7 @@
                                 raw = FALSE,
                                 destroy = FALSE) {
   if (destroy) {
-    utils::askYesNo("Destroy entire resource directory?")
+    askYesNo("Destroy entire resource directory?")
     unlink(icd_data_dir(), recursive = TRUE)
     return(invisible())
   }
@@ -327,7 +327,7 @@ icd_data_dir <- function() {
   if (interact) {
     message("icd.data needs to download and/or parse data.")
     ok <- isTRUE(
-      utils::askYesNo(
+      askYesNo(
         "May I download and cache a few MB per ICD edition as needed?" # nolint
       ) # nolint
     )

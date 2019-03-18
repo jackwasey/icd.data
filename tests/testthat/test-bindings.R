@@ -4,8 +4,7 @@ test_that("download and parse all active bindings", {
   ns <- asNamespace("icd.data")
   for (b in c(
     .binding_names,
-    "icd10cm_latest",
-    "icd10cm_active"
+    "icd10cm_latest"
   )) {
     inf <- paste("Binding:", b)
     expect_true(b %in% ls(ns), info = inf)
