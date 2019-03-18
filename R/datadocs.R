@@ -220,6 +220,7 @@ NULL
 #' @keywords datasets
 #' @seealso get_icd10cm_version get_icd10cm_ver set_icd10cm_ver
 #' @name icd10cm_active
+#' @export
 NULL
 
 #' French ICD-10-FR modification of WHO ICD-10 used in France
@@ -329,7 +330,6 @@ NULL
 
 #' Final version ICD-9-CM, just billable/leaf codes
 #'
-#' These will be removed in a future version in favor of \code{icd9cm2011}.
 #' These are derived from the final CMS published version 32 for 2014, which was
 #' unchanged since 2011. The short descriptions are in ASCII with no special
 #' characters, whereas the long descriptions contain accented characters which
@@ -339,9 +339,7 @@ NULL
 #' including pulling the data from the web pages directly. Despite my best
 #' efforts, current locale can give different results, but this packaged data is
 #' correct, with some \code{UTF-8} encoded strings.
-#'
-#' \code{icd9cm_billable} is deprecated, and currently only provides a list with
-#' one item named \code{"32"}.
+#' \code{icd9cm_billable} has been replaced.
 #' @docType data
 #' @keywords datasets
 #' @format data frames with columns \code{code}, \code{short_desc}, and
@@ -349,16 +347,6 @@ NULL
 #' @source
 #' \url{http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html}
 #' @name icd9cm_leaf_v32
-#' @export
-NULL
-
-#' Deprecated ICD-9-CM leaf/billable codes
-#'
-#' @seealso \code{icd9cm2011}, and the also deprecated
-#'   \code{\link{icd9cm_billable}}
-#' @name icd9cm_billable
-#' @docType data
-#' @keywords datasets
 NULL
 
 #' Hospital discharge data from Vermont

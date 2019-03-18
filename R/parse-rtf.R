@@ -75,7 +75,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
     desc = names(out),
     stringsAsFactors = FALSE
   )
-  out_df[.get_icd34fun("order.icd9")(out), ]
+  out_df[icd::order.icd9(out), ]
   invisible(out_df)
 }
 

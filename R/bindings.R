@@ -142,13 +142,6 @@ lockBinding("icd10cm_latest", environment())
   cim10fr2019
 }
 
-.icd9cm_leaf_v32_binding <- function(x) {
-  stopifnot(missing(x))
-  getExportedValue("icd9cm_billable", ns = asNamespace("icd.data"))[["32"]]
-}
-makeActiveBinding("icd9cm_leaf_v32", .icd9cm_leaf_v32_binding, environment())
-lockBinding("icd9cm_leaf_v32", environment())
-
 .message_who <- function() {
   o <- getOption("icd.data_absent_action")
   if (!is.null(o) && o %nin% c("stop", "message")) {

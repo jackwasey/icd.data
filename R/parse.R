@@ -53,11 +53,8 @@
 .icd9cm_parse_leaf_descs <- function(save_data = TRUE,
                                      verbose = FALSE,
                                      ...) {
-  message("In future, just generate icd9cm_leaf_v32.
-Now just making icd9cm_billable[[\"32\"]]")
   stopifnot(is.logical(save_data), length(save_data) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
-  # icd.data:::
   versions <- icd9cm_sources$version
   if (verbose) {
     message(
@@ -65,18 +62,13 @@ Now just making icd9cm_billable[[\"32\"]]")
       paste(versions, collapse = ", ")
     )
   }
-  dat <- .icd9cm_parse_leaf_desc_ver(
+  icd9cm_leaf_v32 <- .icd9cm_parse_leaf_desc_ver(
     ver = "32",
-    # don't save with icd9cm_leaf_v32 yet
-    save_data = FALSE,
+    save_data = TRUE,
     verbose = verbose,
     ...
   )
-  dat <- dat[.get_icd34fun("order.icd9")(dat$code), ]
-  icd9cm_billable <- list()
-  icd9cm_billable[["32"]] <- dat
-  if (save_data) .save_in_data_dir(icd9cm_billable)
-  invisible(icd9cm_billable)
+  invisible(icd9cm_leaf_v32)
 }
 
 #' Read the ICD-9-CM description data as provided by the Center for Medicaid
@@ -175,7 +167,7 @@ Now just making icd9cm_billable[[\"32\"]]")
     stringsAsFactors = FALSE
   )
   if (verbose) message("now sort so that E is after V")
-  new_order <- .get_icd34fun("order.icd9")(out[["code"]])
+  new_order <- icd::order.icd9(out[["code"]])
   stopifnot(!anyNA(out[["code"]]))
   stopifnot(!anyNA(new_order))
   stopifnot(!any(grepl(out[["code"]], pattern = "[[:space:]]")))
@@ -209,6 +201,8 @@ Now just making icd9cm_billable[[\"32\"]]")
   out$short_desc <- enc2utf8(out$short_desc)
   out$long_desc <- enc2utf8(out$long_desc)
   var_name <- paste0("icd9cm_leaf_v", ver)
+  out[icd::order.icd9(out$code), ]
+  rownames(out) <- NULL
   assign(var_name, out)
   if (save_data) {
     .save_in_data_dir(var_name = var_name)
@@ -237,7 +231,7 @@ Now just making icd9cm_billable[[\"32\"]]")
   close(f)
   names(icd9cm_billable27) <- c("code", "long_desc", "short_desc")
   icd9cm_billable27 <- icd9cm_billable27[c(1, 3, 2)] # reorder columns
-  reorder <- .get_icd34fun("order.icd9")(icd9cm_billable27[["code"]])
+  reorder <- icd::order.icd9(icd9cm_billable27[["code"]])
   invisible(icd9cm_billable27[reorder, ])
 }
 
@@ -308,7 +302,7 @@ Now just making icd9cm_billable[[\"32\"]]")
     x = icd9_rtf$code, short_code = TRUE,
     verbose = verbose
   )
-  icd9_order <- .get_icd34fun("order.icd9")
+  icd9_order <- icd::order.icd9
   chaps <- chaps[icd9_order(.as_char_no_warn(chaps$three_digit)), ]
   icd9_rtf <- icd9_rtf[icd9_order(icd9_rtf$code), ]
   out <- cbind(
@@ -399,12 +393,12 @@ Now just making icd9cm_billable[[\"32\"]]")
   )
   chap_lookup <- lapply(icd9_chapters, function(y)
     .vec_to_env_true(
-      .get_icd34fun("expand_range_major")(icd::as.icd9cm(y[["start"]]),
+      icd::expand_range_major(icd::as.icd9cm(y[["start"]]),
         y[["end"]], defined = FALSE)
     ))
   subchap_lookup <- lapply(icd9_sub_chapters, function(y)
     .vec_to_env_true(
-      .get_icd34fun("expand_range_major")(icd::as.icd9cm(y[["start"]]),
+      icd::expand_range_major(icd::as.icd9cm(y[["start"]]),
         y[["end"]],
         defined = FALSE)
     ))

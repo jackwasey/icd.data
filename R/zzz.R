@@ -53,6 +53,5 @@ utils::globalVariables(c(
   "dl_fun_name",
   ".binding_namess",
   ".icd_data_default",
-  # names(.bindings)
   .binding_names
 ))

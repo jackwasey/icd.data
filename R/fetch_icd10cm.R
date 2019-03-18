@@ -1,14 +1,6 @@
 # Prefer CMS? NCHS actually generates the ICD-10-CM codes, at least the
 # diagnostic ones. http://www.cdc.gov/nchs/data/icd/icd10cm/
 
-# .icd10cm_get_flat_file_cdc <- function(...) {
-#   icd10_url_cdc <- "http://www.cdc.gov/nchs/data/icd/icd10cm/"
-#   .unzip_to_data_raw(
-#     url = paste0(icd10_url_cdc, "2016/ICD10CM_FY2016_code_descriptions.zip"),
-#     file_name = "icd10cm_order_2016.txt", ...
-#   )
-# }
-
 #' Get annual version of ICD-10-CM
 #' @param year four-digit
 #' @template verbose

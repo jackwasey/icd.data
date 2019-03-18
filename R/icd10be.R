@@ -106,7 +106,7 @@
   )
   names(icd10be2017) <- names
   names(icd10be2017_pc) <- names
-  icd10be2017 <- icd10be2017[.get_icd34fun("order.icd10be")(icd10be2017$code), ]
+  icd10be2017 <- icd10be2017[icd::order.icd10be(icd10be2017$code), ]
   icd10be2017_pc <- icd10be2017_pc[order(icd10be2017_pc$code), ]
   class(icd10be2017$code) <- c("icd10be", "icd10", "character")
   class(icd10be2017_pc$code) <- c("icd10be_pc", "character")
@@ -176,7 +176,7 @@
   )
   names(icd10be2014) <- names
   names(icd10be2014_pc) <- names
-  icd10be2014 <- icd10be2014[.get_icd34fun("order.icd10be")(icd10be2014$code), ]
+  icd10be2014 <- icd10be2014[icd::order.icd10be(icd10be2014$code), ]
   icd10be2014_pc <- icd10be2014_pc[order(icd10be2014_pc$code), ]
   class(icd10be2014$code) <- c("icd10be", "icd10", "character")
   class(icd10be2014_pc$code) <- c("icd10be_pc", "character")

@@ -7,7 +7,7 @@
 \usage{
 get_icd10cm_version(ver, verbose = .verbose())
 
-get_icd10cm_active()
+get_icd10cm_active(verbose = FALSE)
 }
 \arguments{
 \item{ver}{Character version of ICD-10-CM to use, corresponding to the suffix

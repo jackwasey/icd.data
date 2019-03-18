@@ -194,7 +194,6 @@
           ...
         )
         stopifnot(!any(recursed_rows$code %in% new_rows$code))
-        # new_rows <- do.call(rbind, c(new_rows, recursed_rows))
         new_rows <- rbind(new_rows, recursed_rows)
       } # not leaf
       new_rows

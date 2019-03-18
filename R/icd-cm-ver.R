@@ -61,8 +61,10 @@ get_icd10cm_version <- function(ver,
 
 #' @describeIn get_icd10cm_version Get the currently active version of ICD-10-CM.
 #' @export
-get_icd10cm_active <- function() {
-  get_icd10cm_version(ver = get_icd10cm_active_ver())
+get_icd10cm_active <- function(verbose = FALSE) {
+  ver = get_icd10cm_active_ver()
+  if (verbose) message("Getting active version: ", ver)
+  get_icd10cm_version(ver = ver)
 }
 
 #' Get the ICD-10-CM versions available in this package
@@ -111,8 +113,6 @@ get_icd10cm_available <- function(
   var_name <- "icd10cm2019"
   if (exists(var_name)) return(get(var_name))
   getExportedValue(asNamespace("icd.data"), var_name)
-  # needed?
-  # eval(parse(text = paste0("icd.data::", var_name)))
 }
 
 #' Evaluate code with a particular version of ICD-10-CM

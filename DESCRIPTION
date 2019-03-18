@@ -26,7 +26,7 @@ Depends:
 Suggests:
     covr,
     httr,
-    icd,
+    icd (>= 4.0),
     jsonlite,
     memoise,
     parallel,

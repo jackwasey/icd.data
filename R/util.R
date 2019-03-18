@@ -242,31 +242,11 @@ get_icd_data <- function(data_name, alt = NULL) {
   }
 }
 
-# two functions are not exported in icd < 3.4
-.get_icd34fun <- function(f) {
-  if (exists(f, where = asNamespace("icd"), mode = "function")) {
-    get(f, envir = asNamespace("icd"), mode = "function")
-  } else {
-    stop("Function ", f, " is not exported with icd < 3.4")
-  }
-}
-
 .exists_in_ns <- function(name) {
   pkg_ns <- asNamespace("icd.data")
   lazy_env <- pkg_ns[[".__NAMESPACE__."]][["lazydata"]]
   exists(name, lazy_env) || exists(name, pkg_ns)
 }
-
-# Cannot 'stop' in an active binding for R CMD check because
-# tools::checkS3methods ends up sourcing the bindings, because they are
-# considered to be code. This is an escape hatch, really just for R CMD check.
-# .stop_on_absent <- function(...) {
-#   msg <- paste(unlist(unname(list(...))))
-#   o <- getOption("icd.data.absent_action")
-#   if (o == "stop") stop(msg, call. = FALSE)
-#   if (o == "message") message(msg)
-#   invisible()
-# }
 
 .have_memoise <- function() {
   have_memoise <- requireNamespace("memoise", quietly = TRUE)

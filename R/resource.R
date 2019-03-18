@@ -314,9 +314,6 @@ icd_data_dir <- function() {
   if (!is.null(o)) return(o)
   msg <- paste("The", sQuote("icd.data.resource"), "option is not set.")
   if (.verbose()) message(msg)
-  # .absent_action_switch(msg)
-  # warning(msg)
-  # TODO: argh!! .absent_action_switch(msg)
   NULL
 }
 

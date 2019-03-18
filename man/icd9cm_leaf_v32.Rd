@@ -10,7 +10,6 @@
 \url{http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html}
 }
 \description{
-These will be removed in a future version in favor of \code{icd9cm2011}.
 These are derived from the final CMS published version 32 for 2014, which was
 unchanged since 2011. The short descriptions are in ASCII with no special
 characters, whereas the long descriptions contain accented characters which
@@ -21,8 +20,6 @@ This all done during package creation, but can be repeated by package users,
 including pulling the data from the web pages directly. Despite my best
 efforts, current locale can give different results, but this packaged data is
 correct, with some \code{UTF-8} encoded strings.
-
-\code{icd9cm_billable} is deprecated, and currently only provides a list with
-one item named \code{"32"}.
+\code{icd9cm_billable} has been replaced.
 }
 \keyword{datasets}

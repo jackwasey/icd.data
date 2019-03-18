@@ -28,10 +28,8 @@ matrix:
 r_github_packages:
   - jimhester/lintr
   - jimhester/covr
-# should work with old and development versions of icd
-#  - jackwasey/icd
-#  - jackwasey/icd@v3.4
-
+  - jackwasey/icd
+.
 before_script:
  - sed -i'' '/.*[Dd]ata.*/d' .Rbuildignore # do include (raw) data for testing
  - sed -i'' '/\.covrignore/d' .Rbuildignore
