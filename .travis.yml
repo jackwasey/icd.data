@@ -40,6 +40,7 @@ before_script:
 # - sed -i'' '/\.lintr/d' .Rbuildignore
 # otherwise, icd is installed from CRAN, and after the github install???
  - echo "Remotes:\ jackwasey/icd" >> DESCRIPTION
+ - echo "StagedInstall:\ no" >> DESCRIPTION
 
 after_success:
   - R CMD INSTALL $PKG_TARBALL
