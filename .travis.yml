@@ -26,6 +26,9 @@ matrix:
     - r: oldrel
     - env: ICD_DATA_OFFLINE=FALSE
 
+r_packages:
+  - httr
+
 r_github_packages:
   - jimhester/lintr
   - jimhester/covr

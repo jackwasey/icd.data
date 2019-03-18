@@ -17,7 +17,7 @@ cache:
 
 # Appveyor does seem to need correct version of suggested packages:
 before_build:
-  - Rscript -e "install.packages('remotes', repos = 'https://cloud.r-project.org/')"
+  - Rscript -e "install.packages(c('remotes', 'httr', repos = 'https://cloud.r-project.org/')"
 #  - Rscript -e "remotes::install_github(\"jackwasey/icd\", ref = \"v3.4\")"
   - Rscript -e "remotes::install_github(\"jackwasey/icd\")"
 
