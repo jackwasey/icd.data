@@ -14,6 +14,7 @@ r:
 env:
   global:
     - ICD_DATA_INTERACT=FALSE
+    - ICD_DATA_VERBOSE=TRUE
   matrix:
     - ICD_DATA_OFFLINE=TRUE
     - ICD_DATA_OFFLINE=FALSE
