@@ -46,7 +46,7 @@ before_script:
 after_success:
   - R CMD INSTALL $PKG_TARBALL
 #  - Rscript -e 'lintr::lint_package()'
-  - Rscript -e 'if (!require("remotes")) install.packages("remotes"); remotes::install_github("jackwasey/icd")
+  - Rscript -e 'if (!require("remotes")) {install.packages("remotes")}; remotes::install_github("jackwasey/icd")
   - Rscript -e 'covr::codecov()'
 
 notifications:
