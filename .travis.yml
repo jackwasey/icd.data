@@ -16,7 +16,7 @@ env:
     - ICD_DATA_INTERACT=FALSE
     - ICD_DATA_VERBOSE=TRUE
     # travis uses --as-cran by default
-    - "_R_CHECK_EXIT_ON_FIRST_ERROR_"=true
+    - _R_CHECK_EXIT_ON_FIRST_ERROR_=true
   matrix:
     - ICD_DATA_OFFLINE=TRUE
     - ICD_DATA_OFFLINE=FALSE
@@ -37,15 +37,15 @@ r_github_packages:
   - jackwasey/icd
 
 before_script:
- - sed -i'' '/.*[Dd]ata.*/d' .Rbuildignore # do include (raw) data for testing
+  - sed -i'' '/.*[Dd]ata.*/d' .Rbuildignore # do include (raw) data for testing
+#  Test the installation (which is what may fail laterduring CRAN check)
+  - 'R CMD INSTALL --debug --no-docs $PKG_TARBALL'
 # - sed -i'' '/\.covrignore/d' .Rbuildignore
 # - sed -i'' '/\.lintr/d' .Rbuildignore
 # otherwise, icd is installed from CRAN, and after the github install???
 # - 'echo "Remotes: jackwasey/icd" >> DESCRIPTION'
 # - 'echo "StagedInstall: no" >> DESCRIPTION'
 # - cat DESCRIPTION
-#  Test the installation (which is what may fail laterduring CRAN check)
-  - R CMD INSTALL --debug --no-docs $PKG_TARBALL
 
 after_success:
   - R CMD INSTALL $PKG_TARBALL
