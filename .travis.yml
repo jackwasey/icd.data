@@ -39,7 +39,8 @@ r_github_packages:
 before_script:
   - sed -i'' '/.*[Dd]ata.*/d' .Rbuildignore # do include (raw) data for testing
 #  Test the installation (which is what may fail laterduring CRAN check)
-  - 'R CMD INSTALL --debug --no-docs $PKG_TARBALL'
+  - R CMD build .
+  - R CMD INSTALL --debug --no-docs icd.data_*.tar.gz
 # - sed -i'' '/\.covrignore/d' .Rbuildignore
 # - sed -i'' '/\.lintr/d' .Rbuildignore
 # otherwise, icd is installed from CRAN, and after the github install???
