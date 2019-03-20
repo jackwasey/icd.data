@@ -17,16 +17,24 @@ cache:
 
 # Appveyor does seem to need correct version of suggested packages:
 before_build:
+  # do include any data or raw data for testing, most data not in github though
+  - sed -i'' -e '/.*[Dd]ata.*/d' .Rbuildignore
   - Rscript -e "install.packages(c('remotes', 'httr'), repos = 'https://cloud.r-project.org/')"
 #  - Rscript -e "remotes::install_github(\"jackwasey/icd\", ref = \"v3.4\")"
   - Rscript -e "remotes::install_github(\"jackwasey/icd\")"
 
 environment:
+  WARNINGS_ARE_ERRORS: 1
+  # appveyor uses --as-cran by default
+  _R_CHECK_EXIT_ON_FIRST_ERROR_: true
   USE_RTOOLS: true # Set to false if no GitHub packages are necessary
   ICD_DATA_OFFLINE: true
   ICD_DATA_INTERACT: false
   ICD_DATA_VERBOSE: true
   ICD_DATA_ABSENT_ACTION: 'message'
+  matrix:
+    - R_VERSION: release
+    - R_VERSION: devel
 
 build_script:
   - travis-tool.sh install_deps
