@@ -54,15 +54,21 @@ get_icd10cm_version <- function(ver,
     return(.get(var_name))
   }
   if (verbose) message("Resorting to normal package data")
-  out <- getExportedValue("icd.data", var_name)
-  .assign(var_name, out)
-  out
+  # try double checking it exists for bizarre R CMD check problem
+  lazyenv <- asNamespace("icd.data")$.__NAMESPACE__.$lazydata
+  if (exists(var_name, lazyenv)) {
+    out <- getExportedValue("icd.data", var_name)
+    .assign(var_name, out)
+    out
+  } else {
+    NULL
+  }
 }
 
 #' @describeIn get_icd10cm_version Get the currently active version of ICD-10-CM.
 #' @export
 get_icd10cm_active <- function(verbose = FALSE) {
-  ver = get_icd10cm_active_ver()
+  ver <- get_icd10cm_active_ver()
   if (verbose) message("Getting active version: ", ver)
   get_icd10cm_version(ver = ver)
 }

@@ -112,8 +112,13 @@ lockBinding("icd10cm_active", environment())
 
 .icd10cm_latest_binding <- function(x) {
   if (!missing(x)) .stop_binding_ro()
-  # lazy data, which is not available during package .onLoad yet:
-  getExportedValue("icd10cm2019", ns = asNamespace("icd.data"))
+  # lazy data, which is not available during package .onLoad yet.
+  # also, since icd depends on icd.data, R CMD check seems to use the old icd.data version and doesn't find its own data, so check it exists first:
+  lazyenv <- asNamespace("icd.data")$.__NAMESPACE__.$lazydata
+  if (exists("icd10cm2019", lazyenv))
+    getExportedValue("icd10cm2019", ns = asNamespace("icd.data"))
+  else
+    NULL
 }
 makeActiveBinding("icd10cm_latest", .icd10cm_latest_binding, environment())
 lockBinding("icd10cm_latest", environment())

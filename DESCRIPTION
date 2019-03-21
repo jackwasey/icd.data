@@ -24,7 +24,6 @@ License: GPL-3
 Depends: 
     R (>= 3.4.0)
 Suggests:
-    covr,
     httr,
     icd (>= 4.0),
     jsonlite,

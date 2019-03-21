@@ -7,21 +7,26 @@
 .set_init_options()
 }
 \description{
-\code{icd.data.offline} - default is TRUE, unless ICD_DATA_OFFLINE is false/no. This will only ever be turned on with explicit user authorization (or by directly setting it). Turning this on also results in data being saved in the data directory. See below.
+\code{icd.data.offline} - default is TRUE, unless ICD_DATA_OFFLINE is
+false/no. This will only ever be turned on with explicit user authorization
+(or by directly setting it). Turning this on also results in data being saved
+in the data directory. See below.
 }
 \details{
-\code{icd.data.interact} - default is based on interactive mode of R, as given by \code{base::interactive()}.
+\code{icd.data.interact} - default is based on interactive mode of R, as
+given by \code{base::interactive()}.
 
-\code{icd.data.resource} - default is ~/.icd.data but won't write unless user gives
-permission
+\code{icd.data.resource} - default is ~/.icd.data but won't write unless user
+gives permission
 
-\code{icd.data.absent_action} - what to do if data is missing, "stop" or "message"
-consider removing this. Need to automate the hell out of this, but might be
-useful for testing.
+\code{icd.data.absent_action} - what to do if data is missing, "stop" or
+"message" consider removing this. Need to automate the hell out of this, but
+might be useful for testing.
 
-\code{icd.data.icd10cm_active_ver} - which ICD-10-CM version is currently active.
-Default is 2019.
+\code{icd.data.icd10cm_active_ver} - which ICD-10-CM version is currently
+active. Default is 2019.
 
-See also \code{.show_options()} \code{.clear_options()} \code{.set_dev_options()}
+See also \code{.show_options()} \code{.clear_options()}
+\code{.set_dev_options()}
 }
 \keyword{internal}
