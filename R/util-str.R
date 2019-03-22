@@ -46,7 +46,8 @@
   }
   out <- res[, ifelse(swap, 1L, 2L)]
   stopifnot(all(!is.na(out)))
-  setNames(out, out_names)
+  names(out) <- out_names
+  out
 }
 
 #' @describeIn dot-str_pair_match Return all matches for regular expression

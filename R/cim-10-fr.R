@@ -29,7 +29,7 @@
     }
     return(NULL)
   }
-  cim_raw <- read.delim(
+  cim_raw <- utils::read.delim(
     fileEncoding = "Latin1",
     fp$file_path,
     header = FALSE,

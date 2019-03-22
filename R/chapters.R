@@ -15,13 +15,13 @@
   stopifnot(is.list(chapters), is.character(prefix))
   erm <- if (.have_memoise()) {
     memoise::memoise(
-      icd::expand_range_major,
+      .expand_range_major.icd10cm,
       cache = memoise::cache_filesystem(
         file.path(icd_data_dir(), "memoise")
       )
     )
   } else {
-    icd::expand_range_major
+    .expand_range_major.icd10cm
   }
   df_rows <- lapply(
     names(chapters),

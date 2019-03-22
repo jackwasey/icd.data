@@ -393,12 +393,12 @@
   )
   chap_lookup <- lapply(icd9_chapters, function(y)
     .vec_to_env_true(
-      icd::expand_range_major(icd::as.icd9cm(y[["start"]]),
+      .expand_range_major.icd9(y[["start"]],
         y[["end"]], defined = FALSE)
     ))
   subchap_lookup <- lapply(icd9_sub_chapters, function(y)
     .vec_to_env_true(
-      icd::expand_range_major(icd::as.icd9cm(y[["start"]]),
+      .expand_range_major.icd9(y[["start"]],
         y[["end"]],
         defined = FALSE)
     ))

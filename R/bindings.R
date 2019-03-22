@@ -54,7 +54,10 @@
     ff <- get(bound_name, final_env)
     if (is.function(ff)) {
       if (exists(var_name, final_env)) {
-        stop(var_name, " already exists.")
+        if (verbose) {
+          message(var_name, " already exists.")
+          next
+        }
       }
       makeActiveBinding(
         sym = var_name,

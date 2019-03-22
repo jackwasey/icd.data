@@ -153,8 +153,13 @@ is_non_ascii <- function(x)
     as.character(unique(flat_hier[[field]]))
   }
   three_digits <- as.character(flat_hier[["three_digit"]])
+  setNames <- function(x) {
+    y <- x
+    names(y) <- x
+    y
+  }
   lapply(
-    setNames(u, u),
+    setNames(u),
     function(chap) {
       td <- sort(
         unique(three_digits[flat_hier[[field]] == chap])

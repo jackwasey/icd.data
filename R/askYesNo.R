@@ -1,5 +1,5 @@
 # R core team, from utils package, but not available in R 3.4
-function(msg, default = TRUE,
+askYesNo <- function(msg, default = TRUE,
          prompts = getOption(
            "askYesNo",
            gettext(c("Yes", "No", "Cancel"))

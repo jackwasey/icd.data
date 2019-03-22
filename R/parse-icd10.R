@@ -109,7 +109,7 @@
       by.x = "three_digit", by.y = "chap_major",
       all.x = TRUE
     )[["chap_desc"]]
-  dat <- dat[icd::order.icd10cm(dat$code), ]
+  dat <- dat[order.icd10cm(dat$code), ]
   class(dat$code) <- c("icd10cm", "icd10", "character")
   row.names(dat) <- NULL
   assign(paste0("icd10cm", year), value = dat)
