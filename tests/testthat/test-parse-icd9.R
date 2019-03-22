@@ -131,7 +131,7 @@ test_that("ICD-9-CM billable codes package data is recreated", {
   skip_on_os(c("windows", "mac", "solaris"))
   # Do encoding problems on Linux. It is unpredictable at the best of times.
   skip_flat_icd9_all_avail()
-  check_billable <- parse_icd9cm_leaf_desc_all(save_data = FALSE)
+  check_billable <- .icd9cm_parse_leaf_descs(save_data = FALSE)
   # make specific quick tests for previously known problems:
   b32 <- .icd9cm_parse_leaf_desc_ver("32", save_data = FALSE)
   expect_true(nrow(b32) == 14567L)

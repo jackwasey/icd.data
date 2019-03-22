@@ -44,7 +44,7 @@
 #' # e.g. using devtools::load_all()
 #' \dontrun{
 #' option("icd.data.offline" = FALSE)
-#' parse_icd9cm_leaf_desc_all(save_data = TRUE)
+#' .icd9cm_parse_leaf_descs(save_data = TRUE)
 #' }
 #' @source
 #' http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html
