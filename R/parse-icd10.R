@@ -53,7 +53,7 @@
     }
     return(NULL)
   }
-  message("Please wait a few moments to parse data...")
+  message("Working...")
   # readLines may muck up encoding, resulting in weird factor order generation
   # later?
   x <- readLines(con = f_info$file_path, encoding = "ASCII")

@@ -142,17 +142,19 @@ with_icd10cm_version <- function(ver, code) {
 #'   for testing.
 #' @keywords internal
 #' @noRd
-.get_icd10cm_ver <- function(
-                             ver,
+.get_icd10cm_ver <- function(ver,
                              dx,
-                             #                             must_work = FALSE,
                              interact = .interactive()) {
   ver <- as.character(ver)
   stopifnot(grepl("^[[:digit:]]{4}$", ver))
   var_name <- paste0("icd10cm", ver)
   dat_path <- .rds_path(var_name)
-  if (exists(var_name, envir = .icd_data_env)) {
-    return(get(var_name, envir = .icd_data_env))
+  if (exists(var_name, .icd_data_env)) {
+    return(get(var_name, .icd_data_env))
+  }
+  lazyenv <- asNamespace("icd.data")$.__NAMESPACE__.$lazydata
+  if (exists(var_name, lazyenv)) {
+    return(get(var_name, lazyenv))
   }
   if (file.exists(dat_path)) {
     dat <- readRDS(dat_path)

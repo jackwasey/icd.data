@@ -14,16 +14,6 @@
                                         must_work = FALSE,
                                         verbose = .verbose()) {
   year <- as.character(year)
-  fp <- .parse_icd10cm_year(
-    ver = year,
-    dx = FALSE,
-    verbose = verbose,
-    offline = FALSE
-  )
-  if (is.null(fp)) {
-    if (must_work) return()
-    return()
-  }
   message("Please wait a few moments to parse and cache data.")
   pcs_file <- icd10cm_sources[[year]][["pcs_flat"]]
   pcs_path <- file.path(

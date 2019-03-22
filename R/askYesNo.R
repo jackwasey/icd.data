@@ -1,9 +1,9 @@
 # R core team, from utils package, but not available in R 3.4
 askYesNo <- function(msg, default = TRUE,
-         prompts = getOption(
-           "askYesNo",
-           gettext(c("Yes", "No", "Cancel"))
-         ), ...) {
+                     prompts = getOption(
+                       "askYesNo",
+                       gettext(c("Yes", "No", "Cancel"))
+                     ), ...) {
   if (is.character(prompts) && length(prompts) == 1) {
     prompts <- strsplit(prompts, "/")[[1]]
   }

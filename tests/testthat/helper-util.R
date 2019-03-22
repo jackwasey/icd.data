@@ -111,8 +111,28 @@ expect_icd10_sub_chap_equal <- function(x, start, end, ...)
     ...
   )))
 
-eee <- function(x, desc, ...)
-  eval(bquote(expect_equal(icd::explain_code(.(x)), .(desc), ...)))
+eee <- function(x, desc, ...) {
+  x <- sub("\\.", "", x)
+  res <- icd.data::icd9cm_hierarchy[
+    icd.data::icd9cm_hierarchy$code %in% x,
+    "long_desc"
+  ]
+  # eval(bquote(expect_equal(icd::explain_code(.(x)), .(desc), ...)))
+  expect_equal(desc, res, ...)
+}
+
+eee10 <- function(x, desc, ...) {
+  x <- sub("\\.", "", x)
+  res <- icd.data::icd10cm2016[
+    icd.data::icd10cm2016 %in% x,
+    "long_desc"
+  ]
+  if (nrow(res) == 0 && is.null(x)) {
+    expect_true(TRUE)
+  } else {
+    expect_equal(desc, res, ...)
+  }
+}
 
 expect_icd9_sub_chap_equal <- function(x, start, end, ...) {
   eval(bquote(expect_chap_equal(.(x), .(start), .(end),

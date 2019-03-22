@@ -66,7 +66,7 @@
     stopifnot(is.character(file_name), length(file_name) == 1)
     if (!is.null(data_raw_path) &&
       !dir.exists(data_raw_path)) {
-      data_raw_path <- tempdir()
+      stop("icd.data resource directory not defined.")
     }
     save_path <- file.path(
       data_raw_path,

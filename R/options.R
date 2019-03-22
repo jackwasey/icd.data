@@ -101,9 +101,11 @@
   .set_hard(
     interact = FALSE,
     absent_action = "silent",
-    resource = tempdir(),
     verbose = FALSE
   )
+  if (is.null(icd_data_dir())) {
+    .set(resource = tempdir())
+  }
 }
 
 .set_attached_options <- function() {

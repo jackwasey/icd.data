@@ -66,7 +66,7 @@ icd9_extract_alpha_numeric <- function(x) {
   t(
     vapply(
       str_match_all(.as_char_no_warn(x),
-                    pattern = "([VvEe]?)([[:digit:].]+)"
+        pattern = "([VvEe]?)([[:digit:].]+)"
       ),
       FUN = function(y) matrix(data = y[2:3], nrow = 1, ncol = 2),
       FUN.VALUE = c(NA_character_, NA_character_)

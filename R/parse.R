@@ -394,13 +394,16 @@
   chap_lookup <- lapply(icd9_chapters, function(y)
     .vec_to_env_true(
       .expand_range_major.icd9(y[["start"]],
-        y[["end"]], defined = FALSE)
+        y[["end"]],
+        defined = FALSE
+      )
     ))
   subchap_lookup <- lapply(icd9_sub_chapters, function(y)
     .vec_to_env_true(
       .expand_range_major.icd9(y[["start"]],
         y[["end"]],
-        defined = FALSE)
+        defined = FALSE
+      )
     ))
   for (i in seq_along(majors)) {
     for (chap_num in seq_along(icd9_chapters)) {

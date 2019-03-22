@@ -107,16 +107,19 @@ lockBinding("icd9cm2011", environment())
   # also, since icd depends on icd.data, R CMD check seems to use the old icd.data version and doesn't find its own data, so check it exists first:
   if (!require("icd.data", quietly = TRUE)) return()
   lazyenv <- asNamespace("icd.data")$.__NAMESPACE__.$lazydata
-  if (exists("icd10cm2019", lazyenv))
+  if (exists("icd10cm2019", lazyenv)) {
     getExportedValue("icd10cm2019", ns = asNamespace("icd.data"))
-  else
+  } else {
     NULL
+  }
 }
 makeActiveBinding("icd10cm_latest", .icd10cm_latest_binding, environment())
 lockBinding("icd10cm_latest", environment())
 
 .icd9cm_billable_binding <- function(x) {
-  message("Use icd9cm_leaf_v32 instead of icd9cm_billable.")
+  if (.verbose() && .interact()) {
+    message("Use icd9cm_leaf_v32 instead of icd9cm_billable.")
+  }
   icd9cm_billable <- list()
   # just for R CMD check, with the circular dep and R-devel
   if (!require("icd.data", quietly = TRUE)) return()
