@@ -3,3 +3,6 @@
 .RData
 icd.data.Rcheck
 icd.data_*.tar.gz
+data-raw
+*.swp
+*.un~

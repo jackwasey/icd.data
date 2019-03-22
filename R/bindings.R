@@ -91,7 +91,8 @@
 # Dynamic
 .icd9cm2011_binding <- function(x) {
   if (!missing(x)) .stop_binding_ro()
-  # lazy data so not available yet
+  # lazy data so not available yet, and work around crazy R CMD check bug/feature
+  if (!require("icd.data", quietly = TRUE)) return()
   getExportedValue("icd9cm_hierarchy", ns = asNamespace("icd.data"))
 }
 makeActiveBinding("icd9cm2011", .icd9cm2011_binding, environment())
@@ -99,6 +100,7 @@ lockBinding("icd9cm2011", environment())
 
 .icd10cm_active_binding <- function(x) {
   if (!missing(x)) .stop_binding_ro()
+  if (!require("icd.data", quietly = TRUE)) return()
   if (.verbose()) {
     message(
       "Binding getting icd10cm_active, version is: ",
@@ -114,6 +116,7 @@ lockBinding("icd10cm_active", environment())
   if (!missing(x)) .stop_binding_ro()
   # lazy data, which is not available during package .onLoad yet.
   # also, since icd depends on icd.data, R CMD check seems to use the old icd.data version and doesn't find its own data, so check it exists first:
+  if (!require("icd.data", quietly = TRUE)) return()
   lazyenv <- asNamespace("icd.data")$.__NAMESPACE__.$lazydata
   if (exists("icd10cm2019", lazyenv))
     getExportedValue("icd10cm2019", ns = asNamespace("icd.data"))
