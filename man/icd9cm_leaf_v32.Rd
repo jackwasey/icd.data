@@ -19,7 +19,7 @@ are stored as Unicode, \code{latin-1} or \code{cp1252}.
 This all done during package creation, but can be repeated by package users,
 including pulling the data from the web pages directly. Despite my best
 efforts, current locale can give different results, but this packaged data is
-correct, with some \code{UTF-8} encoded strings.
-\code{icd9cm_billable} has been replaced.
+correct, with some \code{UTF-8} encoded strings. \code{icd9cm_billable} has
+been deprecated, and now includes only the latest version (32).
 }
 \keyword{datasets}

@@ -338,8 +338,8 @@ NULL
 #' This all done during package creation, but can be repeated by package users,
 #' including pulling the data from the web pages directly. Despite my best
 #' efforts, current locale can give different results, but this packaged data is
-#' correct, with some \code{UTF-8} encoded strings.
-#' \code{icd9cm_billable} has been replaced.
+#' correct, with some \code{UTF-8} encoded strings. \code{icd9cm_billable} has
+#' been deprecated, and now includes only the latest version (32).
 #' @docType data
 #' @keywords datasets
 #' @format data frames with columns \code{code}, \code{short_desc}, and
@@ -348,6 +348,22 @@ NULL
 #' \url{http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html}
 #' @name icd9cm_leaf_v32
 NULL
+
+#' Deprecated name for the ICD-9-CM leaf nodes
+#'
+#' This now just contains the final version (2011, version number 32). Use
+#' \code{\link{icd9cm_leaf_v32}} instead.
+#' @seealso \code{\link{icd9cm_leaf_v32}}
+#' @docType data
+#' @keywords datasets
+#' @format data frames with columns \code{code}, \code{short_desc}, and
+#'   \code{long_desc}.
+#' @source
+#' \url{http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html}
+#' @name icd9cm_billable
+#' @export
+NULL
+
 
 #' Hospital discharge data from Vermont
 #'
