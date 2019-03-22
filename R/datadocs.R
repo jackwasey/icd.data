@@ -202,27 +202,6 @@ NULL
 #' @export
 NULL
 
-#' The currently active version of ICD-10-CM in this package.
-#'
-#' This is work in progress, so not exported. The default is the latest version,
-#' however, depending on the context, it seems not to respect the R option, e.g.
-#' during testing. `set_icd10cm_ver()` may be used to set the active version,
-#' and `get_icd10cm_ver()` gives the current setting. `get_icd10cm_version(ver =
-#' "2015")` will return the 2015 version. `get_icd10cm_active()` will return the
-#' currently active version, as set by the option, then default being the most
-#' recent available.
-#' @examples
-#' \dontrun{
-#' set_icd10cm_active_ver("2016")
-#' }
-#' @details This is an active binding, so is exported explicitly
-#' @docType data
-#' @keywords datasets
-#' @seealso get_icd10cm_version get_icd10cm_ver set_icd10cm_ver
-#' @name icd10cm_active
-#' @export
-NULL
-
 #' French ICD-10-FR modification of WHO ICD-10 used in France
 #'
 #' La Classification internationale statistique des maladies (CIM), version 10,

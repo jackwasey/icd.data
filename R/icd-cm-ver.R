@@ -130,7 +130,7 @@ get_icd10cm_available <- function(
 with_icd10cm_version <- function(ver, code) {
   stopifnot(is.character(ver), length(ver) == 1)
   old <- options("icd.data.icd10cm_active_ver" = ver)
-  on.exit(options(old))
+  on.exit(options(old), add = TRUE)
   force(code)
 }
 

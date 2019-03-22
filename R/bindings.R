@@ -101,20 +101,6 @@
 makeActiveBinding("icd9cm2011", .icd9cm2011_binding, environment())
 lockBinding("icd9cm2011", environment())
 
-.icd10cm_active_binding <- function(x) {
-  if (!missing(x)) .stop_binding_ro()
-  if (!require("icd.data", quietly = TRUE)) return()
-  if (.verbose()) {
-    message(
-      "Binding getting icd10cm_active, version is: ",
-      getOption("icd.data.icd10cm_active_ver")
-    )
-  }
-  get_icd10cm_active()
-}
-makeActiveBinding("icd10cm_active", .icd10cm_active_binding, environment())
-lockBinding("icd10cm_active", environment())
-
 .icd10cm_latest_binding <- function(x) {
   if (!missing(x)) .stop_binding_ro()
   # lazy data, which is not available during package .onLoad yet.

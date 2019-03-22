@@ -22,7 +22,7 @@ test_that("all available data is reported", {
 test_that("temporarily set active version", {
   skip_icd10cm_flat_avail("2014")
   with_icd10cm_version("2014", code = {
-    expect_identical(nrow(icd.data::icd10cm_active), nrow(icd10cm2014))
+    expect_identical(nrow(icd.data::get_icd10cm_active()), nrow(icd10cm2014))
   })
 })
 
