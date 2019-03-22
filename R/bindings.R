@@ -132,6 +132,8 @@ lockBinding("icd10cm_latest", environment())
 .icd9cm_billable_binding <- function(x) {
   message("Use icd9cm_leaf_v32 instead of icd9cm_billable.")
   icd9cm_billable <- list()
+  # just for R CMD check, with the circular dep and R-devel
+  if (!require("icd.data", quietly = TRUE)) return()
   lazyenv <- asNamespace("icd.data")$.__NAMESPACE__.$lazydata
   # work around the fact that R CMD check gets all the bindings before lazy data is put in the package namespace
   if (!exists("icd9cm_leaf_v32", lazyenv)) return()
