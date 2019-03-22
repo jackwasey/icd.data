@@ -39,3 +39,6 @@ icd_data_dir()
 unlink(td)
 try(icd_data_dir())
 }
+\seealso{
+\code{\link{download_icd_data}}
+}

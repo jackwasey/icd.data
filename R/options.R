@@ -243,6 +243,7 @@ with_absent_action <- function(absent_action = c(
 #' @return The path to the resource directory, or \code{NULL} if it could not be
 #'   found.
 #' @return Invisibly returns the data path which was set, or NULL if not done.
+#' @seealso \code{\link{download_icd_data}}
 #' @export
 setup_icd_data <- function(path = .icd_data_default) {
   options("icd.data.offline" = FALSE)
@@ -253,7 +254,22 @@ setup_icd_data <- function(path = .icd_data_default) {
   invisible(path)
 }
 
+#' Download all the additional data at once
+#'
+#' This may take ten minutes on a broadband connection. It will download and
+#' parse WHO ICD-10, French, and Belgian codes and descriptions. It will also
+#' get years 2014, 2015, 2017, and 2018 for ICD-10-CM (diagnostic codes), and
+#' 2014--2019 procedure codes. 2016 and 2019 diagnostic codes are included in
+#' the package data.
+#' @seealso \code{\link{setup_icd_data}}
+#' @examples
+#' \dontrun{
+#' setup_icd_data()
+#' download_icd_data()
+#' }
+#' @export
 download_icd_data <- function() {
+  setup_icd_data()
   message("Downloading, caching and parsing all ICD data")
   message("This will take a few minutes.")
   options("icd.data.offline" = FALSE)
