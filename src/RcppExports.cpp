@@ -39,11 +39,36 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// icd9Compare
+bool icd9Compare(std::string a, std::string b);
+RcppExport SEXP _icd_data_icd9Compare(SEXP aSEXP, SEXP bSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type a(aSEXP);
+    Rcpp::traits::input_parameter< std::string >::type b(bSEXP);
+    rcpp_result_gen = Rcpp::wrap(icd9Compare(a, b));
+    return rcpp_result_gen;
+END_RCPP
+}
+// icd9Order
+std::vector<std::size_t> icd9Order(std::vector<std::string> x);
+RcppExport SEXP _icd_data_icd9Order(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<std::string> >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(icd9Order(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_icd_data_icd10cmCompare", (DL_FUNC) &_icd_data_icd10cmCompare, 2},
     {"_icd_data_icd10cmSort", (DL_FUNC) &_icd_data_icd10cmSort, 1},
     {"_icd_data_icd10cmOrder", (DL_FUNC) &_icd_data_icd10cmOrder, 1},
+    {"_icd_data_icd9Compare", (DL_FUNC) &_icd_data_icd9Compare, 2},
+    {"_icd_data_icd9Order", (DL_FUNC) &_icd_data_icd9Order, 1},
     {NULL, NULL, 0}
 };
 

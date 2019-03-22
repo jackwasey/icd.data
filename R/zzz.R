@@ -45,6 +45,7 @@ utils::globalVariables(c(
   "icd9_sub_chapters",
   "icd9_chapters",
   "icd9cm_sources",
+  "icd9cm_leaf_v32",
   "icd9_majors",
   "icd10cm2019",
   "icd10cm_sources",

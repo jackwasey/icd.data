@@ -167,7 +167,7 @@
     stringsAsFactors = FALSE
   )
   if (verbose) message("now sort so that E is after V")
-  new_order <- icd::order.icd9(out[["code"]])
+  new_order <- order.icd9(out[["code"]])
   stopifnot(!anyNA(out[["code"]]))
   stopifnot(!anyNA(new_order))
   stopifnot(!any(grepl(out[["code"]], pattern = "[[:space:]]")))
@@ -201,7 +201,7 @@
   out$short_desc <- enc2utf8(out$short_desc)
   out$long_desc <- enc2utf8(out$long_desc)
   var_name <- paste0("icd9cm_leaf_v", ver)
-  out[icd::order.icd9(out$code), ]
+  out[order.icd9(out$code), ]
   rownames(out) <- NULL
   assign(var_name, out)
   if (save_data) {
@@ -231,7 +231,7 @@
   close(f)
   names(icd9cm_billable27) <- c("code", "long_desc", "short_desc")
   icd9cm_billable27 <- icd9cm_billable27[c(1, 3, 2)] # reorder columns
-  reorder <- icd::order.icd9(icd9cm_billable27[["code"]])
+  reorder <- order.icd9(icd9cm_billable27[["code"]])
   invisible(icd9cm_billable27[reorder, ])
 }
 
@@ -302,7 +302,7 @@
     x = icd9_rtf$code, short_code = TRUE,
     verbose = verbose
   )
-  icd9_order <- icd::order.icd9
+  icd9_order <- order.icd9
   chaps <- chaps[icd9_order(.as_char_no_warn(chaps$three_digit)), ]
   icd9_rtf <- icd9_rtf[icd9_order(icd9_rtf$code), ]
   out <- cbind(

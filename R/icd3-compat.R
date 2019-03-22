@@ -78,3 +78,12 @@ str_match_all <- function(string, pattern, ...) {
   string <- as.character(string)
   regmatches(x = string, m = regexec(pattern = pattern, text = string, ...))
 }
+
+order.icd9 <- function(x) {
+  if (anyNA(x)) {
+    warning("Dropping NA values")
+    x <- x[!is.na(x)]
+    if (length(x) == 0) return(integer())
+  }
+  icd9_order_rcpp(x)
+}

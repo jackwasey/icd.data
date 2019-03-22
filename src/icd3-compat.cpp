@@ -83,3 +83,48 @@ IntegerVector icd10cmOrder(const CharacterVector &x) {
   CharacterVector x_sorted = icd10cmSort(x);
   return match(x, x_sorted);
 }
+
+// [[Rcpp::export(icd9_compare_rcpp)]]
+bool icd9Compare(std::string a, std::string b) {
+  const char *acs = a.c_str();
+  const char *bcs = b.c_str();
+  // most common is numeric, so deal with that first:
+  if (*acs < 'A') return strcmp(acs, bcs) < 0;
+  // if the second char is now  a number, then we can immediately return false
+  if (*bcs < 'A') return false;
+  // V vs E as first or both characters is next
+  if (*acs == 'V' && *bcs == 'E') return true;
+  if (*acs == 'E' && *bcs == 'V') return false;
+  // now cover both V codes or both E codes
+  return strcmp(acs, bcs) < 0;
+}
+
+typedef std::pair<std::string, std::size_t> pas;
+
+bool icd9ComparePair(pas a, pas b) {
+  std::string af = a.first;
+  std::string bf = b.first;
+  return icd9Compare(af, bf);
+}
+
+// add one because R indexes from 1, not 0
+inline std::size_t
+  getSecondPlusOne(const std::pair<std::string, std::size_t> &p) {
+    return p.second + 1;
+  }
+
+// [[Rcpp::export(icd9_order_rcpp)]]
+std::vector<std::size_t> icd9Order(std::vector<std::string> x) {
+  std::vector<std::pair<std::string, std::size_t>> vp;
+  std::vector<std::size_t> out;
+  out.reserve(x.size());
+  vp.reserve(x.size());
+  for (std::size_t i = 0; i != x.size(); ++i)
+    vp.push_back(std::make_pair(x[i], i));
+  std::sort(vp.begin(), vp.end(), icd9ComparePair);
+  std::transform(vp.begin(),
+                 vp.end(),
+                 std::back_inserter(out),
+                 getSecondPlusOne);
+  return out;
+}

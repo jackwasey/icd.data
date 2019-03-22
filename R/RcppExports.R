@@ -2,14 +2,22 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 icd10cm_compare_rcpp <- function(x, y) {
-    .Call('_icd_data_icd10cmCompare', PACKAGE = 'icd.data', x, y)
+    .Call(`_icd_data_icd10cmCompare`, x, y)
 }
 
 icd10cm_sort_rcpp <- function(x) {
-    .Call('_icd_data_icd10cmSort', PACKAGE = 'icd.data', x)
+    .Call(`_icd_data_icd10cmSort`, x)
 }
 
 icd10cm_order_rcpp <- function(x) {
-    .Call('_icd_data_icd10cmOrder', PACKAGE = 'icd.data', x)
+    .Call(`_icd_data_icd10cmOrder`, x)
+}
+
+icd9_compare_rcpp <- function(a, b) {
+    .Call(`_icd_data_icd9Compare`, a, b)
+}
+
+icd9_order_rcpp <- function(x) {
+    .Call(`_icd_data_icd9Order`, x)
 }
 

@@ -129,6 +129,15 @@ lockBinding("icd10cm_active", environment())
 makeActiveBinding("icd10cm_latest", .icd10cm_latest_binding, environment())
 lockBinding("icd10cm_latest", environment())
 
+.icd9cm_billable_binding <- function(x) {
+  message("Use icd9cm_leaf_v32 instead of icd9cm_billable.")
+  icd9cm_billable <- list()
+  icd9cm_billable[["32"]] <- icd9cm_leaf_v32
+  icd9cm_billable
+}
+makeActiveBinding("icd9cm_billable", .icd9cm_billable_binding, environment())
+lockBinding("icd9cm_billable", environment())
+
 #' Localised synonym for icd10fr2019, with French column names
 #' @keywords internal
 #' @noRd
