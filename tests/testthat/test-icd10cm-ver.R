@@ -5,7 +5,7 @@ test_that("active version set to latest version", {
     ver = "2019",
     expect_identical(
       get_icd10cm_active(),
-      icd10cm_latest
+      icd10cm2019
     )
   )
 })

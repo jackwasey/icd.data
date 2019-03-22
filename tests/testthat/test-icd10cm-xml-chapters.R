@@ -61,6 +61,7 @@ test_that("chapter parsing for ICD-10 went okay", {
 })
 
 test_that("sub-chapter parsing for ICD-10 went okay", {
+  skip("slow! 12 seconds on laptop")
   skip_on_cran()
   skip_if_not_installed("icd", "3.4")
   for (y in 2014:2019) {
