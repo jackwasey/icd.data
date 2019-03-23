@@ -309,9 +309,6 @@
 icd_data_dir <- function() {
   o <- getOption("icd.data.resource")
   if (!is.null(o)) return(o)
-  setup_icd_data()
-  o <- getOption("icd.data.resource")
-  if (!is.null(o)) return(o)
   msg <- paste("The", sQuote("icd.data.resource"), "option is not set.")
   if (.verbose()) message(msg)
   NULL

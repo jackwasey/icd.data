@@ -247,11 +247,12 @@ with_absent_action <- function(absent_action = c(
 #' @return Invisibly returns the data path which was set, or NULL if not done.
 #' @seealso \code{\link{download_icd_data}}
 #' @export
-setup_icd_data <- function(path = .icd_data_default) {
+setup_icd_data <- function(path) {
   options("icd.data.offline" = FALSE)
   message("Using the icd data cache: ", path)
   if (!dir.exists(path)) {
-    stopifnot(dir.create(path))
+    created <- dir.create(path)
+    if (!created) stop("Unable to create directory at: ", path)
   }
   invisible(path)
 }
@@ -271,7 +272,8 @@ setup_icd_data <- function(path = .icd_data_default) {
 #' }
 #' @export
 download_icd_data <- function() {
-  setup_icd_data()
+  setup_icd_data(path = getOption("icd.data.resource",
+                                  default = .icd_data_default))
   message("Downloading, caching and parsing all ICD data")
   message("This will take a few minutes.")
   options("icd.data.offline" = FALSE)
