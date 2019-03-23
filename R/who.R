@@ -2,7 +2,7 @@
 #'
 #' This is likely to be not exported in the future, as it is designed for the
 #' transition to icd.data version 1.1 . The user may use the active binding
-#' `icd10who2016` as if it is a variable. In some situations, it may be
+#' \code{icd10who2016} as if it is a variable. In some situations, it may be
 #' preferable to call this function. E.g., using the active binding when the
 #' cache directory has not been populated may produce messages. Auto-complete in
 #' Rstudio is unfortunately considered still to be interactive, so these
@@ -42,8 +42,8 @@
   who_base <- "https://apps.who.int/classifications"
   json_url <- paste(who_base, edition, "browse", year, lang, resource, sep = "/")
   # TODO: this stops us using the memoised data, even if available. Seems an unlikely situation, except maybe for local testing. memoise::has_cache(f, ...) lets us test whether a memoise call is cached already.
-  if (.offline() || !.interactive()) {
-    msg <- "Offline, so unable to attempt WHO data download."
+  if (.offline() || !.interact()) {
+    msg <- "Offline and not interactive, so not attempting WHO data download."
     .absent_action_switch(msg)
     return(NULL)
   }
@@ -59,7 +59,7 @@
 
 #' Use WHO API to discover chapters
 #'
-#' Of note, the `WHO` package does not provide access to classifications, just
+#' Of note, the \code{WHO} package does not provide access to classifications, just
 #' WHO summary data.
 #' @keywords internal
 #' @noRd
@@ -92,7 +92,7 @@
 #' Use public interface to fetch ICD-10 WHO version
 #'
 #' The user may call this function to install the full WHO ICD-10 definition on
-#' their machine, after which it will be available to `icd`. TODO: determine the
+#' their machine, after which it will be available to \code{icd}. TODO: determine the
 #' best place to save this data.
 #' @param concept_id This is the id for the code or code group, e.g. "XI"
 #'   (Chapter 6), "T90-T98" (A sub-chapter), "E01" (A sub-sub-chapter). You
@@ -100,7 +100,7 @@
 #' @param year integer 4-digit year
 #' @param lang Currently it seems only 'en' works
 #' @param verbose logical
-#' @param ... further arguments passed to self recursively, or `.who_api`
+#' @param ... further arguments passed to self recursively, or \code{.who_api}
 #' @keywords internal
 #' @noRd
 .dl_icd10who <- function(concept_id = NULL,

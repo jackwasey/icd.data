@@ -11,10 +11,16 @@ get_icd10cm_active(verbose = FALSE)
 }
 \arguments{
 \item{ver}{Character version of ICD-10-CM to use, corresponding to the suffix
-of the `data.frame` name, e.g. for 2019 ICD-10-CM, use "icd10cm2019" for
-Dutch 2014 ICD-CM translations, use 'icd10cm2014_nl"}
+of the \code{data.frame} name, e.g. for 2019 ICD-10-CM, use
+\code{"icd10cm2019"} for Dutch 2014 ICD-CM translations, use
+'icd10cm2014_nl"}
 
-\item{verbose}{single logical value, defaults to \code{FALSE} in most settings, based on the default value of the option. Verbose output may be set for the R session using `options(icd.data.verbose = TRUE)`. Furthermore, for some functions, setting the verbosity to an integer greater than one will give more verbosity. This is primarily for development.}
+\item{verbose}{single logical value, defaults to \code{FALSE} in most
+settings, based on the default value of the option. Verbose output may be
+set for the R session using \code{options(icd.data.verbose = TRUE)}.
+Furthermore, for some functions, setting the verbosity to an integer
+greater than one will give more verbosity. This is primarily for
+development.}
 }
 \description{
 When called without an argument, it returns the curerntly active version as
@@ -22,7 +28,8 @@ set by \code{set_icd10cm_active_ver()}
 }
 \section{Functions}{
 \itemize{
-\item \code{get_icd10cm_active}: Get the currently active version of ICD-10-CM.
+\item \code{get_icd10cm_active}: Get the currently active version of
+ICD-10-CM.
 }}
 
 \examples{

@@ -10,6 +10,7 @@ test_that("download and parse all active bindings", {
     "icd10cm_latest"
   )) {
     inf <- paste("Binding:", b)
+    if (!.exists_in_cache(b)) skip(paste(inf, "not in cache"))
     expect_true(b %in% ls(ns), info = inf)
     expect_true(.exists_in_ns(b), info = inf)
     expect_true(bindingIsActive(b, ns), info = inf)

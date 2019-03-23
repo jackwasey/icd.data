@@ -185,6 +185,14 @@
       if (verbose) message("Found ", var_name, " in cache.")
       return(dat)
     }
+    # strictly speaking, we could be offline and already have the raw data, but this is a weird corner case:
+    if (.offline()) {
+      if (verbose) message("Offline and not in cache")
+      .absent_action_switch(
+        "Offline so not attempting to download or parse",
+        must_work = is.null(alt))
+      return(alt)
+    }
     if (verbose) {
       message(
         "Trying to find parse function: ",
@@ -309,7 +317,7 @@
 .icd_data_default <- file.path("~", ".icd.data")
 
 .set_data_dir <- function(path = .icd_data_default) {
-  if (!dir.exists(path)) {
+  if (is.null(path) || !dir.exists(path)) {
     if (!dir.create(path)) stop("Could not create directory at: ", path)
   }
   options("icd.data.resource" = path)
@@ -319,7 +327,7 @@
 #' @describeIn setup_icd_data Return the currently active data directory. If missing, it will return \code{NULL} and, depending on \code{getOption("icd.data.absent_action")}, will stop, give a message, or do nothing.
 #' @export
 icd_data_dir <- function() {
-  o <- getOption("icd.data.resource")
+  o <- getOption("icd.data.resource", default = NULL)
   if (!is.null(o)) return(o)
   msg <- paste("The", sQuote("icd.data.resource"), "option is not set.")
   if (.verbose()) message(msg)
@@ -327,14 +335,14 @@ icd_data_dir <- function() {
 }
 
 .confirm_download <- function(absent_action = .absent_action(),
-                              interact = .interactive()) {
+                              interact = .interact()) {
   if (!.offline()) return(TRUE)
   ok <- FALSE
   if (interact) {
     message("icd.data needs to download and/or parse data.")
     ok <- isTRUE(
       askYesNo(
-        "May I download and cache a few MB per ICD edition as needed?" # nolint
+        "May I download and cache a few MB per ICD edition as needed?"
       ) # nolint
     )
   }
@@ -382,7 +390,7 @@ icd_data_dir <- function() {
 .ls_fun <- function(f) ls(environment(f))
 
 # for development, list envrionment of a function
-.ls.str_fun <- function(f) ls.str(environment(f))
+.ls.str_fun <- function(f) utils::ls.str(environment(f))
 
 #' List the actual data in this package, not bindings
 #' @examples

@@ -98,7 +98,6 @@
                           save_path,
                           insecure = TRUE,
                           verbose = FALSE,
-                          absent_action = .absent_action(),
                           dl_msg = NULL,
                           ...) {
   stopifnot(is.character(url))

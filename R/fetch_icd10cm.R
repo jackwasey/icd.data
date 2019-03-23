@@ -4,7 +4,7 @@
 #' Get annual version of ICD-10-CM
 #' @param year four-digit
 #' @template verbose
-#' @param ... passed through, e.g., `offline = FALSE`
+#' @param ... passed through, e.g., \code{offline = FALSE}
 #' @keywords internal
 #' @noRd
 .icd10cm_get_flat_file <- function(year, verbose = .verbose(), ...) {

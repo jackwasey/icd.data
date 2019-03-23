@@ -22,8 +22,8 @@
 .dl_icd10be2014 <- function(dx = TRUE,
                             verbose = .verbose(),
                             ...) {
-  if (.offline() && !.interactive()) {
-    msg <- "Offline, so unable to attempt Belgian data download."
+  if (.offline() && !.interact()) {
+    msg <- "Offline and not interactive, so not downloading Belgian data."
     .absent_action_switch(msg)
     return(NULL)
   }
@@ -57,7 +57,8 @@
 #' \url{https://www.health.belgium.be/fr/sante/organisation-des-soins-de-sante/hopitaux/systemes-denregistrement/icd-10-be}
 #' \url{https://www.health.belgium.be/sites/default/files/uploads/fields/fpshealth_theme_file/fy2017_reflist_icd-10-be.xlsx_last_updatet_28-07-2017_1.xlsx}
 #' \url{https://www.health.belgium.be/fr/fy2014reflisticd-10-bexlsx}
-#' @param ... passed to `download_to_data_raw`, e.g., `offline = FALSE`.
+#' @param ... passed to \code{download_to_data_raw}, e.g., \code{offline =
+#'   FALSE}.
 #' @seealso \code{link{parse_icd10be2014_be}}
 #' @keywords internal
 #' @noRd
@@ -122,9 +123,11 @@
 }
 
 #' Get 2014 French and Dutch translations of ICD-10-CM for Beglian coding
-#' @references \url{https://www.health.belgium.be/fr/sante/organisation-des-soins-de-sante/hopitaux/systemes-denregistrement/icd-10-be}
-#' \url{https://www.health.belgium.be/fr/fy2014reflisticd-10-bexlsx}
-#' @param ... passed to `.download_to_data_raw`, e.g., `offline = FALSE`.
+#' @references
+#'   \url{https://www.health.belgium.be/fr/sante/organisation-des-soins-de-sante/hopitaux/systemes-denregistrement/icd-10-be}
+#'    \url{https://www.health.belgium.be/fr/fy2014reflisticd-10-bexlsx}
+#' @param ... passed to \code{.download_to_data_raw}, e.g., \code{offline =
+#'   FALSE}.
 #' @seealso \code{link{parse_icd10be2014_be}}
 #' @keywords internal
 #' @noRd

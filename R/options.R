@@ -28,7 +28,7 @@
 #' @keywords internal
 .set_init_options <- function() {
   if (!("icd.data.verbose" %in% names(options()))) {
-    options(icd.data.verbose = FALSE)
+    options("icd.data.verbose" = .env_var_is_true("ICD_DATA_VERBOSE"))
   }
   if (!("icd.data.offline" %in% names(options()))) {
     options("icd.data.offline" = !.env_var_is_false("ICD_DATA_OFFLINE"))
@@ -37,20 +37,20 @@
   options(
     "icd.data.interact" =
       !.env_var_is_false("ICD_DATA_INTERACT") ||
-        interactive()
+      interactive()
   )
-  # stop or message, anything else will silently continue
-  if ("icd.data.absent_action" %nin% names(options())) {
-    ev <- tolower(Sys.getenv("ICD_DATA_ABSENT_ACTION", unset = "stop"))
-    stopifnot(ev %in% c(
-      "message",
-      "stop",
-      "warning",
-      "warn",
-      "silent"
-    ))
-    options("icd.data.absent_action" = ev)
-  }
+  # stop or message, anything else will silently continue, which we have to
+  # default to onLoad to avoid numerous R CMD check problems. For this reason
+  # also, don't check whether option already set, just to make sure we are
+  # really silent with CRAN.
+  ev <- tolower(Sys.getenv("ICD_DATA_ABSENT_ACTION", unset = "silent"))
+  stopifnot(ev %in% c(
+    "message",
+    "stop",
+    "warning",
+    "silent"
+  ))
+  options("icd.data.absent_action" = ev)
   # Which version of ICD-10-CM to use by default?
   if (!("icd.data.icd10cm_active_ver" %in% names(options()))) {
     set_icd10cm_active_ver("2019", check_exists = FALSE)
@@ -109,16 +109,6 @@
   }
 }
 
-.set_attached_options <- function() {
-  .set_default_options(hard = FALSE)
-  .set(
-    offline = TRUE,
-    absent_action = "stop",
-    resource = .icd_data_default,
-    interact = interactive()
-  )
-}
-
 .set_dev_options <- function() {
   .set_default_options(hard = TRUE)
   .set(
@@ -136,7 +126,7 @@
   invisible(x)
 }
 
-.interactive <- function(x) {
+.interact <- function(x) {
   if (missing(x)) {
     return(isTRUE(getOption("icd.data.interact")))
   }
@@ -152,7 +142,15 @@
   invisible(x)
 }
 
-.absent_action <- function() {
+.absent_action <- function(x = c("stop",
+                                 "warning",
+                                 "message",
+                                 "silent")) {
+  if (!missing(x)) {
+    x <- match.arg(x)
+    options("icd.data.absent_action" = x)
+    return(x)
+  }
   a <- getOption("icd.data.absent_action")
   # default to silent, as I think R check uses empty options for various parts of check, which ignore anything I might have wanted to set in .onLoad .
   if (is.null(a)) {
@@ -164,16 +162,15 @@
 
 .absent_action_switch <- function(msg, must_work = TRUE) {
   switch(.absent_action(),
-    "stop" = {
-      if (must_work) {
-        stop(msg, call. = FALSE)
-      } else {
-        warning(msg, call. = FALSE)
-      }
-    },
-    "warning" = warning(msg, call. = FALSE),
-    "warn" = warning(msg, call. = FALSE),
-    "message" = message(msg)
+         "stop" = {
+           if (must_work) {
+             stop(msg, call. = FALSE)
+           } else {
+             warning(msg, call. = FALSE)
+           }
+         },
+         "warning" = warning(msg, call. = FALSE),
+         "message" = message(msg)
   )
 }
 
@@ -221,13 +218,12 @@ with_interact <- function(interact, code) {
 }
 
 with_absent_action <- function(absent_action = c(
-                                 "message",
-                                 "stop",
-                                 "warning",
-                                 "warn",
-                                 "silent"
-                               ),
-                               code) {
+  "message",
+  "stop",
+  "warning",
+  "silent"
+),
+code) {
   absent_action <- match.arg(absent_action)
   old <- options("icd.data.absent_action" = absent_action)
   on.exit(options(old))
@@ -258,7 +254,7 @@ with_absent_action <- function(absent_action = c(
 setup_icd_data <- function(path = .icd_data_default) {
   options("icd.data.offline" = FALSE)
   message("Using the icd data cache: ", path)
-  if (!dir.exists(path)) {
+  if (is.null(path) || !dir.exists(path)) {
     created <- dir.create(path)
     if (!created) stop("Unable to create directory at: ", path)
   }
@@ -281,7 +277,7 @@ setup_icd_data <- function(path = .icd_data_default) {
 #' @export
 download_icd_data <- function() {
   setup_icd_data(path = getOption("icd.data.resource",
-    default = .icd_data_default
+                                  default = .icd_data_default
   ))
   message("Downloading, caching and parsing all ICD data")
   message("This will take a few minutes.")

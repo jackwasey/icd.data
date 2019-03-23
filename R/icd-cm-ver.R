@@ -7,10 +7,10 @@ set_icd10cm_active_ver <- function(ver, check_exists = TRUE) {
   old_v <- get_icd10cm_active_ver()
   v <- as.character(ver)
   stopifnot(grepl("^[[:digit:]]{4}$", v))
-  stopifnot(v %in% names(icd10cm_sources))
   v_name <- paste0("icd10cm", v)
   if (check_exists &&
     !exists(v_name, envir = asNamespace("icd.data"))) {
+    stopifnot(v %in% names(icd10cm_sources))
     stopifnot(.exists_in_ns(v_name))
   }
   options("icd.data.icd10cm_active_ver" = v)
@@ -65,7 +65,8 @@ get_icd10cm_version <- function(ver,
   }
 }
 
-#' @describeIn get_icd10cm_version Get the currently active version of ICD-10-CM.
+#' @describeIn get_icd10cm_version Get the currently active version of
+#'   ICD-10-CM.
 #' @export
 get_icd10cm_active <- function(verbose = FALSE) {
   ver <- get_icd10cm_active_ver()
@@ -75,8 +76,8 @@ get_icd10cm_active <- function(verbose = FALSE) {
 
 #' Get the ICD-10-CM versions available in this package
 #' @template pc
-#' @param return_year Logical, which, if `TRUE`, will result in only a character
-#'   vector of year (or year-like version) being returned.
+#' @param return_year Logical, which, if \code{TRUE}, will result in only a
+#'   character vector of year (or year-like version) being returned.
 #' @examples
 #' # Diagnostic codes:
 #' get_icd10cm_available()
@@ -98,11 +99,11 @@ get_icd10cm_available <- function(
 
 #' Get the data for the latest ICD-10-CM version in this package.
 #'
-#' Usually, the `icd.data` package should be attached, and therefore appear on
-#' the search list, using `library(icd.data)` or `require(icd.data)`. If it is
-#' not attached, the active binding `icd10cm_latest` cannot find the packages
-#' own data! This function is a possible work-around to get the data without
-#' having to attach the package.
+#' Usually, the \code{icd.data} package should be attached, and therefore appear
+#' on the search list, using \code{library(icd.data)} or
+#' \code{require(icd.data)}. If it is not attached, the active binding
+#' \code{icd10cm_latest} cannot find the packages own data! This function is a
+#' possible work-around to get the data without having to attach the package.
 #' @examples
 #' # if icd.data not attached:
 #' a <- icd.data::icd10cm_latest
@@ -144,7 +145,7 @@ with_icd10cm_version <- function(ver, code) {
 #' @noRd
 .get_icd10cm_ver <- function(ver,
                              dx,
-                             interact = .interactive()) {
+                             interact = .interact()) {
   ver <- as.character(ver)
   stopifnot(grepl("^[[:digit:]]{4}$", ver))
   var_name <- paste0("icd10cm", ver)

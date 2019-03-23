@@ -28,7 +28,10 @@
   stopifnot(is.character(file_name), length(file_name) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
   if (verbose) message(url)
-  stopifnot(dir.exists(data_raw_path))
+  if (is.null(data_raw_path) || !dir.exists(data_raw_path)) {
+    .absent_action_switch("Data directory not defined", must_work = FALSE)
+    return()
+  }
   file_path <- file.path(data_raw_path, save_name)
   if (verbose) {
     sprintf(
@@ -64,9 +67,9 @@
              ...) {
     stopifnot(is.character(url), length(url) == 1)
     stopifnot(is.character(file_name), length(file_name) == 1)
-    if (!is.null(data_raw_path) &&
-      !dir.exists(data_raw_path)) {
-      stop("icd.data resource directory not defined.")
+    if (is.null(data_raw_path) || !dir.exists(data_raw_path)) {
+      .absent_action_switch(
+        "icd.data resource directory not defined or created.")
     }
     save_path <- file.path(
       data_raw_path,

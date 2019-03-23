@@ -17,6 +17,7 @@ env:
     - ICD_DATA_VERBOSE=TRUE
     # travis uses --as-cran by default
     - _R_CHECK_EXIT_ON_FIRST_ERROR_=true
+    - ICD_DATA_ABSENT_ACTION=message
   matrix:
     - ICD_DATA_OFFLINE=TRUE
     - ICD_DATA_OFFLINE=FALSE
