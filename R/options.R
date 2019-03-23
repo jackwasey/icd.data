@@ -104,7 +104,8 @@
     verbose = FALSE
   )
   if (is.null(icd_data_dir())) {
-    .set(resource = tempdir())
+    .set(resource = td <- tempdir())
+    message("Created temporary resource directory: ", td)
   }
 }
 
@@ -130,18 +131,25 @@
 .verbose <- function(x) {
   if (missing(x)) {
     return(isTRUE(getOption("icd.data.verbose")))
-  } else {
-    options(icd.data.verbose = x)
   }
-  x
+  options(icd.data.verbose = x)
+  invisible(x)
 }
 
-.interactive <- function() {
-  isTRUE(getOption("icd.data.interact"))
+.interactive <- function(x) {
+  if (missing(x)) {
+    return(isTRUE(getOption("icd.data.interact")))
+  }
+  options(icd.data.interact = x)
+  invisible(x)
 }
 
-.offline <- function() {
-  !isFALSE(getOption("icd.data.offline"))
+.offline <- function(x) {
+  if (missing(x)) {
+    return(isTRUE(getOption("icd.data.offline")))
+  }
+  options(icd.data.offline = x)
+  invisible(x)
 }
 
 .absent_action <- function() {
@@ -247,7 +255,7 @@ with_absent_action <- function(absent_action = c(
 #' @return Invisibly returns the data path which was set, or NULL if not done.
 #' @seealso \code{\link{download_icd_data}}
 #' @export
-setup_icd_data <- function(path) {
+setup_icd_data <- function(path = .icd_data_default) {
   options("icd.data.offline" = FALSE)
   message("Using the icd data cache: ", path)
   if (!dir.exists(path)) {
@@ -273,7 +281,8 @@ setup_icd_data <- function(path) {
 #' @export
 download_icd_data <- function() {
   setup_icd_data(path = getOption("icd.data.resource",
-                                  default = .icd_data_default))
+    default = .icd_data_default
+  ))
   message("Downloading, caching and parsing all ICD data")
   message("This will take a few minutes.")
   options("icd.data.offline" = FALSE)

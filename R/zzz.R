@@ -1,9 +1,11 @@
-.make_icd10cm_parsers()
+.debug <- FALSE
+.verbose(.debug)
+.make_icd10cm_parsers(verbose = .debug)
+.make_getters_and_fetchers(verbose = .debug)
 
 .onLoad <- function(libname, pkgname) {
   .set_init_options()
-  # be silent for package loading, which CRAN check does multiple times
-  .set_check_options()
+  # on CRAN, travis etc, ~/.icd.data doesn't exist and isn't created, so leave option unset
   for (trypath in c(
     getOption("icd.data.resource", default = ""),
     Sys.getenv("ICD_DATA_PATH"),
@@ -15,6 +17,8 @@
     }
   }
   # must make bindings on load, not attach (when namespace is sealed)
+  #
+  # The verbosity option can't be used downstream because the value is realized rather than the option being re-queried, so for testing, just setting to TRUE now.
   .make_active_bindings(asNamespace(pkgname), verbose = .verbose())
 }
 

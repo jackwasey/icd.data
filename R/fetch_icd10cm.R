@@ -97,7 +97,7 @@
   fp
 }
 
-.make_icd10cm_parse_fun <- function(year, dx) {
+.make_icd10cm_parse_fun <- function(year, dx, verbose) {
   # can't have the function in the loop otherwise it inherits the environment of
   # the loop, doesn't have it's own unique one?
   #
@@ -105,21 +105,25 @@
   # later evaluated in the loop environment.
   force(year)
   force(dx)
+  force(verbose)
   parse_fun <- function() {
-    .parse_icd10cm_year(year = year, dx = dx)
+    .parse_icd10cm_year(year = year, dx = dx, verbose = verbose)
   }
   parse_fun_env <- environment(parse_fun)
   parse_fun_env$year <- as.character(year)
   parse_fun_env$dx <- dx
+  parse_fun_env$verbose <- verbose
   parse_fun
 }
 
-.make_icd10cm_parsers <- function(env = parent.frame()) {
+# run in zzz onload
+.make_icd10cm_parsers <- function(env = parent.frame(),
+                                  verbose = FALSE) {
   for (y in 2014:2019) {
     for (dx in c(TRUE, FALSE)) {
       if (dx && (y %in% c(2016, 2019))) next
       parse_fun_name <- .get_parser_icd10cm_name(y, dx)
-      parse_fun <- .make_icd10cm_parse_fun(y, dx)
+      parse_fun <- .make_icd10cm_parse_fun(y, dx, verbose)
       assign(parse_fun_name, parse_fun, envir = env)
     }
   }

@@ -46,7 +46,7 @@
     message("Seeing if ", sQuote(var_name), " exists in cache env or dir")
   }
   stopifnot(is.character(var_name))
-  if (verbose > 1) message("Trying icd_data_env environment")
+  if (verbose > 1) message(".exists_in_cache trying icd_data_env environment")
   if (.exists(var_name)) {
     if (verbose) message(sQuote(var_name), " found in cache.")
     return(TRUE)
@@ -68,13 +68,16 @@
       "Trying to get ", sQuote(var_name), " from cache env or dir"
     )
   }
+  if (verbose) message(".get_from_cache Trying icd_data_env environment")
+  if (.exists(var_name)) {
+    if (verbose) message("Found in env cache")
+    return(.get(var_name))
+  }
   if (!.exists_in_cache(var_name = var_name, verbose = verbose)) {
     msg <- paste("Unable to get cached data for:", var_name)
     .absent_action_switch(msg, must_work = must_work)
     return()
   }
-  if (verbose) message("Trying icd_data_env environment")
-  if (.exists(var_name)) return(.get(var_name))
   fp <- .rds_path(var_name)
   if (verbose) message("Checking if we have file path for get")
   if (is.null(fp)) return()
@@ -136,21 +139,27 @@
   getter_fun <- function(alt = NULL,
                            must_work = TRUE,
                            msg = paste("Unable to find", var_name)) {
-    if (verbose) message("Starting getter")
+    if (verbose) message("Starting getter for: ", var_name)
     stopifnot(is.character(var_name))
     dat <- .get_from_cache(var_name,
       must_work = FALSE,
       verbose = verbose
     )
-    if (!is.null(dat)) return(dat)
+    if (!is.null(dat)) {
+      if (verbose) message("Found in cache ", var_name, " in cache.")
+      return(dat)
+    }
     if (must_work) {
       stop("Cannot get ", sQuote(var_name), " from caches and it must work.")
     }
     if (is.null(alt)) {
-      message("Returning NULL as alternative data are not specified")
+      if (verbose)
+        message("Returning NULL as alternative data are not specified for ",
+                var_name)
       return()
     }
-    if (verbose) message("Returning 'alt' as ", var_name, " not available")
+    if (verbose)
+      message("Returning 'alt' as ", var_name, " not available")
     alt
   }
   f_env <- environment(getter_fun)
@@ -167,13 +176,15 @@
                             must_work = TRUE,
                             msg = paste("Unable to find", var_name)) {
     if (verbose) message("Starting fetcher for ", var_name)
-    # TODO: call the specific/generated getter instead?
     dat <- .get_from_cache(
       var_name = var_name,
       must_work = FALSE,
       verbose = verbose
     )
-    if (!is.null(dat)) return(dat)
+    if (!is.null(dat)) {
+      if (verbose) message("Found ", var_name, " in cache.")
+      return(dat)
+    }
     if (verbose) {
       message(
         "Trying to find parse function: ",
@@ -183,11 +194,12 @@
     fr <- environment()
     if (exists(parse_fun_name, fr, inherits = TRUE)) {
       if (verbose) message("Found parse function. Calling it.")
-      out <- do.call(get(parse_fun_name,
-        envir = fr,
-        inherits = TRUE
-      ),
-      args = list()
+      out <- do.call(
+        get(parse_fun_name,
+          envir = fr,
+          inherits = TRUE
+        ),
+        args = list()
       )
       if (verbose && is.null(out)) message("Returning NULL")
       if (!is.null(out) && !.offline()) {
@@ -228,6 +240,7 @@
   fetcher_fun
 }
 
+# called in zzz.R
 .make_getters_and_fetchers <- function(final_env = parent.frame(),
                                        verbose = .verbose()) {
   # for (var_name in names(.bindings)) {
@@ -247,7 +260,6 @@
     )
   }
 }
-.make_getters_and_fetchers(verbose = .verbose())
 
 #' Gets data, from env cache, file cache, the downloading and parsing if
 #' necessary and possible.
@@ -365,6 +377,12 @@ icd_data_dir <- function() {
 .ls <- function() {
   ls(.icd_data_env, all.names = TRUE)
 }
+
+# for development, list envrionment of a function
+.ls_fun <- function(f) ls(environment(f))
+
+# for development, list envrionment of a function
+.ls.str_fun <- function(f) ls.str(environment(f))
 
 #' List the actual data in this package, not bindings
 #' @examples

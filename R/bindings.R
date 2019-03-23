@@ -1,24 +1,24 @@
 # Set up an environemnt to cache ICD data
 .icd_data_env <- new.env(parent = emptyenv())
 
-# Generate getter functions for all bound data
-.bindings <- list(
-  # WHO
-  "icd10who2016" = c("dx"),
-  "icd10who2008fr" = c("dx"),
-  # FR
-  "icd10fr2019" = c("dx"),
-  # BE
-  "icd10be2014" = c("dx", "pc"),
-  "icd10be2017" = c("dx", "pc"),
-  # ICD-10-CM
-  "icd10cm2014" = c("dx", "pc"),
-  "icd10cm2015" = c("dx", "pc"),
-  "icd10cm2016" = c("pc"),
-  "icd10cm2017" = c("dx", "pc"),
-  "icd10cm2018" = c("dx", "pc"),
-  "icd10cm2019" = c("pc")
-)
+# Generate getter functions for all bound data?
+# .bindings <- list(
+#   # WHO
+#   "icd10who2016" = c("dx"),
+#   "icd10who2008fr" = c("dx"),
+#   # FR
+#   "icd10fr2019" = c("dx"),
+#   # BE
+#   "icd10be2014" = c("dx", "pc"),
+#   "icd10be2017" = c("dx", "pc"),
+#   # ICD-10-CM
+#   "icd10cm2014" = c("dx", "pc"),
+#   "icd10cm2015" = c("dx", "pc"),
+#   "icd10cm2016" = c("pc"),
+#   "icd10cm2017" = c("dx", "pc"),
+#   "icd10cm2018" = c("dx", "pc"),
+#   "icd10cm2019" = c("pc")
+# )
 
 .binding_names <- list(
   # WHO
@@ -36,15 +36,18 @@
   "icd10cm2014_pc",
   "icd10cm2015",
   "icd10cm2015_pc",
+  # icd10cm2016 included (but will migrate to 2019 once all is on CRAN)
   "icd10cm2016_pc",
   "icd10cm2017",
   "icd10cm2017_pc",
   "icd10cm2018",
   "icd10cm2018_pc",
+  # icd10cm2019 included already
   "icd10cm2019_pc"
 )
 
-.make_active_bindings <- function(final_env, verbose = .verbose()) {
+# called in .onLoad in zzz.R
+.make_active_bindings <- function(final_env, verbose = FALSE) {
   for (var_name in .binding_names) {
     if (verbose) message("Making active binding(s) for: ", var_name)
     binding_fun <- .make_binding_fun(var_name = var_name, verbose = verbose)
@@ -72,7 +75,8 @@
   } # end loop through bindings
 }
 
-.make_binding_fun <- function(var_name, verbose = .verbose()) {
+# Cannot bind verbose now because it is forced, and stops being dynamic once the functino is made.
+.make_binding_fun <- function(var_name, verbose = FALSE) {
   # TODO: ideally don't use do.call, but the actual function (or it's symbol?)
   if (verbose) message("Making binding fun for: ", var_name)
   fetcher_name <- .get_fetcher_name(var_name)
