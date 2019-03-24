@@ -41,6 +41,9 @@ utils::globalVariables(c(
   "icd9_sub_chapters",
   "icd9_chapters",
   "icd9_majors",
+  "icd10_sub_chapters",
+  "icd10_chapters",
+  "icd10cm2016",
   "icd10cm2019",
   "icd9cm_hierarchy"
 ))
