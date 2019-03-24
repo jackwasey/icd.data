@@ -28,4 +28,7 @@ each hierarchy level containing each code.
 \details{
 Format:  data frame
 }
+\seealso{
+\code{\link{icd9cm2011}} which is the preferred name frmo icd 1.1
+}
 \keyword{datasets}

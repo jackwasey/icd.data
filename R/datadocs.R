@@ -77,6 +77,7 @@ NULL
 #' @docType data
 #' @keywords datasets
 #' @details Format:  data frame
+#' @seealso \code{\link{icd9cm2011}} which is the preferred name frmo icd 1.1
 #' @source
 #' \url{http://wonder.cdc.gov/wonder/sci_data/codes/icd9/type_txt/icd9cm.asp}
 #' @source Rich text descriptions here:
@@ -94,6 +95,15 @@ NULL
 #' \url{http://wonder.cdc.gov/wonder/sci_data/codes/icd9/type_txt/icd9abb.asp}
 #' @name icd9cm_hierarchy
 NULL
+
+#' New name for \code{\link{icd9cm_hierarchy}}
+#' @seealso \code{\link{icd9cm_hierarchy}}
+#' @export
+#' @docType data
+#' @keywords datasets internal
+icd9cm2011 <- function() {
+  icd9cm_hierarchy
+}
 
 #' ICD-9-CM data sources
 #' @name icd9cm_sources
@@ -195,12 +205,13 @@ NULL
 NULL
 
 #' The latest available version of ICD-10-CM in this package
-#' @details This is an active binding, so is exported explicitly
 #' @docType data
 #' @keywords datasets
 #' @name icd10cm_latest
 #' @export
-NULL
+icd10cm_latest <- function() {
+  icd10cm2019
+}
 
 #' French ICD-10-FR modification of WHO ICD-10 used in France
 #'
@@ -279,7 +290,9 @@ NULL
 #'   the year, e.g., \code{"2018"}. Each data frame contains two character
 #'   columns, the first, named \code{code} is the procedure code; the second,
 #'   named \code{desc}, has the description.
-#' @name icd10cm2014_pc
+#' @name icd10cm2019_pc
+#' @aliases icd10cm2014_pc icd10cm2015_pc icd10cm2016_pc icd10cm2017_pc
+#'   icd10cm2018_pc
 #' @seealso
 #' \url{https://www.cms.gov/Medicare/Coding/ICD10/downloads/pcs_refman.pdf}
 #' @docType data
@@ -287,29 +300,9 @@ NULL
 #' @export
 NULL
 
-#' @rdname icd10cm2014_pc
-#' @export
-#' @name icd10cm2015_pc
-NULL
-
-#' @rdname icd10cm2014_pc
-#' @export
-#' @name icd10cm2016_pc
-NULL
-
-#' @rdname icd10cm2014_pc
-#' @export
-#' @name icd10cm2017_pc
-NULL
-
-#' @rdname icd10cm2014_pc
-#' @export
-#' @name icd10cm2018_pc
-NULL
-
 #' Final version ICD-9-CM, just billable/leaf codes
 #'
-#' These are derived from the final CMS published version 32 for 2014, which was
+#' @details These are derived from the final CMS published version 32 for 2014, which was
 #' unchanged since 2011. The short descriptions are in ASCII with no special
 #' characters, whereas the long descriptions contain accented characters which
 #' are stored as Unicode, \code{latin-1} or \code{cp1252}.
@@ -339,8 +332,8 @@ NULL
 #'   \code{long_desc}.
 #' @source
 #' \url{http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html}
-#' @name icd9cm_billable
 #' @export
+#' @name icd9cm_billable
 NULL
 
 

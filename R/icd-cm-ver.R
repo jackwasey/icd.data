@@ -74,6 +74,12 @@ get_icd10cm_active <- function(verbose = FALSE) {
   get_icd10cm_version(ver = ver)
 }
 
+#' @describeIn get_icd10cm_version abbreviate name for same data
+#' @export
+icd10cm_active <- function() {
+  get_icd10cm_active()
+}
+
 #' Get the ICD-10-CM versions available in this package
 #' @template pc
 #' @param return_year Logical, which, if \code{TRUE}, will result in only a

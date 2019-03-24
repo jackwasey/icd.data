@@ -4,10 +4,10 @@
 \name{icd10cm_latest}
 \alias{icd10cm_latest}
 \title{The latest available version of ICD-10-CM in this package}
+\usage{
+icd10cm_latest()
+}
 \description{
 The latest available version of ICD-10-CM in this package
-}
-\details{
-This is an active binding, so is exported explicitly
 }
 \keyword{datasets}

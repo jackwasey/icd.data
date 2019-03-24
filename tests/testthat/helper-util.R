@@ -1,10 +1,13 @@
 rtf_year_ok <- function(year, ...) {
   !is.null(
-    with_offline(
-      offline = TRUE,
-      with_interact(
-        interact = FALSE,
-        .rtf_fetch_year(year, offline = TRUE, ...)
+    with_absent_action(
+      absent_action = "silent",
+      with_offline(
+        offline = TRUE,
+        with_interact(
+          interact = FALSE,
+          .rtf_fetch_year(year, offline = TRUE, ...)
+        )
       )
     )
   )
@@ -61,11 +64,14 @@ skip_icd10cm_flat_avail <- function(year, dx = TRUE) {
 skip_icd10cm_xml_avail <- function() {
   msg <- "skipping test because XML file ICD-10-CM source not available"
   if (is.null(
-    with_offline(
-      offline = TRUE,
-      with_interact(
-        interact = FALSE,
-        .icd10cm_get_xml_file()
+    with_absent_action(
+      absent_action = "silent",
+      with_offline(
+        offline = TRUE,
+        with_interact(
+          interact = FALSE,
+          .icd10cm_get_xml_file()
+        )
       )
     )
   )) {

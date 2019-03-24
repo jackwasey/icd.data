@@ -3,11 +3,14 @@
 \name{get_icd10cm_version}
 \alias{get_icd10cm_version}
 \alias{get_icd10cm_active}
+\alias{icd10cm_active}
 \title{Get the data for a given version (four-digit year) of ICD-10-CM}
 \usage{
 get_icd10cm_version(ver, verbose = .verbose())
 
 get_icd10cm_active(verbose = FALSE)
+
+icd10cm_active()
 }
 \arguments{
 \item{ver}{Character version of ICD-10-CM to use, corresponding to the suffix
@@ -30,6 +33,8 @@ set by \code{set_icd10cm_active_ver()}
 \itemize{
 \item \code{get_icd10cm_active}: Get the currently active version of
 ICD-10-CM.
+
+\item \code{icd10cm_active}: abbreviate name for same data
 }}
 
 \examples{

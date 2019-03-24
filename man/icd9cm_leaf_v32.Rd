@@ -10,12 +10,14 @@
 \url{http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html}
 }
 \description{
+Final version ICD-9-CM, just billable/leaf codes
+}
+\details{
 These are derived from the final CMS published version 32 for 2014, which was
 unchanged since 2011. The short descriptions are in ASCII with no special
 characters, whereas the long descriptions contain accented characters which
 are stored as Unicode, \code{latin-1} or \code{cp1252}.
-}
-\details{
+
 This all done during package creation, but can be repeated by package users,
 including pulling the data from the web pages directly. Despite my best
 efforts, current locale can give different results, but this packaged data is

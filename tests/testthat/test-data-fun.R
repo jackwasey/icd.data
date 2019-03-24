@@ -1,0 +1,21 @@
+context("data fun")
+
+test_that("download and parse generated data functions", {
+  ns <- asNamespace("icd.data")
+  for (b in c(
+    .data_names,
+    "icd10cm_latest"
+  )) {
+    inf <- paste("Data fun name:", b)
+    expect_true(b %in% ls(ns), info = inf)
+    expect_true(.exists_in_ns(b), info = inf)
+    if (.offline() && !.exists_in_cache(b)) {
+      skip(paste(
+        "Regardless of interactivity, don't download during tests and",
+        inf, "not in cache"
+      ))
+    }
+    f <- get(b, ns, mode = "function")
+    expect_is(f(), "data.frame", info = inf)
+  }
+})

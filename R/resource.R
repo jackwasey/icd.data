@@ -89,7 +89,7 @@
 
 .all_cached <- function() {
   all(
-    vapply(.binding_names, .exists_in_cache, logical(1))
+    vapply(.data_names, .exists_in_cache, logical(1))
   )
 }
 
@@ -153,13 +153,17 @@
       stop("Cannot get ", sQuote(var_name), " from caches and it must work.")
     }
     if (is.null(alt)) {
-      if (verbose)
-        message("Returning NULL as alternative data are not specified for ",
-                var_name)
+      if (verbose) {
+        message(
+          "Returning NULL as alternative data are not specified for ",
+          var_name
+        )
+      }
       return()
     }
-    if (verbose)
+    if (verbose) {
       message("Returning 'alt' as ", var_name, " not available")
+    }
     alt
   }
   f_env <- environment(getter_fun)
@@ -190,7 +194,8 @@
       if (verbose) message("Offline and not in cache")
       .absent_action_switch(
         "Offline so not attempting to download or parse",
-        must_work = is.null(alt))
+        must_work = is.null(alt)
+      )
       return(alt)
     }
     if (verbose) {
@@ -252,7 +257,7 @@
 .make_getters_and_fetchers <- function(final_env = parent.frame(),
                                        verbose = .verbose()) {
   # for (var_name in names(.bindings)) {
-  for (var_name in .binding_names) {
+  for (var_name in .data_names) {
     if (verbose) message("Making getters and fetchers for ", var_name)
     getter_name <- .get_getter_name(var_name)
     if (verbose) message("assigning: ", getter_name)
