@@ -194,14 +194,6 @@ NULL
 #' @export
 NULL
 
-#' The latest available version of ICD-10-CM in this package
-#' @details This is an active binding, so is exported explicitly
-#' @docType data
-#' @keywords datasets
-#' @name icd10cm_latest
-#' @export
-NULL
-
 #' French ICD-10-FR modification of WHO ICD-10 used in France
 #'
 #' La Classification internationale statistique des maladies (CIM), version 10,

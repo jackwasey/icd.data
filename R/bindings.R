@@ -78,11 +78,10 @@
 # Cannot bind verbose now because it is forced, and stops being dynamic once the functino is made.
 .make_binding_fun <- function(var_name, verbose = FALSE) {
   # TODO: ideally don't use do.call, but the actual function (or it's symbol?)
-  if (verbose) message("Making binding fun for: ", var_name)
+  if (verbose) message("Making data fun for: ", var_name)
   fetcher_name <- .get_fetcher_name(var_name)
   binding_fun <- function(x) {
-    if (verbose) message("Running binding for ", var_name)
-    if (!missing(x)) .stop_binding_ro()
+    if (verbose) message("Running data fun for ", var_name)
     dat <- do.call(fetcher_name, args = list())
     if (!is.null(dat)) return(dat)
     .absent_action_switch(paste(var_name, "not available."))
@@ -95,51 +94,37 @@
   binding_fun
 }
 
-# Dynamic
-.icd9cm2011_binding <- function(x) {
-  if (!missing(x)) .stop_binding_ro()
-  # lazy data so not available yet, and work around crazy R CMD check bug/feature
-  if (!require("icd.data", quietly = TRUE)) return()
-  getExportedValue("icd9cm_hierarchy", ns = asNamespace("icd.data"))
+#' Get the ICD-9-CM data structure
+#'
+#' This replaces the now deprecated and confusingly named `icd9cm_hierarhcy`
+#' @keywords datasets
+#' @export
+get_icd9cm2011 <- function() {
+  icd9cm_hierarchy
 }
-makeActiveBinding("icd9cm2011", .icd9cm2011_binding, environment())
-lockBinding("icd9cm2011", environment())
 
-.icd10cm_latest_binding <- function(x) {
-  if (!missing(x)) .stop_binding_ro()
-  # lazy data, which is not available during package .onLoad yet.
-  # also, since icd depends on icd.data, R CMD check seems to use the old icd.data version and doesn't find its own data, so check it exists first:
-  if (!require("icd.data", quietly = TRUE)) return()
-  lazyenv <- asNamespace("icd.data")$.__NAMESPACE__.$lazydata
-  if (exists("icd10cm2019", lazyenv)) {
-    getExportedValue("icd10cm2019", ns = asNamespace("icd.data"))
-  } else {
-    NULL
-  }
+#' The latest available version of ICD-10-CM in this package
+#' @details This is an active binding, so is exported explicitly
+#' @docType data
+#' @keywords datasets
+#' @name icd10cm_latest
+#' @export
+get_icd10cm_latest <- function() {
+  get_icd10cm2019()
 }
-makeActiveBinding("icd10cm_latest", .icd10cm_latest_binding, environment())
-lockBinding("icd10cm_latest", environment())
 
-.icd9cm_billable_binding <- function(x) {
-  if (.verbose() && .interact()) {
-    message("Use icd9cm_leaf_v32 instead of icd9cm_billable.")
-  }
-  icd9cm_billable <- list()
-  # just for R CMD check, with the circular dep and R-devel
-  if (!require("icd.data", quietly = TRUE)) return()
-  lazyenv <- asNamespace("icd.data")$.__NAMESPACE__.$lazydata
-  # work around the fact that R CMD check gets all the bindings before lazy data is put in the package namespace
-  if (!exists("icd9cm_leaf_v32", lazyenv)) return()
-  icd9cm_billable[["32"]] <- get("icd9cm_leaf_v32", envir = lazyenv)
-  icd9cm_billable
-}
-makeActiveBinding("icd9cm_billable", .icd9cm_billable_binding, environment())
-lockBinding("icd9cm_billable", environment())
+# construct icd9cm_billable directly in the namespace
+icd9cm_billable <- list()
+# just for R CMD check, with the circular dep and R-devel
+lazyenv <- asNamespace("icd.data")$.__NAMESPACE__.$lazydata
+# work around the fact that R CMD check gets all the bindings before lazy data is put in the package namespace
+if (!exists("icd9cm_leaf_v32", lazyenv)) return()
+icd9cm_billable[["32"]] <- get("icd9cm_leaf_v32", envir = lazyenv)
 
-#' Localised synonym for icd10fr2019, with French column names
-#' @keywords internal
-#' @noRd
-.cim10fr2019_binding <- function(x) {
+#' Localised synonym for \code{\link{get_icd10fr2019}}, with French column names
+#' @seealso \code{\link{get_icd10fr2019}}
+#' @export
+get_cim10fr2019 <- function(x) {
   if (!missing(x)) .stop_binding_ro()
   if (exists("cim10fr2019", envir = .icd_data_env)) {
     return(get("cim10fr2019", envir = .icd_data_env))
@@ -184,8 +169,4 @@ lockBinding("icd9cm_billable", environment())
     setup_icd_data()"
     )
   }
-}
-
-.stop_binding_ro <- function() {
-  stop("This active binding cannot be set.", call. = FALSE)
 }

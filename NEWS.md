@@ -1,6 +1,6 @@
 # icd.data 1.1
 
-* Works best with 'icd' package > 3.3, but not required.
+* Works best with 'icd' package >= 4.0, but not required.
 * French ICD-10 (CIM-10) codes for 2019, with data available with English or French column names
 * Belgian ICD-10 codes, data has columns for French, Dutch and English translations.
 * Includes ICD-10-CM 2019 with more than 2000 new codes. The most recent available ICD-10-CM version is also made available using icd.data::icd10cm_latest when an specific annual version is not needed.
@@ -9,7 +9,7 @@
 * Added capability for each user to download the WHO ICD-10 data on first use.
 * Moved data creation code from 'icd' package to 'icd.data'
 * Expand Vermont data from 1,000 to about 50,000 rows
-* Add variable icd9cm2011, which is an active binding to make naming of icd9cm_hierarchy consistent
+* Add `get_icd9cm2011()`, which will replace the deprecated and poorly named `icd9cm_hierarchy` package data.
 
 # icd.data 1.0
 
