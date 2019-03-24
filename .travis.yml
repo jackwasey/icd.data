@@ -17,11 +17,8 @@ env:
     - ICD_DATA_VERBOSE=TRUE
     # travis uses --as-cran by default
     - _R_CHECK_EXIT_ON_FIRST_ERROR_=true
-    - ICD_DATA_ABSENT_ACTION=message
-  matrix:
+    - ICD_DATA_ABSENT_ACTION=stop
     - ICD_DATA_OFFLINE=TRUE
-    - ICD_DATA_OFFLINE=FALSE
-#   - R_CHECK_ARGS="--install-args=--no-staged-install"
 
 matrix:
   fast_finish: true
@@ -33,25 +30,17 @@ r_packages:
   - httr
 
 r_github_packages:
-#  - jimhester/lintr
   - jimhester/covr
-#  - jackwasey/icd
 
 before_script:
   - sed -i'' '/.*[Dd]ata.*/d' .Rbuildignore # do include (raw) data for testing
 #  Test the installation (which is what may fail laterduring CRAN check)
   - R CMD build .
   - R CMD INSTALL --debug --no-docs icd.data_*.tar.gz
-# - sed -i'' '/\.covrignore/d' .Rbuildignore
-# - sed -i'' '/\.lintr/d' .Rbuildignore
-# otherwise, icd is installed from CRAN, and after the github install???
 # - 'echo "Remotes: jackwasey/icd" >> DESCRIPTION'
-# - 'echo "StagedInstall: no" >> DESCRIPTION'
-# - cat DESCRIPTION
 
 after_success:
   - R CMD INSTALL $PKG_TARBALL
-#  - Rscript -e 'lintr::lint_package()'
   - Rscript -e 'if (!require("remotes")) {install.packages("remotes")}; remotes::install_github("jackwasey/icd")
   - Rscript -e 'covr::codecov()'
 

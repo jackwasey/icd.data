@@ -37,7 +37,7 @@
   options(
     "icd.data.interact" =
       !.env_var_is_false("ICD_DATA_INTERACT") ||
-      interactive()
+        interactive()
   )
   # stop or message, anything else will silently continue, which we have to
   # default to onLoad to avoid numerous R CMD check problems. For this reason
@@ -142,10 +142,12 @@
   invisible(x)
 }
 
-.absent_action <- function(x = c("stop",
-                                 "warning",
-                                 "message",
-                                 "silent")) {
+.absent_action <- function(x = c(
+                             "stop",
+                             "warning",
+                             "message",
+                             "silent"
+                           )) {
   if (!missing(x)) {
     x <- match.arg(x)
     options("icd.data.absent_action" = x)
@@ -162,15 +164,15 @@
 
 .absent_action_switch <- function(msg, must_work = TRUE) {
   switch(.absent_action(),
-         "stop" = {
-           if (must_work) {
-             stop(msg, call. = FALSE)
-           } else {
-             warning(msg, call. = FALSE)
-           }
-         },
-         "warning" = warning(msg, call. = FALSE),
-         "message" = message(msg)
+    "stop" = {
+      if (must_work) {
+        stop(msg, call. = FALSE)
+      } else {
+        warning(msg, call. = FALSE)
+      }
+    },
+    "warning" = warning(msg, call. = FALSE),
+    "message" = message(msg)
   )
 }
 
@@ -218,12 +220,12 @@ with_interact <- function(interact, code) {
 }
 
 with_absent_action <- function(absent_action = c(
-  "message",
-  "stop",
-  "warning",
-  "silent"
-),
-code) {
+                                 "message",
+                                 "stop",
+                                 "warning",
+                                 "silent"
+                               ),
+                               code) {
   absent_action <- match.arg(absent_action)
   old <- options("icd.data.absent_action" = absent_action)
   on.exit(options(old))
@@ -251,13 +253,28 @@ code) {
 #' @return Invisibly returns the data path which was set, or NULL if not done.
 #' @seealso \code{\link{download_icd_data}}
 #' @export
-setup_icd_data <- function(path = .icd_data_default) {
+setup_icd_data <- function(path = NULL) {
   options("icd.data.offline" = FALSE)
-  message("Using the icd data cache: ", path)
+  if (!is.null(path)) {
+    message("Using the icd data cache set by argument from user: ", path)
+  }
+  if (is.null(path)) {
+    path <- getOption("icd.data.resource", default = NULL)
+    message("Using the icd data cache set by option(\"icd.data.resource\"): ", path) # nolint
+  }
+  if (is.null(path)) {
+    path <- Sys.getenv("ICD_DATA_RESOURCE", unset = NULL)
+    message("Using the icd data cache set by the environment variable ICD_DATA_RESOURCE: ", path) # nolint
+  }
+  if (is.null(path)) {
+    path <- .icd_data_default
+    message("Using the default icd data cache: ", path)
+  }
   if (is.null(path) || !dir.exists(path)) {
     created <- dir.create(path)
     if (!created) stop("Unable to create directory at: ", path)
   }
+  options("icd.data.resource" = path)
   invisible(path)
 }
 
@@ -277,7 +294,7 @@ setup_icd_data <- function(path = .icd_data_default) {
 #' @export
 download_icd_data <- function() {
   setup_icd_data(path = getOption("icd.data.resource",
-                                  default = .icd_data_default
+    default = .icd_data_default
   ))
   message("Downloading, caching and parsing all ICD data")
   message("This will take a few minutes.")

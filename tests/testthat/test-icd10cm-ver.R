@@ -23,7 +23,8 @@ test_that("temporarily set active version", {
   skip_icd10cm_flat_avail("2014")
   expect_identical(
     with_icd10cm_version("2014", nrow(get_icd10cm_active())),
-    nrow(icd10cm2014))
+    nrow(icd10cm2014)
+  )
 })
 
 test_that("basic Belgian", {

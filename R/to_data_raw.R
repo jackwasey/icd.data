@@ -69,7 +69,8 @@
     stopifnot(is.character(file_name), length(file_name) == 1)
     if (is.null(data_raw_path) || !dir.exists(data_raw_path)) {
       .absent_action_switch(
-        "icd.data resource directory not defined or created.")
+        "icd.data resource directory not defined or created."
+      )
     }
     save_path <- file.path(
       data_raw_path,

@@ -5,7 +5,7 @@
 \alias{icd_data_dir}
 \title{Set up the data download cache, give permission to download data}
 \usage{
-setup_icd_data(path = .icd_data_default)
+setup_icd_data(path = NULL)
 
 icd_data_dir()
 }
