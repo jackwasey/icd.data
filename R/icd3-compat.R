@@ -26,7 +26,7 @@
   # we expand the start to end range of chapter and sub-chapter definitions.
   se <- toupper(trimws(as.character(c(start, end))))
   unique_mjrs <- if (defined) {
-    unique(icd.data::icd10cm2016$three_digit)
+    unique(icd10cm2016$three_digit)
   } else {
     .icd10cm_get_majors_possible("A00", "Z99")
   }
