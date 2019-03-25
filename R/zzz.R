@@ -14,6 +14,13 @@
   #
   # The verbosity option can't be used downstream because the value is realized rather than the option being re-queried, so for testing, just setting to TRUE now.
   .make_data_funs(asNamespace(pkgname), verbose = .verbose())
+  icd9cm_billable <- list()
+  # just for R CMD check, with the circular dep and R-devel
+  lazyenv <- asNamespace("icd.data")$.__NAMESPACE__.$lazydata
+  # work around the fact that R CMD check gets all the bindings before lazy data is put in the package namespace
+  # if (exists("icd9cm_leaf_v32", lazyenv))
+  icd9cm_billable[["32"]] <- get("icd9cm_leaf_v32", envir = lazyenv)
+  assign("icd9cm_billable", icd9cm_billable, asNamespace(pkgname))
 }
 
 .onAttach <- function(libname, pkgname) {

@@ -7,8 +7,7 @@ test_that("download and parse generated data functions", {
     "icd10cm_latest"
   )) {
     inf <- paste("Data fun name:", b)
-    expect_true(b %in% ls(ns), info = inf)
-    expect_true(.exists_in_ns(b), info = inf)
+    expect_true(.exists_in_ns(paste0("get_", b)), info = inf)
     if (.offline() && !.exists_in_cache(b)) {
       skip(paste(
         "Regardless of interactivity, don't download during tests and",

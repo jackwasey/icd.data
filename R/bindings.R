@@ -34,8 +34,10 @@
                             verbose = FALSE) {
   for (var_name in .data_names) {
     if (verbose) message("Making data function for: ", var_name)
-    data_fun <- .make_data_fun(var_name = var_name, verbose = verbose)
-    assign(var_name, data_fun, final_env)
+    get_data_fun_name <- paste0("get_", var_name)
+    data_fun <- .make_data_fun(var_name = get_data_fun_name,
+                               verbose = verbose)
+    assign(get_data_fun_name, data_fun, final_env)
   }
 }
 
@@ -67,31 +69,17 @@
   data_fun
 }
 
-.icd9cm_billable_binding <- function(x) {
-  if (.verbose() && .interact()) {
-    message("Use icd9cm_leaf_v32 instead of icd9cm_billable.")
-  }
-  icd9cm_billable <- list()
-  # just for R CMD check, with the circular dep and R-devel
-  if (!requireNamespace("icd.data", quietly = TRUE)) return()
-  lazyenv <- asNamespace("icd.data")$.__NAMESPACE__.$lazydata
-  # work around the fact that R CMD check gets all the bindings before lazy data is put in the package namespace
-  # if (!exists("icd9cm_leaf_v32", lazyenv)) return()
-  icd9cm_billable[["32"]] <- get("icd9cm_leaf_v32", envir = lazyenv)
-  icd9cm_billable
-}
-makeActiveBinding("icd9cm_billable", .icd9cm_billable_binding, environment())
-lockBinding("icd9cm_billable", environment())
-
-#' Synonym for \code{\link{icd10fr2019}}, with column names in the French language
-#' @docType data
+#' Semi-localised synonym for \code{\link{get_icd10fr2019}}, with French language column names
+#'
+#' Classification internationale des maladies.
+#' @seealso \code{\link{get_icd10fr2019}}
 #' @keywords datasets
 #' @export
-cim10fr2019 <- function() {
-  if (exists("cim10fr2019", envir = .icd_data_env)) {
-    return(get("cim10fr2019", envir = .icd_data_env))
+get_cim10fr2019 <- function() {
+  if (.exists("cim10fr2019")) {
+    return(.get("cim10fr2019"))
   }
-  cim10fr2019 <- icd10fr2019
+  cim10fr2019 <- get_icd10fr2019()
   names(cim10fr2019) <- c(
     "code",
     "desc_courte",
@@ -105,8 +93,4 @@ cim10fr2019 <- function() {
     envir = .icd_data_env
   )
   cim10fr2019
-}
-
-.message_who <- function() {
-
 }

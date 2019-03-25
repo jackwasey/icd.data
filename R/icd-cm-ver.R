@@ -90,8 +90,7 @@ icd10cm_active <- function() {
 #' # Just get the years avaiable for English language procedure codes
 #' get_icd10cm_available(pc = TRUE, return_year = TRUE)
 #' @export
-get_icd10cm_available <- function(
-                                  pc = FALSE,
+get_icd10cm_available <- function(pc = FALSE,
                                   return_year = FALSE) {
   stopifnot(is.logical(pc), length(pc) == 1)
   pc_str <- ifelse(pc, "_pc", "")
@@ -104,28 +103,31 @@ get_icd10cm_available <- function(
 }
 
 #' Get the data for the latest ICD-10-CM version in this package.
-#'
-#' Usually, the \code{icd.data} package should be attached, and therefore appear
-#' on the search list, using \code{library(icd.data)} or
-#' \code{require(icd.data)}. If it is not attached, the active binding
-#' \code{icd10cm_latest} cannot find the packages own data! This function is a
-#' possible work-around to get the data without having to attach the package.
 #' @examples
 #' # if icd.data not attached:
-#' a <- icd.data::icd10cm_latest
-#' b <- icd.data:::.get_icd10cm_latest()
-#' stopifnot(identical(a, b))
-#' # Preferred:
-#' \dontrun{
-#' library(icd.data)
-#' head(icd10cm_latest)
-#' }
-#' @keywords internal datasets
-#' @noRd
-.get_icd10cm_latest <- function() {
-  var_name <- "icd10cm2019"
-  if (exists(var_name)) return(get(var_name))
-  getExportedValue(asNamespace("icd.data"), var_name)
+#' a <- icd.data::get_icd10cm_latest
+#' identical(a, icd10cm2019)
+#' @keywords datasets
+#' @export
+get_icd10cm_latest <- function() {
+  icd10cm2019
+}
+
+#' Get the 2019 ICD-10-CM codes and descriptions
+#'
+#' The most recent available data is also available as the package data,
+#' currently \code{icd10cm2019}
+#' @export
+get_icd10cm2016 <- function() {
+  icd10cm2016
+}
+
+#' Get the 2019 ICD-10-CM codes and descriptions
+#'
+#' This is also available as the package data \code{icd10cm2016}
+#' @export
+get_icd10cm2019 <- function() {
+  icd10cm2019
 }
 
 #' Evaluate code with a particular version of ICD-10-CM

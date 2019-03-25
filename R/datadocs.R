@@ -126,8 +126,8 @@ NULL
 #' a code higher in the hierarchy which nevertheless will have a description.
 #' @section Editions: There are annual revisions to this data in the US.
 #' @aliases icd10cm2016
-#' @seealso \code{\link{icd10cm2014}} \code{\link{icd10cm2015}}
-#'   \code{\link{icd10cm2017}} \code{\link{icd10cm2018}}
+#' @seealso \code{\link{get_icd10cm2014}} \code{\link{get_icd10cm2015}}
+#'   \code{\link{get_icd10cm2017}} \code{\link{get_icd10cm2018}}
 #' @source \url{http://www.cdc.gov/nchs/icd/icd10cm.htm}
 #' @docType data
 #' @keywords datasets
@@ -150,7 +150,7 @@ NULL
 #' @name icd10cm2019
 NULL
 
-#' @name icd10cm2014
+#' @name get_icd10cm2014
 #' @title ICD-10-CM 2014
 #' @seealso \code{\link{icd10cm2019}}
 #' @docType data
@@ -158,7 +158,7 @@ NULL
 #' @export
 NULL
 
-#' @name icd10cm2015
+#' @name get_icd10cm2015
 #' @title ICD-10-CM 2015
 #' @seealso \code{\link{icd10cm2019}}
 #' @docType data
@@ -166,7 +166,7 @@ NULL
 #' @export
 NULL
 
-#' @name icd10cm2017
+#' @name get_icd10cm2017
 #' @title ICD-10-CM 2017
 #' @seealso \code{\link{icd10cm2019}}
 #' @docType data
@@ -174,7 +174,7 @@ NULL
 #' @export
 NULL
 
-#' @name icd10cm2018
+#' @name get_icd10cm2018
 #' @title ICD-10-CM 2018
 #' @seealso \code{\link{icd10cm2019}}
 #' @docType data
@@ -186,7 +186,7 @@ NULL
 #'
 #' This data must be downloaded on a per-user basis. A prompt is given when the
 #' data is first attempted to be accessed.
-#' @name icd10who2016
+#' @name get_icd10who2016
 #' @source \url{http://www.who.int}
 #' @docType data
 #' @keywords datasets
@@ -197,21 +197,12 @@ NULL
 #'
 #' This data must be downloaded on a per-user basis. A prompt is given when the
 #' data is first attempted to be accessed.
-#' @name icd10who2008fr
+#' @name get_icd10who2008fr
 #' @source \url{http://www.who.int}
 #' @docType data
 #' @keywords datasets
 #' @export
 NULL
-
-#' The latest available version of ICD-10-CM in this package
-#' @docType data
-#' @keywords datasets
-#' @name icd10cm_latest
-#' @export
-icd10cm_latest <- function() {
-  icd10cm2019
-}
 
 #' French ICD-10-FR modification of WHO ICD-10 used in France
 #'
@@ -231,7 +222,7 @@ icd10cm_latest <- function() {
 #'   CIM-10-FR}
 #' @docType data
 #' @keywords datasets
-#' @name icd10fr2019
+#' @name get_icd10fr2019
 #' @export
 NULL
 
@@ -247,36 +238,36 @@ NULL
 #' \url{https://www.health.belgium.be/sites/default/files/uploads/fields/fpshealth_theme_file/fy2017_reflist_icd-10-be.xlsx_last_updatet_28-07-2017_1.xlsx}
 #' \url{https://www.health.belgium.be/fr/sante/organisation-des-soins-de-sante/hopitaux/systemes-denregistrement/icd-10-be}
 #' \url{https://www.health.belgium.be/fr/fy2014reflisticd-10-bexlsx}
-#' @name icd10be2014
-#' @seealso \code{\link{icd10be2017}} \code{\link{icd10be2014_pc}}
-#'   \code{\link{icd10be2017_pc}}
+#' @name get_icd10be2014
+#' @seealso \code{\link{get_icd10be2017}} \code{\link{get_icd10be2014_pc}}
+#'   \code{\link{get_icd10be2017_pc}}
 #' @docType data
 #' @keywords datasets
 #' @export
 NULL
 
 #' @title ICD-10-BE 2017
-#' @name icd10be2017
-#' @seealso \code{\link{icd10be2014}} \code{\link{icd10be2014_pc}}
-#'   \code{\link{icd10be2017_pc}}
+#' @name get_icd10be2017
+#' @seealso \code{\link{get_icd10be2014}} \code{\link{get_icd10be2014_pc}}
+#'   \code{\link{get_icd10be2017_pc}}
 #' @docType data
 #' @keywords datasets
 #' @export
 NULL
 
 #' @title ICD-10-BE 2017 procedure codes
-#' @name icd10be2017_pc
-#' @seealso \code{\link{icd10be2014}} \code{\link{icd10be2014_pc}}
-#'   \code{\link{icd10be2017}}
+#' @name get_icd10be2017_pc
+#' @seealso \code{\link{get_icd10be2014}} \code{\link{get_icd10be2014_pc}}
+#'   \code{\link{get_icd10be2017}}
 #' @docType data
 #' @keywords datasets
 #' @export
 NULL
 
 #' @title ICD-10-BE 2014 procedure codes
-#' @name icd10be2014_pc
-#' @seealso \code{\link{icd10be2014}} \code{\link{icd10be2017}}
-#'   \code{\link{icd10be2017_pc}}
+#' @name get_icd10be2014_pc
+#' @seealso \code{\link{get_icd10be2014}} \code{\link{get_icd10be2017}}
+#'   \code{\link{get_icd10be2017_pc}}
 #' @docType data
 #' @keywords datasets
 #' @export
@@ -290,9 +281,9 @@ NULL
 #'   the year, e.g., \code{"2018"}. Each data frame contains two character
 #'   columns, the first, named \code{code} is the procedure code; the second,
 #'   named \code{desc}, has the description.
-#' @name icd10cm2019_pc
-#' @aliases icd10cm2014_pc icd10cm2015_pc icd10cm2016_pc icd10cm2017_pc
-#'   icd10cm2018_pc
+#' @name get_icd10cm2019_pc
+#' @aliases get_icd10cm2014_pc get_icd10cm2015_pc get_icd10cm2016_pc get_icd10cm2017_pc
+#'   get_icd10cm2018_pc
 #' @seealso
 #' \url{https://www.cms.gov/Medicare/Coding/ICD10/downloads/pcs_refman.pdf}
 #' @docType data
@@ -335,6 +326,24 @@ NULL
 #' @export
 #' @name icd9cm_billable
 NULL
+
+#' Get the ICD-9-CM data structure
+#'
+#' This replaces the now deprecated and confusingly named `icd9cm_hierarhcy`
+#' @keywords datasets
+#' @export
+get_icd9cm2011 <- function() {
+  icd9cm_hierarchy
+}
+
+#' The latest available version of ICD-10-CM in this package
+#' @details This is an active binding, so is exported explicitly
+#' @docType data
+#' @keywords datasets
+#' @export
+get_icd10cm_latest <- function() {
+  get_icd10cm2019()
+}
 
 
 #' Hospital discharge data from Vermont

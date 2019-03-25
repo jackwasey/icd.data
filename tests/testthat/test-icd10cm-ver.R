@@ -13,8 +13,8 @@ test_that("active version set to latest version", {
 test_that("all available data is reported", {
   for (pc in c(TRUE, FALSE)) {
     res <- get_icd10cm_available(pc)
-    expect_true(exists(res, envir = asNamespace("icd.data")),
-      info = paste(pc)
+    data_fun_name <- paste0("get_", res)
+    expect_true(.exists_in_ns(data_fun_name), info = paste(pc)
     )
   }
 })

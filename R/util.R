@@ -181,7 +181,7 @@ is_non_ascii <- function(x)
 #' @noRd
 .get_chapters_fr <- function(save_data = FALSE) {
   icd10_chapters_fr <- .get_chapter_ranges_from_flat(
-    flat_hier = icd10who2008fr,
+    flat_hier = get_icd10who2008fr(),
     field = "chapter"
   )
   .save_in_data_dir(icd10_chapters_fr)
@@ -190,7 +190,7 @@ is_non_ascii <- function(x)
 
 .get_sub_chapters_fr <- function(save_data = FALSE) {
   icd10_sub_chapters_fr <- .get_chapter_ranges_from_flat(
-    flat_hier = icd10who2008fr,
+    flat_hier = get_icd10who2008fr(),
     field = "sub_chapter"
   )
   .save_in_data_dir(icd10_sub_chapters_fr)

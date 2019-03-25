@@ -2,7 +2,7 @@
 #'
 #' This is likely to be not exported in the future, as it is designed for the
 #' transition to icd.data version 1.1 . The user may use the active binding
-#' \code{icd10who2016} as if it is a variable. In some situations, it may be
+#' \code{\link{get_icd10who2016}} as if it is a variable. In some situations, it may be
 #' preferable to call this function. E.g., using the active binding when the
 #' cache directory has not been populated may produce messages. Auto-complete in
 #' Rstudio is unfortunately considered still to be interactive, so these
