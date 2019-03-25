@@ -13,12 +13,12 @@ r:
 
 env:
   global:
-    - ICD_DATA_INTERACT=FALSE
+#    - ICD_DATA_INTERACT=FALSE
     - ICD_DATA_VERBOSE=TRUE
     # travis uses --as-cran by default
     - _R_CHECK_EXIT_ON_FIRST_ERROR_=true
-    - ICD_DATA_ABSENT_ACTION=stop
-    - ICD_DATA_OFFLINE=TRUE
+#    - ICD_DATA_ABSENT_ACTION=stop
+#    - ICD_DATA_OFFLINE=TRUE
 
 matrix:
   fast_finish: true

@@ -36,7 +36,7 @@
   if (!("icd.data.interact" %in% names(options()))) {
     options(
       "icd.data.interact" =
-        !.env_var_is_false("ICD_DATA_INTERACT") ||
+        .env_var_is_true("ICD_DATA_INTERACT") ||
           interactive()
     )
   }
