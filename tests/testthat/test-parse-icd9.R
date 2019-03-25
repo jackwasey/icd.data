@@ -133,7 +133,7 @@ test_that("ICD-9-CM billable codes package data is recreated", {
   skip_flat_icd9_all_avail()
   check_billable <- .icd9cm_parse_leaf_descs(save_data = FALSE)
   # make specific quick tests for previously known problems:
-  b32 <- .icd9cm_parse_leaf_desc_ver("32", save_data = FALSE)
+  b32 <- .parse_icd9cm_leaf_year("2014", save_data = FALSE)
   expect_true(nrow(b32) == 14567L)
   expect_true(ncol(b32) == 3L)
   expect_identical(

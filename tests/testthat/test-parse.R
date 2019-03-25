@@ -150,7 +150,7 @@ test_year <- "2011"
 # test whether the RTF is available offline. N.b. we skip in a 'context' so all
 # subsequent tests are skipped.
 if (rtf_year_ok(test_year)) {
-  rtf_dat <- icd9cm_sources[icd9cm_sources$f_year == test_year, ]
+  rtf_dat <- .icd9cm_sources[.icd9cm_sources$f_year == test_year, ]
   f_info_short <- .unzip_to_data_raw(rtf_dat$rtf_url,
     file_name = rtf_dat$rtf_filename
   )
@@ -215,11 +215,10 @@ if (rtf_year_ok(test_year)) {
   })
 
   test_that("all leaf codes from TXT are in flat file extract", {
-    skip_flat_icd9_avail("32")
-    skip_if_not_installed("icd", "3.4")
-    v32 <- .icd9cm_parse_leaf_desc_ver(
-      ver = "32",
-      save_data = FALSE
+    skip_flat_icd9_avail(year = "2014")
+    skip_if_not_installed("icd", "4.0")
+    v32 <- .parse_icd9cm_leaf_year(
+      year = "2014",
     )
     leaves <- icd::short_to_decimal(v32$code)
     expect_true(all(leaves %in% nrtf))

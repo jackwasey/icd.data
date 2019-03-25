@@ -9,7 +9,7 @@
 #' @noRd
 .icd10cm_get_flat_file <- function(year, verbose = .verbose(), ...) {
   if (verbose) message("Trying to get flat file for year: ", year)
-  y <- icd10cm_sources[[as.character(year)]]
+  y <- .icd10cm_sources[[as.character(year)]]
   .unzip_to_data_raw(
     url = paste0(y$base_url, y$dx_zip),
     # dx_leaf is same, just leaves
@@ -27,7 +27,7 @@
 #' @keywords internal
 #' @noRd
 .dl_icd10cm_all <- function(verbose = FALSE, ...) {
-  for (year in names(icd10cm_sources)) {
+  for (year in names(.icd10cm_sources)) {
     for (dx in c(TRUE, FALSE)) {
       if (verbose) {
         message(
@@ -58,9 +58,9 @@
   ver <- as.character(ver)
   stopifnot(is.logical(dx), length(dx) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
-  stopifnot(as.character(ver) %in% names(icd10cm_sources))
+  stopifnot(as.character(ver) %in% names(.icd10cm_sources))
   if (verbose) message(ifelse(dx, "dx", "pcs"))
-  s <- icd10cm_sources[[ver]]
+  s <- .icd10cm_sources[[ver]]
   url <- paste0(s$base_url, s$dx_zip)
   # fox dx codes, get either the hier or just leaf flat file here:
   file_name <- s$dx_hier

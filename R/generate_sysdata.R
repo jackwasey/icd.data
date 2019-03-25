@@ -1,60 +1,9 @@
-# nocov start
-.generate_sysdata <- function(save_data = FALSE, verbose = FALSE) {
-  icd9cm_sources <- .make_icd9cm_sources()
-  icd10cm_sources <- .make_icd10cm_sources()
-  long_fns <- icd9cm_sources[["long_filename"]]
-  short_fns <- icd9cm_sources[["long_filename"]]
-  # make.names is stricter than necessary, but no function to sanitize a file
-  # name in R, although R CMD check of course can do it...
-  if (verbose) {
-    message(
-      "non-portable ICD-9-CM long file names: ",
-      paste(long_fns[long_fns != make.names(long_fns)])
-    )
-  }
-  if (verbose) {
-    message(
-      "non-portable ICD-9-CMshort file names: ",
-      paste(short_fns[short_fns != make.names(short_fns)])
-    )
-  }
-  long_fns <- icd10cm_sources[["long_filename"]]
-  short_fns <- icd10cm_sources[["long_filename"]]
-  if (verbose) {
-    message(
-      "non-portable ICD-10-CM long file names: ",
-      paste(long_fns[long_fns != make.names(long_fns)])
-    )
-  }
-  if (verbose) {
-    message(
-      "non-portable ICD-10-CM short file names: ",
-      paste(short_fns[short_fns != make.names(short_fns)])
-    )
-  }
-  sysdata_names <- c(
-    deparse(quote(icd9cm_sources)),
-    deparse(quote(icd10cm_sources))
-  )
-  # we assume we are in the root of the package directory. Save to sysdata.rda
-  # because these are probably not of interest to a user and would clutter an
-  # already busy namespace.
-  if (save_data) {
-    save(
-      list = sysdata_names,
-      file = file.path("R", "sysdata.rda"),
-      compress = "xz"
-    )
-  }
-  invisible(mget(sysdata_names))
-}
-
-.make_icd9cm_sources <- function() {
+.icd9cm_sources <- local({
   cms_base <-
     "https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/"
   cdc_base <- "ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Publications/"
   data.frame(
-    version = as.character(c(32, 31, 30, 29, 28, 27, 26, 25, 24, 23)),
+    version = as.character(seq(32, 23)),
     f_year = c(as.character(seq(2014, 2005))),
     start_date = c(
       "2014-10-01", "2013-10-01", "2012-10-01", "2011-10-01",
@@ -130,9 +79,9 @@
     ),
     stringsAsFactors = FALSE
   )
-}
+})
 
-.make_icd10cm_sources <- function() {
+.icd10cm_sources <- local({
   list(
     "2019" = list(
       base_url = "https://www.cms.gov/Medicare/Coding/ICD10/Downloads/",
@@ -201,7 +150,7 @@
       pcs_flat = "icd10pcs_order_2014.txt"
     )
   )
-}
+})
 
 .url_ok <- function(url) {
   httr::HEAD(url)$status_code < 400
@@ -223,7 +172,7 @@
 .check_icd9cm_urls <- function(warn = FALSE) {
   oldwarn <- options("warn" = 1)
   on.exit(options(oldwarn))
-  urls <- c(.make_icd9cm_sources()$url, .make_icd9cm_sources()$rtf_url)
+  urls <- c(.icd9cm_sources$url, .icd9cm_sources$rtf_url)
   for (url in urls)
     .url_warn_or_stop(url, warn)
   message("now regenerate sysdata with\ngenerate_sysdata()")
@@ -232,7 +181,7 @@
 .check_icd10cm_urls <- function(warn = FALSE) {
   oldwarn <- options("warn" = 1)
   on.exit(options(oldwarn))
-  lapply(.make_icd10cm_sources(), function(year) {
+  lapply(.icd10cm_sources, function(year) {
     zips <- grep("zip$", names(year))
     urls <- paste0(year$base_url, unlist(unname(year))[zips])
     for (url in urls)
@@ -240,4 +189,3 @@
   })
   message("now regenerate sysdata with\ngenerate_sysdata()")
 }
-# nocov end

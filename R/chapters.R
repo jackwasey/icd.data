@@ -2,14 +2,14 @@
 .icd10_generate_subchap_lookup <- function(year, verbose = FALSE) {
   .icd10_generate_chap_lookup(
     year = year,
-    chapters = icd.data::icd10_sub_chapters,
+    chapters = icd10_sub_chapters,
     prefix = "sc",
     verbose = verbose
   )
 }
 
 .icd10_generate_chap_lookup <- function(year,
-                                        chapters = icd.data::icd10_chapters,
+                                        chapters = icd10_chapters,
                                         prefix = "chap",
                                         verbose = FALSE) {
   stopifnot(is.list(chapters), is.character(prefix))

@@ -144,8 +144,7 @@ is_non_ascii <- function(x)
   .chapter_to_desc_range(x, re_major = re_icd10_major_bare)
 }
 
-.get_chapter_ranges_from_flat <- function(
-                                          flat_hier = icd10cm2019,
+.get_chapter_ranges_from_flat <- function(flat_hier = icd10cm2019,
                                           field = "chapter") {
   u <- if (is.factor(flat_hier[[field]])) {
     levels(flat_hier[[field]])
@@ -182,7 +181,7 @@ is_non_ascii <- function(x)
 #' @noRd
 .get_chapters_fr <- function(save_data = FALSE) {
   icd10_chapters_fr <- .get_chapter_ranges_from_flat(
-    flat_hier = icd10who2008fr,
+    flat_hier = get_icd10who2008fr(),
     field = "chapter"
   )
   .save_in_data_dir(icd10_chapters_fr)
@@ -191,7 +190,7 @@ is_non_ascii <- function(x)
 
 .get_sub_chapters_fr <- function(save_data = FALSE) {
   icd10_sub_chapters_fr <- .get_chapter_ranges_from_flat(
-    flat_hier = icd10who2008fr,
+    flat_hier = get_icd10who2008fr(),
     field = "sub_chapter"
   )
   .save_in_data_dir(icd10_sub_chapters_fr)
@@ -251,6 +250,17 @@ get_icd_data <- function(data_name, alt = NULL) {
   pkg_ns <- asNamespace("icd.data")
   lazy_env <- pkg_ns[[".__NAMESPACE__."]][["lazydata"]]
   exists(name, lazy_env) || exists(name, pkg_ns)
+}
+
+.ls_lazy <- function(all.names = TRUE, ...) {
+  pkg_ns <- asNamespace("icd.data")
+  ls(pkg_ns[[".__NAMESPACE__."]][["lazydata"]],
+     all.names = all.names)
+}
+
+.ls_in_ns <- function(all.names = TRUE, ...) {
+  pkg_ns <- asNamespace("icd.data")
+  ls(pkg_ns, all.names = all.names)
 }
 
 .have_memoise <- function() {

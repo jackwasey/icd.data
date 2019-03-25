@@ -1,5 +1,3 @@
-# nocov start
-
 # quick sanity checks - full tests of x in test-parse.R
 .icd9cm_hierarchy_sanity <- function(x) {
   stopifnot(
@@ -10,11 +8,11 @@
   if (!any(
     vapply(
       x,
-      is.na,
-      logical(nrow(x))
+      FUN = is.na,
+      FUN.VALUE = logical(nrow(x))
     )
   )) {
-    return()
+    return(invisible())
   }
   print(colSums(vapply(x, is.na, logical(nrow(x)))))
   print(x[which(is.na(x$major)), ])
@@ -30,7 +28,7 @@
 #'
 #' For versions 23 to 32, those which are on the CMS web site, get any codes
 #' with long or short descriptions. Earlier years only have abbreviated
-#' descriptions.
+#' descriptions, not long descriptions.
 #' @param save_data single logical value, if \code{TRUE} the source text or CSV
 #'   file will be saved in the raw data directory, otherwise (the default) the
 #'   data is simply returned invisibly.
@@ -38,14 +36,6 @@
 #' @template offline
 #' @return data frame with \code{icd9}, \code{short_desc} and \code{long_desc}
 #'   columns. \code{NA} is placed in \code{long_desc} when not available.
-#' @examples
-#' # To populate the raw data directory with the ICD-9 source:
-#' # not included in installed package, run using the full source from github,
-#' # e.g. using devtools::load_all()
-#' \dontrun{
-#' option("icd.data.offline" = FALSE)
-#' .icd9cm_parse_leaf_descs(save_data = TRUE)
-#' }
 #' @source
 #' http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html
 #' @keywords internal datagen
@@ -55,15 +45,15 @@
                                      ...) {
   stopifnot(is.logical(save_data), length(save_data) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
-  versions <- icd9cm_sources$version
+  versions <- .icd9cm_sources$version
   if (verbose) {
     message(
       "Available versions of sources are: ",
       paste(versions, collapse = ", ")
     )
   }
-  icd9cm_leaf_v32 <- .icd9cm_parse_leaf_desc_ver(
-    ver = "32",
+  icd9cm_leaf_v32 <- .parse_icd9cm_leaf_year(
+    ver = "2014",
     save_data = TRUE,
     verbose = verbose,
     ...
@@ -71,16 +61,50 @@
   invisible(icd9cm_leaf_v32)
 }
 
-#' Read the ICD-9-CM description data as provided by the Center for Medicaid
-#' Services (CMS).
+.dl_icd9cm_leaf_year <- function(year,
+                           verbose = .verbose(),
+                           ...) {
+  year <- as.character(year)
+  if (verbose) message("Downloading ICD-9-CM leaf/billable year: ", year)
+  stopifnot(year %in% .icd9cm_sources$f_year)
+  dat <- .icd9cm_sources[.icd9cm_sources$f_year == year, ]
+  fn_short_orig <- dat$short_filename
+  fn_long_orig <- dat$long_filename
+  f_info_long <- NA
+  f_info_short <- .unzip_to_data_raw(
+    dat$url,
+    file_name = fn_short_orig,
+    verbose = verbose,
+    save_name = .get_versioned_raw_file_name(fn_short_orig,
+                                             ver = year
+    ),
+    ...
+  )
+  if (!is.na(fn_long_orig)) {
+    f_info_long <- .unzip_to_data_raw(
+      url = dat$url,
+      file_name = fn_long_orig,
+      verbose = verbose,
+      save_name = .get_versioned_raw_file_name(fn_long_orig,
+                                               ver = year
+      ),
+      ...
+    )
+  }
+  list(short = f_info_short, long = f_info_long)
+}
+
+#' Read the ICD-9-CM leaf description data as provided by the Center for
+#' Medicaid Services (CMS).
 #'
-#' The full ICD-9 specification is in an RTF file, but CMS also distributes a
-#' space-separated text file with just the definitions for 'defined', 'billable'
-#' codes. Note that this canonical data doesn't specify non-diagnostic
-#' higher-level codes, just the specific diagnostic 'child' codes.
+#' The full ICD-9 specification is unfortunately only available in an RTF file,
+#' but CMS also distributes a space-separated text file with just the
+#' definitions for 'leaf' or 'billable' codes. Note that this canonical data
+#' doesn't specify non-diagnostic higher-level codes, just the specific
+#' diagnostic codes.
 #'
-#' The file can be pulled from the zip files on the CMS web site or from within
-#' the package.
+#' The RTFs are parsed by this package to produce the icd9cm2011 etc data,
+#' formerly called icd9cm_hierarchy.
 #' @param version character vector of length one containing the ICD-9 version,
 #'   e.g. \code{"32"}.
 #' @template save_data
@@ -90,52 +114,29 @@
 #' @return invisibly return the result
 #' @keywords internal datagen
 #' @noRd
-.icd9cm_parse_leaf_desc_ver <- function(ver,
-                                        save_data = FALSE,
-                                        verbose = FALSE,
-                                        ...) {
-  ver <- as.character(ver)
-  if (verbose) message("Fetching billable codes version: ", ver)
-  if (ver == "27") {
+.parse_icd9cm_leaf_year <- function(year,
+                              verbose = .verbose(),
+                              ...) {
+  stopifnot(length(year) == 1L)
+  year <- as.character(year)
+  stopifnot(grepl("^[[:digit:]]{4}$", year))
+  if (verbose) message("Fetching billable codes version: ", year)
+  # 2009 version 27 is exceptionally badly formatted:
+  if (year == "2009") {
     return(invisible(.parse_leaf_desc_icd9cm_v27(...)))
   }
-  stopifnot(ver %in% icd9cm_sources$version)
-  dat <- icd9cm_sources[icd9cm_sources$version == ver, ]
-  fn_short_orig <- dat$short_filename
-  fn_long_orig <- dat$long_filename
-  f_info_short <- .unzip_to_data_raw(
-    dat$url,
-    file_name = fn_short_orig,
-    verbose = verbose,
-    save_name = .get_versioned_raw_file_name(fn_short_orig,
-      ver = ver
-    ),
-    ...
-  )
-  f_info_long <- NULL
-  if (!is.na(fn_long_orig)) {
-    f_info_long <- .unzip_to_data_raw(
-      url = dat$url,
-      file_name = fn_long_orig,
-      verbose = verbose,
-      save_name = .get_versioned_raw_file_name(fn_long_orig,
-        ver = ver
-      ),
-      ...
-    )
-  }
+  stopifnot(year %in% .icd9cm_sources$f_year)
+  f_info <- .dl_icd9cm_leaf_year(year = year, verbose = verbose, ...)
   # Below, yes, specify encoding twice, once to declare the source format, and
   # again to tell R to flag (apparently only where necessary), the destination
   # strings: in our case this is about ten accented character in long
   # descriptions of disease names
   #
   # shortlines should always exist
-  shortlines <- readLines(f_info_short$file_path)
+  shortlines <- readLines(f_info$short$file_path)
   # longlines may not, and may have more complicated encoding
-  if (!is.na(fn_long_orig)) {
-    file_long <- file(f_info_long$file_path, encoding = "latin1")
-    longlines <- readLines(f_info_long$file_path, encoding = "latin1")
-    close(file_long)
+  if (!is.na(f_info["long"])) {
+    longlines <- readLines(f_info$long$file_path, encoding = "latin1")
   } else {
     longlines <- NA_character_
   }
@@ -178,8 +179,8 @@
   stopifnot(length(setdiff(new_order, seq_len(nrow(out)))) == 0)
   out <- out[new_order, ]
   oldwarn <- options(warn = ifelse(verbose, 1, -1))
-  on.exit(options(oldwarn))
-  if (!is.na(fn_long_orig)) {
+  on.exit(options(oldwarn), add = TRUE)
+  if (!is.na(f_info["long"])) {
     encs <- Encoding(out[["long_desc"]])
     if (verbose) {
       message(
@@ -200,13 +201,10 @@
   }
   out$short_desc <- enc2utf8(out$short_desc)
   out$long_desc <- enc2utf8(out$long_desc)
-  var_name <- paste0("icd9cm_leaf_v", ver)
+  var_name <- paste0("icd9cm", year, "_leaf")
   out[order.icd9(out$code), ]
   rownames(out) <- NULL
-  assign(var_name, out)
-  if (save_data) {
-    .save_in_data_dir(var_name = var_name)
-  }
+  .save_in_resource_dir(var_name = var_name, x = out)
   invisible(out)
 }
 
@@ -217,7 +215,7 @@
 #' @noRd
 .parse_leaf_desc_icd9cm_v27 <- function(...) {
   message("working on version 27 quirk")
-  v27_dat <- icd9cm_sources[icd9cm_sources$version == "27", ]
+  v27_dat <- .icd9cm_sources[.icd9cm_sources$version == "27", ]
   fn_orig <- v27_dat$other_filename
   url <- v27_dat$url
   message("original v27 file name = '", fn_orig, "'. URL = ", url)
@@ -277,8 +275,7 @@
 #' @template offline
 #' @keywords internal datagen
 #' @noRd
-.icd9cm_gen_chap_hier <- function(
-                                  save_data = FALSE,
+.icd9cm_gen_chap_hier <- function(save_data = FALSE,
                                   verbose = FALSE,
                                   offline = .offline(),
                                   perl = TRUE,
@@ -324,7 +321,7 @@
   # just copy the long description over.
 
   # need ICD-9 codes to build this, right now just working off the final published edition.
-  bill32 <- .icd9cm_parse_leaf_desc_ver("32",
+  bill32 <- .parse_icd9cm_leaf_year("2014",
     verbose = verbose,
     offline = offline
   )
@@ -438,4 +435,27 @@
   out
 }
 
-# nocov end
+.make_icd9cm_parse_leaf_fun <- function(year, verbose) {
+  # Must force, so that the values to the arguments are not promises which are
+  # later evaluated in a different environment.
+  force(year)
+  parse_fun <- function() {
+    if (.verbose()) message("Calling ICD-9-CM leaf parser for year:", year)
+    .parse_icd9cm_leaf_year(year = year)
+  }
+  parse_fun_env <- environment(parse_fun)
+  parse_fun_env$ver <- as.character(year)
+  parse_fun
+}
+
+.make_icd9cm_leaf_parsers <- function(env = parent.frame(),
+                                      verbose = .verbose()) {
+  for (y in .icd9cm_sources$f_year) {
+    # TODO: special case for 2011 / v32?
+    parse_fun_name <- .get_parser_icd9cm_leaf_name(y)
+    if (verbose) message("Making ICD-9-CM leaf parser: ", parse_fun_name)
+    parse_fun <- .make_icd9cm_parse_leaf_fun(y, verbose = verbose)
+    assign(parse_fun_name, parse_fun, envir = env)
+  }
+}
+

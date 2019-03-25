@@ -76,7 +76,7 @@
     .rds_path(var_name),
     compress = "gzip"
   )
-  invisible(get(var_name, envir = envir))
+  invisible(.get(var_name))
 }
 
 #' Unzip a single file from URL

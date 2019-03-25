@@ -4,7 +4,7 @@
 \alias{get_cim10fr2019}
 \title{Localised synonym for \code{\link{get_icd10fr2019}}, with French column names}
 \usage{
-get_cim10fr2019(x)
+get_cim10fr2019()
 }
 \description{
 Localised synonym for \code{\link{get_icd10fr2019}}, with French column names

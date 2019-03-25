@@ -1,26 +1,11 @@
 # Set up an environemnt to cache ICD data
 .icd_data_env <- new.env(parent = emptyenv())
 
-# Generate getter functions for all bound data?
-# .bindings <- list(
-#   # WHO
-#   "icd10who2016" = c("dx"),
-#   "icd10who2008fr" = c("dx"),
-#   # FR
-#   "icd10fr2019" = c("dx"),
-#   # BE
-#   "icd10be2014" = c("dx", "pc"),
-#   "icd10be2017" = c("dx", "pc"),
-#   # ICD-10-CM
-#   "icd10cm2014" = c("dx", "pc"),
-#   "icd10cm2015" = c("dx", "pc"),
-#   "icd10cm2016" = c("pc"),
-#   "icd10cm2017" = c("dx", "pc"),
-#   "icd10cm2018" = c("dx", "pc"),
-#   "icd10cm2019" = c("pc")
-# )
+# This is an environment with active bindings to get ICD-9-CM leaves and descriptions. Previously, icd9cm_billable was a named list
+#TODO: ? icd9cm_billable <- new.env(parent = emptyenv())
 
-.binding_names <- list(
+
+.data_names <- c(
   # WHO
   "icd10who2016",
   "icd10who2008fr",
@@ -31,105 +16,38 @@
   "icd10be2014_pc",
   "icd10be2017",
   "icd10be2017_pc",
-  # ICD-10-CM
+  # ICD-9-CM leaf descriptions
+  paste0("icd9cm", 2005:2014, "_leaf"),
+  # RTF parsing with majors "three-digit" codes and other non-leaf nodes
+  paste0("icd9cm", 2005:2014),
+  # ICD-10-CM PCS
+  paste0("icd10cm", 2014:2019, "_pc"),
+  # ICD-10-CM DX
   "icd10cm2014",
-  "icd10cm2014_pc",
   "icd10cm2015",
-  "icd10cm2015_pc",
   # icd10cm2016 included (but will migrate to 2019 once all is on CRAN)
-  "icd10cm2016_pc",
   "icd10cm2017",
-  "icd10cm2017_pc",
-  "icd10cm2018",
-  "icd10cm2018_pc",
-  # icd10cm2019 included already
-  "icd10cm2019_pc"
+  "icd10cm2018"
+  # icd10cm2019 included already, being the latest version
 )
-
-# called in .onLoad in zzz.R
-.make_active_bindings <- function(final_env, verbose = FALSE) {
-  for (var_name in .binding_names) {
-    if (verbose) message("Making active binding(s) for: ", var_name)
-    binding_fun <- .make_binding_fun(var_name = var_name, verbose = verbose)
-    bound_name <- paste0(".", var_name, "_binding")
-    assign(bound_name, eval(binding_fun), final_env)
-    if (verbose) message("Trying to create active binding itself")
-    ff <- get(bound_name, final_env)
-    if (is.function(ff)) {
-      if (exists(var_name, final_env)) {
-        if (verbose) {
-          message(var_name, " already exists.")
-          next
-        }
-      }
-      makeActiveBinding(
-        sym = var_name,
-        ff,
-        env = final_env
-      )
-      lockBinding(var_name, final_env)
-    } else {
-      if (verbose) message(var_name, " is not a function! Skipping")
-    }
-    # set environment of the binding? environment(get())
-  } # end loop through bindings
-}
-
-# Cannot bind verbose now because it is forced, and stops being dynamic once the functino is made.
-.make_binding_fun <- function(var_name, verbose = FALSE) {
-  # TODO: ideally don't use do.call, but the actual function (or it's symbol?)
-  if (verbose) message("Making data fun for: ", var_name)
-  fetcher_name <- .get_fetcher_name(var_name)
-  binding_fun <- function(x) {
-    if (verbose) message("Running data fun for ", var_name)
-    dat <- do.call(fetcher_name, args = list())
-    if (!is.null(dat)) return(dat)
-    .absent_action_switch(paste(var_name, "not available."))
-    .message_who()
-  }
-  f_env <- environment(binding_fun)
-  f_env$fetcher_name <- fetcher_name
-  f_env$var_name <- var_name
-  f_env$verbose <- verbose
-  binding_fun
-}
-
-#' Get the ICD-9-CM data structure
-#'
-#' This replaces the now deprecated and confusingly named `icd9cm_hierarhcy`
-#' @keywords datasets
-#' @export
-get_icd9cm2011 <- function() {
-  icd9cm_hierarchy
-}
 
 #' The latest available version of ICD-10-CM in this package
 #' @details This is an active binding, so is exported explicitly
 #' @docType data
 #' @keywords datasets
-#' @name icd10cm_latest
 #' @export
 get_icd10cm_latest <- function() {
   get_icd10cm2019()
 }
 
-# construct icd9cm_billable directly in the namespace
-icd9cm_billable <- list()
-# just for R CMD check, with the circular dep and R-devel
-lazyenv <- asNamespace("icd.data")$.__NAMESPACE__.$lazydata
-# work around the fact that R CMD check gets all the bindings before lazy data is put in the package namespace
-if (!exists("icd9cm_leaf_v32", lazyenv)) return()
-icd9cm_billable[["32"]] <- get("icd9cm_leaf_v32", envir = lazyenv)
-
 #' Localised synonym for \code{\link{get_icd10fr2019}}, with French column names
 #' @seealso \code{\link{get_icd10fr2019}}
 #' @export
-get_cim10fr2019 <- function(x) {
-  if (!missing(x)) .stop_binding_ro()
+get_cim10fr2019 <- function() {
   if (exists("cim10fr2019", envir = .icd_data_env)) {
     return(get("cim10fr2019", envir = .icd_data_env))
   }
-  cim10fr2019 <- icd10fr2019
+  cim10fr2019 <- get_icd10fr2019()
   names(cim10fr2019) <- c(
     "code",
     "desc_courte",
@@ -145,28 +63,3 @@ get_cim10fr2019 <- function(x) {
   cim10fr2019
 }
 
-.message_who <- function() {
-  o <- getOption("icd.data_absent_action")
-  if (!is.null(o) && o %nin% c("stop", "message")) {
-    # TODO: update this message, as we now automate.
-    message(
-      "WHO ICD data must be downloaded by each user due to copyright
-    concerns. This may be achieved by running either of the commands
-
-    icd.data:::.fetch_icd10who2016()
-    icd.data:::.fetch_icd10who2008_fr()
-
-    The data has to be saved somewhere accessible. The
-    location is given by:
-
-    icd_data_dir()
-
-    which defaults to:
-
-    file.path(\"~/.icd.data\")
-
-    See:
-    setup_icd_data()"
-    )
-  }
-}

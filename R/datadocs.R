@@ -70,10 +70,18 @@ NULL
 #' @aliases icd10_sub_chapters_fr
 NULL
 
-#' Latest ICD-9-CM diagnosis codes, in flat \code{data.frame} format
+#' ICD-9-CM diagnosis codes including leaf nodes and branch names up to the
+#' three-digit codes.
 #'
-#' Short-form ICD-9 codes with short and long descriptions, and description of
-#' each hierarchy level containing each code.
+#' Unlike \code{\link{get_icd9cm2014_leaf}} and friends, these data frames contain
+#' the full structure of the ICD-9-CM scheme up to the three-digit codes. Unlike
+#' the equivalent ICD-10-CM data frames (e.g., \code{\link{icd10cm2019}}), they
+#' do not have columns indicating billable/leaf status, or chapter designations.
+#'
+#' \code{icd9cm_hierarchy} is the deprecated name, which currently points to the
+#' final ICD-9-CM 2014 release. 2011 -- 2014 are in fact identical. These are
+#' generated dynamically by parsing an awkward RTF file, and only the 2011 --
+#' 2014 data has been tested and used thoroughly.
 #' @docType data
 #' @keywords datasets
 #' @details Format:  data frame
@@ -95,18 +103,6 @@ NULL
 #' @name icd9cm_hierarchy
 NULL
 
-#' ICD-9-CM data sources
-#' @name icd9cm_sources
-#' @docType data
-#' @keywords datasets internal
-NULL
-
-#' ICD-10-CM data sources
-#' @name icd10cm_sources
-#' @docType data
-#' @keywords datasets internal
-NULL
-
 #' United States and Belgium ICD-10-CM
 #'
 #' The public domain modified ICD-10 classification as published in the public
@@ -116,8 +112,8 @@ NULL
 #' a code higher in the hierarchy which nevertheless will have a description.
 #' @section Editions: There are annual revisions to this data in the US.
 #' @aliases icd10cm2016
-#' @seealso \code{\link{icd10cm2014}} \code{\link{icd10cm2015}}
-#'   \code{\link{icd10cm2017}} \code{\link{icd10cm2018}}
+#' @seealso \code{\link{get_icd10cm2014}} \code{\link{get_icd10cm2015}}
+#'   \code{\link{get_icd10cm2017}} \code{\link{get_icd10cm2018}}
 #' @source \url{http://www.cdc.gov/nchs/icd/icd10cm.htm}
 #' @docType data
 #' @keywords datasets
@@ -140,7 +136,7 @@ NULL
 #' @name icd10cm2019
 NULL
 
-#' @name icd10cm2014
+#' @name get_icd10cm2014
 #' @title ICD-10-CM 2014
 #' @seealso \code{\link{icd10cm2019}}
 #' @docType data
@@ -148,7 +144,7 @@ NULL
 #' @export
 NULL
 
-#' @name icd10cm2015
+#' @name get_icd10cm2015
 #' @title ICD-10-CM 2015
 #' @seealso \code{\link{icd10cm2019}}
 #' @docType data
@@ -156,7 +152,7 @@ NULL
 #' @export
 NULL
 
-#' @name icd10cm2017
+#' @name get_icd10cm2017
 #' @title ICD-10-CM 2017
 #' @seealso \code{\link{icd10cm2019}}
 #' @docType data
@@ -164,7 +160,7 @@ NULL
 #' @export
 NULL
 
-#' @name icd10cm2018
+#' @name get_icd10cm2018
 #' @title ICD-10-CM 2018
 #' @seealso \code{\link{icd10cm2019}}
 #' @docType data
@@ -176,7 +172,7 @@ NULL
 #'
 #' This data must be downloaded on a per-user basis. A prompt is given when the
 #' data is first attempted to be accessed.
-#' @name icd10who2016
+#' @name get_icd10who2016
 #' @source \url{http://www.who.int}
 #' @docType data
 #' @keywords datasets
@@ -187,7 +183,7 @@ NULL
 #'
 #' This data must be downloaded on a per-user basis. A prompt is given when the
 #' data is first attempted to be accessed.
-#' @name icd10who2008fr
+#' @name get_icd10who2008fr
 #' @source \url{http://www.who.int}
 #' @docType data
 #' @keywords datasets
@@ -212,7 +208,7 @@ NULL
 #'   CIM-10-FR}
 #' @docType data
 #' @keywords datasets
-#' @name icd10fr2019
+#' @name get_icd10fr2019
 #' @export
 NULL
 
@@ -228,36 +224,36 @@ NULL
 #' \url{https://www.health.belgium.be/sites/default/files/uploads/fields/fpshealth_theme_file/fy2017_reflist_icd-10-be.xlsx_last_updatet_28-07-2017_1.xlsx}
 #' \url{https://www.health.belgium.be/fr/sante/organisation-des-soins-de-sante/hopitaux/systemes-denregistrement/icd-10-be}
 #' \url{https://www.health.belgium.be/fr/fy2014reflisticd-10-bexlsx}
-#' @name icd10be2014
-#' @seealso \code{\link{icd10be2017}} \code{\link{icd10be2014_pc}}
-#'   \code{\link{icd10be2017_pc}}
+#' @name get_icd10be2014
+#' @seealso \code{\link{get_icd10be2017}} \code{\link{get_icd10be2014_pc}}
+#'   \code{\link{get_icd10be2017_pc}}
 #' @docType data
 #' @keywords datasets
 #' @export
 NULL
 
 #' @title ICD-10-BE 2017
-#' @name icd10be2017
-#' @seealso \code{\link{icd10be2014}} \code{\link{icd10be2014_pc}}
-#'   \code{\link{icd10be2017_pc}}
+#' @name get_icd10be2017
+#' @seealso \code{\link{get_icd10be2014}} \code{\link{get_icd10be2014_pc}}
+#'   \code{\link{get_icd10be2017_pc}}
 #' @docType data
 #' @keywords datasets
 #' @export
 NULL
 
 #' @title ICD-10-BE 2017 procedure codes
-#' @name icd10be2017_pc
-#' @seealso \code{\link{icd10be2014}} \code{\link{icd10be2014_pc}}
-#'   \code{\link{icd10be2017}}
+#' @name get_icd10be2017_pc
+#' @seealso \code{\link{get_icd10be2014}} \code{\link{get_icd10be2014_pc}}
+#'   \code{\link{get_icd10be2017}}
 #' @docType data
 #' @keywords datasets
 #' @export
 NULL
 
 #' @title ICD-10-BE 2014 procedure codes
-#' @name icd10be2014_pc
-#' @seealso \code{\link{icd10be2014}} \code{\link{icd10be2017}}
-#'   \code{\link{icd10be2017_pc}}
+#' @name get_icd10be2014_pc
+#' @seealso \code{\link{get_icd10be2014}} \code{\link{get_icd10be2017}}
+#'   \code{\link{get_icd10be2017_pc}}
 #' @docType data
 #' @keywords datasets
 #' @export
@@ -271,7 +267,9 @@ NULL
 #'   the year, e.g., \code{"2018"}. Each data frame contains two character
 #'   columns, the first, named \code{code} is the procedure code; the second,
 #'   named \code{desc}, has the description.
-#' @name icd10cm2014_pc
+#' @name get_icd10cm2019_pc
+#' @aliases get_icd10cm2014_pc get_icd10cm2015_pc get_icd10cm2016_pc get_icd10cm2017_pc
+#'   get_icd10cm2018_pc
 #' @seealso
 #' \url{https://www.cms.gov/Medicare/Coding/ICD10/downloads/pcs_refman.pdf}
 #' @docType data
@@ -279,61 +277,152 @@ NULL
 #' @export
 NULL
 
-#' @rdname icd10cm2014_pc
-#' @export
-#' @name icd10cm2015_pc
-NULL
-
-#' @rdname icd10cm2014_pc
-#' @export
-#' @name icd10cm2016_pc
-NULL
-
-#' @rdname icd10cm2014_pc
-#' @export
-#' @name icd10cm2017_pc
-NULL
-
-#' @rdname icd10cm2014_pc
-#' @export
-#' @name icd10cm2018_pc
-NULL
-
-#' Final version ICD-9-CM, just billable/leaf codes
+#' ICD-9-CM, just billable/leaf codes
 #'
-#' These are derived from the final CMS published version 32 for 2014, which was
-#' unchanged since 2011. The short descriptions are in ASCII with no special
-#' characters, whereas the long descriptions contain accented characters which
-#' are stored as Unicode, \code{latin-1} or \code{cp1252}.
+#' @details These are derived from the final CMS published version 32 for 2014,
+#'   which was unchanged since 2011. The short descriptions are in ASCII with no
+#'   special characters, whereas the long descriptions contain accented
+#'   characters which are stored as Unicode, \code{latin-1} or \code{cp1252}.
 #'
-#' This all done during package creation, but can be repeated by package users,
-#' including pulling the data from the web pages directly. Despite my best
-#' efforts, current locale can give different results, but this packaged data is
-#' correct, with some \code{UTF-8} encoded strings. \code{icd9cm_billable} has
-#' been deprecated, and now includes only the latest version (32).
+#'   This all done during package creation, but can be repeated by package
+#'   users, including pulling the data from the web pages directly. Despite my
+#'   best efforts, current locale can give different results, but this packaged
+#'   data is correct, with some \code{UTF-8} encoded strings.
+#'   \code{icd9cm_billable} has been deprecated, and now includes only the
+#'   latest version (32).
 #' @docType data
 #' @keywords datasets
 #' @format data frames with columns \code{code}, \code{short_desc}, and
 #'   \code{long_desc}.
 #' @source
 #' \url{http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html}
-#' @name icd9cm_leaf_v32
+#' @name get_icd9cm2014_leaf
+#' @aliases iget_cd9cm2005_leaf get_icd9cm2006_leaf get_icd9cm2007_leaf
+#'   get_icd9cm2008_leaf get_icd9cm2009_leaf get_icd9cm2010_leaf
+#'   get_icd9cm2011_leaf get_icd9cm2012_leaf get_icd9cm2013_leaf
+#'   get_icd9cm2014_leaf
+#' @export
 NULL
 
-#' Deprecated name for the ICD-9-CM leaf nodes
+#' @name get_icd9cm2005
+#' @rdname icd9cm_hierarchy
+#' @export
+NULL
+
+#' @name get_icd9cm2006
+#' @rdname icd9cm_hierarchy
+#' @export
+NULL
+
+#' @name get_icd9cm2007
+#' @rdname icd9cm_hierarchy
+#' @export
+NULL
+
+#' @name get_icd9cm2008
+#' @rdname icd9cm_hierarchy
+#' @export
+NULL
+
+#' @name get_icd9cm2009
+#' @rdname icd9cm_hierarchy
+#' @export
+NULL
+
+#' @name get_icd9cm2010
+#' @rdname icd9cm_hierarchy
+#' @export
+NULL
+
+#' @name get_icd9cm2011
+#' @rdname icd9cm_hierarchy
+#' @export
+NULL
+
+#' @name get_icd9cm2012
+#' @rdname icd9cm_hierarchy
+#' @export
+NULL
+
+#' @name get_icd9cm2013
+#' @rdname icd9cm_hierarchy
+#' @export
+NULL
+
+#' @name get_icd9cm2014
+#' @rdname icd9cm_hierarchy
+#' @export
+NULL
+
+#' @name get_icd9cm2005_leaf
+#' @rdname get_icd9cm2014_leaf
+#' @export
+NULL
+
+#' @name get_icd9cm2006_leaf
+#' @rdname get_icd9cm2014_leaf
+#' @export
+NULL
+
+#' @name get_icd9cm2007_leaf
+#' @rdname get_icd9cm2014_leaf
+#' @export
+NULL
+
+#' @name get_icd9cm2008_leaf
+#' @rdname get_icd9cm2014_leaf
+#' @export
+NULL
+
+#' @name get_icd9cm2009_leaf
+#' @rdname get_icd9cm2014_leaf
+#' @export
+NULL
+
+#' @name get_icd9cm2010_leaf
+#' @rdname get_icd9cm2014_leaf
+#' @export
+NULL
+
+#' @name get_icd9cm2011_leaf
+#' @rdname get_icd9cm2014_leaf
+#' @export
+NULL
+
+#' @name get_icd9cm2012_leaf
+#' @rdname get_icd9cm2014_leaf
+#' @export
+NULL
+
+#' @name get_icd9cm2013_leaf
+#' @rdname get_icd9cm2014_leaf
+#' @export
+NULL
+
+#' Deprecated name for the ICD-9-CM billable/leaf nodes
 #'
-#' This now just contains the final version (2011, version number 32). Use
-#' \code{\link{icd9cm_leaf_v32}} instead.
-#' @seealso \code{\link{icd9cm_leaf_v32}}
+#' This now just contains the final version (2014, version number 32). This is
+#' actually the same from 2011 to 2014. Use getter functions such as
+#' \code{\link{get_icd9cm2014_leaf}} instead.
 #' @docType data
 #' @keywords datasets
-#' @format data frames with columns \code{code}, \code{short_desc}, and
-#'   \code{long_desc}.
+#' @format list of data frames with columns \code{code}, \code{short_desc}, and
+#'   \code{long_desc}, containing just the leaf (in USA, "billable") codes, and
+#'   their descriptions. See \code{\link{icd9cm_hierarchy}} for a data frame
+#'   with more hierarchical information.
 #' @source
 #' \url{http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html}
 #' @name icd9cm_billable
-#' @export
 NULL
+
+#' The latest available version of ICD-10-CM in this package
+#' @details This is an active binding, so is exported explicitly
+#' @docType data
+#' @keywords datasets
+#' @export
+get_icd10cm_latest <- function() {
+  get_icd10cm2019()
+}
 
 
 #' Hospital discharge data from Vermont

@@ -33,27 +33,42 @@
   if (!("icd.data.offline" %in% names(options()))) {
     options("icd.data.offline" = !.env_var_is_false("ICD_DATA_OFFLINE"))
   }
-  # don't check interactive option, as it will never change if already set -ve for package loading
-  options(
-    "icd.data.interact" =
-      !.env_var_is_false("ICD_DATA_INTERACT") ||
-        interactive()
-  )
+  if (!("icd.data.interact" %in% names(options()))) {
+    options(
+      "icd.data.interact" =
+        !.env_var_is_false("ICD_DATA_INTERACT") ||
+          interactive()
+    )
+  }
   # stop or message, anything else will silently continue, which we have to
   # default to onLoad to avoid numerous R CMD check problems. For this reason
   # also, don't check whether option already set, just to make sure we are
   # really silent with CRAN.
-  ev <- tolower(Sys.getenv("ICD_DATA_ABSENT_ACTION", unset = "silent"))
-  stopifnot(ev %in% c(
-    "message",
-    "stop",
-    "warning",
-    "silent"
-  ))
-  options("icd.data.absent_action" = ev)
+  if (!("icd.data.absent_action" %in% names(options()))) {
+    ev <- tolower(Sys.getenv("ICD_DATA_ABSENT_ACTION", unset = "stop"))
+    stopifnot(ev %in% c(
+      "message",
+      "stop",
+      "warning",
+      "silent"
+    ))
+    options("icd.data.absent_action" = ev)
+  }
   # Which version of ICD-10-CM to use by default?
   if (!("icd.data.icd10cm_active_ver" %in% names(options()))) {
     set_icd10cm_active_ver("2019", check_exists = FALSE)
+  }
+  if (!("icd.data.resource" %in% names(options()))) {
+    for (trypath in c(
+      getOption("icd.data.resource", default = ""),
+      Sys.getenv("ICD_DATA_PATH"),
+      file.path(Sys.getenv("HOME"), ".icd.data"),
+      path.expand(.icd_data_default)
+    )) {
+      if (!is.null(trypath) && dir.exists(trypath)) {
+        options("icd.data.resource" = trypath)
+      }
+    }
   }
 }
 
@@ -120,7 +135,9 @@
 
 .verbose <- function(x) {
   if (missing(x)) {
-    return(isTRUE(getOption("icd.data.verbose")))
+    v <- getOption("icd.data.verbose")
+    if (is.numeric(v)) return(v)
+    return(isTRUE(v))
   }
   options(icd.data.verbose = x)
   invisible(x)
@@ -168,10 +185,16 @@
       if (must_work) {
         stop(msg, call. = FALSE)
       } else {
-        warning(msg, call. = FALSE)
+        message(msg, call. = FALSE)
       }
     },
-    "warning" = warning(msg, call. = FALSE),
+    "warning" = {
+      if (must_work) {
+        warning(msg, call. = FALSE)
+      } else {
+        message(msg, call. = FALSE)
+      }
+    },
     "message" = message(msg)
   )
 }
@@ -299,8 +322,8 @@ download_icd_data <- function() {
   message("Downloading, caching and parsing all ICD data")
   message("This will take a few minutes.")
   options("icd.data.offline" = FALSE)
-  for (b in .binding_names) {
-    message("Working on: ", b)
-    get(b)
+  for (d in .data_names) {
+    message("Working on: ", d)
+    .get_fetcher_fun(d)()
   }
 }

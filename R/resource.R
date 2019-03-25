@@ -25,6 +25,14 @@
   match.fun(.get_parser_name(var_name))
 }
 
+.get_parser_icd9cm_leaf_name <- function(ver) {
+  paste0(".parse_", paste0("icd9cm", ver, "_leaf"))
+}
+
+.get_parser_icd9cm_rtf_name <- function(ver) {
+  paste0(".parse_", paste0("icd9cm", ver))
+}
+
 .get_parser_icd10cm_name <- function(ver, dx) {
   paste0(".parse_", paste0("icd10cm", ver, ifelse(dx, "", "_pc")))
 }
@@ -34,7 +42,7 @@
 #' @keywords internal
 #' @noRd
 .get_fetcher_name <- function(var_name) {
-  paste0(".fetch_", var_name)
+  paste0("get_", var_name)
 }
 
 .get_fetcher_fun <- function(var_name) {
@@ -89,7 +97,7 @@
 
 .all_cached <- function() {
   all(
-    vapply(.binding_names, .exists_in_cache, logical(1))
+    vapply(.data_names, .exists_in_cache, logical(1))
   )
 }
 
@@ -133,12 +141,12 @@
   }
 }
 
-.make_getter <- function(var_name, verbose) {
+.make_getter <- function(var_name) {
   force(var_name)
-  force(verbose)
   getter_fun <- function(alt = NULL,
                            must_work = TRUE,
                            msg = paste("Unable to find", var_name)) {
+    verbose <- .verbose()
     if (verbose) message("Starting getter for: ", var_name)
     stopifnot(is.character(var_name))
     dat <- .get_from_cache(var_name,
@@ -167,18 +175,17 @@
     alt
   }
   f_env <- environment(getter_fun)
-  f_env$verbose <- verbose
   f_env$var_name <- var_name
   getter_fun
 }
 
-.make_fetcher <- function(var_name, verbose) {
+.make_fetcher <- function(var_name) {
   force(var_name)
-  force(verbose)
   parse_fun_name <- .get_parser_name(var_name)
   fetcher_fun <- function(alt = NULL,
                             must_work = TRUE,
                             msg = paste("Unable to find", var_name)) {
+    verbose <- .verbose()
     if (verbose) message("Starting fetcher for ", var_name)
     dat <- .get_from_cache(
       var_name = var_name,
@@ -247,7 +254,6 @@
     alt
   }
   f_env <- environment(fetcher_fun)
-  f_env$verbose <- verbose
   f_env$parse_fun_name <- parse_fun_name
   f_env$var_name <- var_name
   fetcher_fun
@@ -257,18 +263,19 @@
 .make_getters_and_fetchers <- function(final_env = parent.frame(),
                                        verbose = .verbose()) {
   # for (var_name in names(.bindings)) {
-  for (var_name in .binding_names) {
+  for (var_name in .data_names) {
     if (verbose) message("Making getters and fetchers for ", var_name)
     getter_name <- .get_getter_name(var_name)
     if (verbose) message("assigning: ", getter_name)
+    # TODO: this doesn't need to be specific to each data element?
     assign(getter_name,
-      .make_getter(var_name, verbose),
+      .make_getter(var_name),
       envir = final_env
     )
     fetcher_name <- .get_fetcher_name(var_name)
     if (verbose) message("assigning: ", fetcher_name)
     assign(fetcher_name,
-      .make_fetcher(var_name, verbose),
+      .make_fetcher(var_name),
       envir = final_env
     )
   }
@@ -353,7 +360,7 @@ icd_data_dir <- function() {
   }
   options("icd.data.offline" = !ok)
   msg <- "Unable to get permission to download data."
-  .absent_action_switch(msg)
+  if (!ok) .absent_action_switch(msg)
   ok
 }
 

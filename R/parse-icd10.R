@@ -18,7 +18,7 @@
                                twentysixteen = FALSE,
                                ...) {
   if (verbose) message("Parsing all ICD-10-CM diagnostic codes.")
-  yrs <- names(icd10cm_sources)
+  yrs <- names(.icd10cm_sources)
   yrs <- if (twentysixteen) {
     "2016"
   } else {
@@ -44,7 +44,7 @@
   year <- as.character(year)
   stopifnot(is.logical(must_work) && length(must_work) == 1L)
   stopifnot(is.logical(verbose) && length(verbose) == 1L)
-  stopifnot(as.character(year) %in% names(icd10cm_sources))
+  stopifnot(as.character(year) %in% names(.icd10cm_sources))
   if (verbose) message("Getting flat file for year: ", year)
   f_info <- .icd10cm_get_flat_file(year = year, verbose = verbose, ...)
   if (is.null(f_info)) {

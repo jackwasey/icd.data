@@ -190,7 +190,7 @@
   if (dx) {
     invisible(icd10be2014)
   } else {
-    invisible(icd10be2017_pc)
+    invisible(icd10be2014_pc)
   }
 }
 

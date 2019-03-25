@@ -1,6 +1,6 @@
-.icd10cm_get_xml_file <- function(ver = "2019", ...) {
+.dl_icd10cm_xml <- function(ver = "2019", ...) {
   # http://www.cdc.gov/nchs/data/icd/icd10cm/2016/ICD10CM_FY2016_Full_XML.ZIP
-  s <- icd10cm_sources[[ver]]
+  s <- .icd10cm_sources[[ver]]
   .unzip_to_data_raw(
     url = paste0(s$base_url, s$dx_xml_zip),
     file_name = s$dx_xml,
@@ -25,7 +25,7 @@
 #' @noRd
 .icd10cm_extract_sub_chapters <- function(save_data = FALSE, ...) {
   stopifnot(is.logical(save_data))
-  f_info <- .icd10cm_get_xml_file(...)
+  f_info <- .dl_icd10cm_xml(...)
   stopifnot(!is.null(f_info))
   j <- xml2::read_xml(f_info$file_path)
   xml2::xml_name(xml2::xml_children(j)) == "chapter" -> chapter_indices

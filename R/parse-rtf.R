@@ -5,14 +5,6 @@ re_icd9_major_strict_bare <- "(?:[[:digit:]]{3}|V(?:0[1-9]|[1-9][[:digit:]])|E[[
 re_icd9_major_bare <- "(?:[[:digit:]]{1,3}|[Vv](?:0[1-9]|[1-9][[:digit:]]?)|[Ee][[:digit:]]{1,3})" # nolint
 re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 
-# try parsing the RTF, and therefore get subheadings, as well as billable codes.
-# ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Publications/ICD9-CM/2011/
-#
-# see https://github.com/LucaFoschini/ICD-9_Codes for a completely different
-# approach in python
-
-# nocov start
-
 #' Fetch RTF for a given year
 #'
 #' Will return NULL if offline and not available
@@ -22,10 +14,14 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #' @noRd
 .rtf_fetch_year <- function(year, verbose = FALSE, ...) {
   year <- as.character(year)
-  rtf_dat <- icd9cm_sources[icd9cm_sources$f_year == year, ]
+  rtf_dat <- .icd9cm_sources[.icd9cm_sources$f_year == year, ]
   fn <- rtf_dat$rtf_filename
   url <- rtf_dat$rtf_url
-  .unzip_to_data_raw(url, file_name = fn, verbose = verbose, ...)
+  .unzip_to_data_raw(url,
+                     save_name = .get_versioned_raw_file_name(fn, ver = year),
+                     file_name = fn,
+                     verbose = verbose,
+                     ...)
 }
 
 #' parse RTF description of entire ICD-9-CM for a specific year
@@ -699,4 +695,26 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   # nolint end
 }
 
-# nocov end
+.make_icd9cm_parse_rtf_fun <- function(year, verbose) {
+  # Must force, so that the values to the arguments are not promises which are
+  # later evaluated in a different environment.
+  force(year)
+  parse_fun <- function() {
+    if (.verbose()) message("Calling ICD-9-CM RTF parser for year:", year)
+    .rtf_parse_year(year = year)
+  }
+  parse_fun_env <- environment(parse_fun)
+  parse_fun_env$ver <- as.character(year)
+  parse_fun
+}
+
+.make_icd9cm_rtf_parsers <- function(env = parent.frame(),
+                                      verbose = .verbose()) {
+  for (y in .icd9cm_sources$f_year) {
+    # TODO: special case for 2011 / v32?
+    parse_fun_name <- .get_parser_icd9cm_rtf_name(y)
+    if (verbose) message("Making ICD-9-CM RTF parser: ", parse_fun_name)
+    parse_fun <- .make_icd9cm_parse_rtf_fun(y, verbose = verbose)
+    assign(parse_fun_name, parse_fun, envir = env)
+  }
+}

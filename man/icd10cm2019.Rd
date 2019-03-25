@@ -40,7 +40,7 @@ Format:  data frame, with columns for code, leaf status (0 or 1),
   \url{https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2014-PCS-long-and-abbreviated-titles.zip}
 }
 \seealso{
-\code{\link{icd10cm2014}} \code{\link{icd10cm2015}}
-  \code{\link{icd10cm2017}} \code{\link{icd10cm2018}}
+\code{\link{get_icd10cm2014}} \code{\link{get_icd10cm2015}}
+  \code{\link{get_icd10cm2017}} \code{\link{get_icd10cm2018}}
 }
 \keyword{datasets}

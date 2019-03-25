@@ -89,9 +89,18 @@ test_that("some sub-chapters are correct", {
     subchaps[nrow(icd9cm_hierarchy)],
     "Injury Resulting From Operations Of War"
   )
-
-  # first and last of a block in the middle
-  suicide_rows <- which(codes %in% (icd::expand_range("E950", "E959")))
+  # first and last of a block in the middle of range E950 to E959
+  psych_codes <- c(
+    "E950", "E9500", "E9501", "E9502", "E9503", "E9504",
+    "E9505", "E9506", "E9507", "E9508", "E9509", "E951", "E9510",
+    "E9511", "E9518", "E952", "E9520", "E9521", "E9528", "E9529",
+    "E953", "E9530", "E9531", "E9538", "E9539", "E954", "E955", "E9550",
+    "E9551", "E9552", "E9553", "E9554", "E9555", "E9556", "E9557",
+    "E9559", "E956", "E957", "E9570", "E9571", "E9572", "E9579",
+    "E958", "E9580", "E9581", "E9582", "E9583", "E9584", "E9585",
+    "E9586", "E9587", "E9588", "E9589", "E959"
+  )
+  suicide_rows <- which(codes %in% psych_codes)
   expect_equal(
     subchaps[suicide_rows[1] - 1],
     paste(

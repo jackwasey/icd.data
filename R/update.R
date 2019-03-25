@@ -6,26 +6,28 @@
 #' mappings are generated from transcribed codes.
 #' @keywords internal datagen
 #' @noRd
-.update_everything <- function(save_data = TRUE,
-                               offline = FALSE,
+.update_everything <- function(offline = FALSE,
                                verbose = .verbose()) {
   old_opt <- options(icd.data.offline = offline)
-  on.exit(options(old_opt))
-  .generate_sysdata(save_data = save_data, verbose = verbose)
-  load(file.path("R", "sysdata.rda"))
-  .icd9cm_parse_leaf_desc_ver(
-    ver = "32",
-    save_data = save_data,
+  on.exit(options(old_opt), add = TRUE)
+  .parse_icd9cm_leaf_year(
+    year = "2014",
+    save_data = TRUE,
     verbose = verbose
   )
   .icd9cm_gen_chap_hier(
-    save_data = save_data,
+    save_data = TRUE,
     verbose = verbose
   )
+  # TODO: just need to save icd10cm2016 and icd10cm2019 in data, and have
+  # special getter functions for them.
   .parse_icd10cm_all(
-    save_data = save_data,
+    save_data = TRUE,
     verbose = verbose,
     twentysixteen = TRUE
   )
-  .icd10cm_extract_sub_chapters(save_data = save_data)
+  .icd10cm_extract_sub_chapters(save_data = TRUE)
+  icd9cm_billable <- list()
+  icd9cm_billable[["32"]] <- get_icd9cm2014_leaf(must_work = TRUE)
+  .save_in_data_dir(icd9cm_billable)
 }
