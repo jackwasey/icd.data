@@ -9,7 +9,6 @@
 #'
 #' @param url URL of a zip file
 #' @param file_name file name of a single file in that zip
-#' @template verbose
 #' @template offline
 #' @param data_raw_path path where the raw directory is
 #' @param save_name file name to save as, default is \code{file_name}
@@ -19,34 +18,33 @@
 #' @noRd
 .unzip_to_data_raw <- function(url,
                                file_name,
-                               verbose = .verbose(),
                                data_raw_path = icd_data_dir(),
                                save_name = file_name,
                                dl_msg = NULL,
                                ...) {
   stopifnot(is.character(url), length(url) == 1)
   stopifnot(is.character(file_name), length(file_name) == 1)
-  stopifnot(is.logical(verbose), length(verbose) == 1)
-  if (verbose) message(url)
+  if (.verbose()) message(url)
   if (is.null(data_raw_path) || !dir.exists(data_raw_path)) {
     .absent_action_switch("Data directory not defined", must_work = FALSE)
     return()
   }
   file_path <- file.path(data_raw_path, save_name)
-  if (verbose) {
+  if (any(grepl("tmp", file_path))) stop("TEMP")
+    if (.verbose()) {
     sprintf(
       "file path = %s\nfile name = %s\nsave name = %s",
       file_path, file_name, save_name
     )
   }
   if (!file.exists(file_path)) {
-    if (verbose) {
+    if (.verbose()) {
       message(
         "Unable to find downloaded file at: ",
         file_path, ". Attempting download..."
       )
     }
-    if (!.confirm_download()) return()
+    if (!.confirm_download(msg = dl_msg)) return()
     if (!is.null(dl_msg)) message(dl_msg)
     ok <- .unzip_single(
       url = url,
@@ -61,10 +59,10 @@
 
 .download_to_data_raw <-
   function(url,
-             file_name = regmatches(url, regexpr("[^/]*$", url)),
-             data_raw_path = icd_data_dir(),
-             dl_msg = NULL,
-             ...) {
+           file_name = regmatches(url, regexpr("[^/]*$", url)),
+           data_raw_path = icd_data_dir(),
+           dl_msg = NULL,
+           ...) {
     stopifnot(is.character(url), length(url) == 1)
     stopifnot(is.character(file_name), length(file_name) == 1)
     if (is.null(data_raw_path) || !dir.exists(data_raw_path)) {
@@ -81,7 +79,7 @@
       file_name = file_name
     )
     if (!is.null(data_raw_path) &&
-      file.exists(save_path)) {
+        file.exists(save_path)) {
       return(f_info)
     }
     if (.offline()) return()

@@ -86,7 +86,9 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   if (verbose) {
     mismatch_sub_chap <-
       dat$three_digit[which(dat$three_digit %nin% sc_lookup$sc_major)]
-    if (length(mismatch_sub_chap) != 0L) stop("mismatch! fix sub chapters?")
+    if (length(mismatch_sub_chap) != 0L)
+      stop("mismatch: ",
+           paste(mismatch_sub_chap, collapse = ", "))
   }
   mj_lookup <- data.frame(three_digit = unname(icd9_majors),
                           mj_major = names(icd9_majors))
@@ -107,7 +109,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
       all.x = TRUE
     )[["sc_desc"]]
   if (verbose) message("Generating chap lookup for year: ", year)
-  chap_lookup <- .icd9_generate_chap_lookup(verbose = verbose)
+  chap_lookup <- .icd9_generate_chap_lookup()
   dat[["chapter"]] <-
     merge(dat["three_digit"], chap_lookup,
           by.x = "three_digit", by.y = "chap_major",

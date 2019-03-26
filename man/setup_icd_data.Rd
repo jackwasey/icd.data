@@ -7,7 +7,7 @@
 \usage{
 setup_icd_data(path = NULL)
 
-icd_data_dir()
+icd_data_dir(path)
 }
 \arguments{
 \item{path}{Path to a directory where cached online raw and parsed data will be cached. It will be created if it doesn't exist.}
@@ -23,7 +23,10 @@ This must be called by the user, as prompted on package attach with \code{librar
 }
 \section{Functions}{
 \itemize{
-\item \code{icd_data_dir}: Return the currently active data directory. If missing, it will return \code{NULL} and, depending on \code{getOption("icd.data.absent_action")}, will stop, give a message, or do nothing.
+\item \code{icd_data_dir}: Return the currently active data directory. If
+missing, it will return \code{NULL} and, depending on
+\code{getOption("icd.data.absent_action")}, will stop, give a message, or
+do nothing.
 }}
 
 \examples{
@@ -31,13 +34,8 @@ This must be called by the user, as prompted on package attach with \code{librar
 setup_icd_data()
 setup_icd_data("/var/cache/icd.data")
 setup_icd_data(path = ".local/icd.data")
-}
-# or use an unexported function to set or reset:
-icd.data:::.set_data_dir(td <- tempdir())
-# what is the currently set directory?
 icd_data_dir()
-unlink(td)
-try(icd_data_dir())
+}
 }
 \seealso{
 \code{\link{download_icd_data}}

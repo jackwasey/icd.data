@@ -3,7 +3,7 @@ context("icd10 fixed width parse")
 test_icd10_most_majors <- outer(LETTERS, sprintf(0:99, fmt = "%02i"), paste0)
 
 test_that("icd10 flat file details are okay", {
-  skip_slow("this test is very slow, but important to run manually")
+  skip_slow("this test is very slow, but important")
   # check cols at a time, so I get better error feedback:
   col_names <- c(
     "code",
@@ -15,12 +15,16 @@ test_that("icd10 flat file details are okay", {
     "sub_chapter",
     "chapter"
   )
-  all_res <- .parse_icd10cm_all(save_data = FALSE)
   for (v in as.character(2014:2019)) {
-    skip_icd10cm_flat_avail(v)
-    res <- all_res[[v]]
+    test_that(.get_icd10cm_name(v, TRUE), {
+    f_info <- with_absent_action("silent",
+                                 .dl_icd10cm_year(year = v, dx = TRUE))
+    if (!is.null(f_info)) skip(paste0("Skipping only icd10cm", v))
+    res <- .parse_icd10cm_year(year = v, save_pkg_data = FALSE)
     expect_identical(colnames(res), col_names)
     expect_is(res$code, "character")
+    expect_true(icd::is.icd10cm(res$code))
+    expect_is(res$code, class = "icd10")
     expect_is(res$billable, "logical")
     expect_is(res$short_desc, "character")
     expect_is(res$long_desc, "character")
@@ -33,6 +37,7 @@ test_that("icd10 flat file details are okay", {
       expect_true(is.factor(res[[n]]))
       expect_identical(res, get_icd10cm_version(v))
     }
+    }) # outer test_that
   } # for all versions
 })
 

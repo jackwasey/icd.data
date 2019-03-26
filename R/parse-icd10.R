@@ -34,32 +34,17 @@
   invisible(out)
 }
 
-.parse_icd10cm_year <- function(year,
-                                must_work = FALSE,
-                                verbose = .verbose(),
-                                ...) {
+.parse_icd10cm_year <- function(year, save_pkg_data = FALSE, ...) {
   stopifnot(is.numeric(year) || is.character(year))
   year <- as.character(year)
-  stopifnot(is.logical(must_work) && length(must_work) == 1L)
-  stopifnot(is.logical(verbose) && length(verbose) == 1L)
   stopifnot(as.character(year) %in% names(.icd10cm_sources))
-  if (verbose) message("Getting flat file for year: ", year)
-  f_info <- .icd10cm_get_flat_file(year = year, verbose = verbose, ...)
-  if (is.null(f_info)) {
-    if (must_work) {
-      stop("Unable to get data to parse ICD-10-CM year: ", year)
-    }
-    return(NULL)
-  }
-  message("Working...")
+  f_info <- .dl_icd10cm_year(year = year, dx = TRUE, ...)
+  message("Working on parsing ICD-10-CM year: ", year)
   # readLines may muck up encoding, resulting in weird factor order generation
   # later?
   x <- readLines(con = f_info$file_path, encoding = "ASCII")
-  if (verbose) message("Got flat file for year: ", year)
+  if (.verbose()) message("Got flat file for year: ", year)
   stopifnot(all(Encoding(x) == "unknown"))
-  # Beware: stringr::str_trim may do some encoding tricks which result in
-  # different factor order on different platforms. Seems to affect "major" which
-  # comes from "short_desc"
   dat <- data.frame(
     # id = substr(x, 1, 5),
     code = trimws(substr(x, 7, 13)),
@@ -83,8 +68,8 @@
     )[["short_desc"]]
   )
   dat[["major"]] <- icd::as.short_diag(icd::as.icd10cm(dat[["major"]]))
-  if (verbose) message("Generating sub-chapter lookup for year: ", year)
-  sc_lookup <- .icd10_generate_subchap_lookup(year = year, verbose = verbose)
+  if (.verbose()) message("Generating sub-chapter lookup for year: ", year)
+  sc_lookup <- .icd10_generate_subchap_lookup()
   mismatch_sub_chap <-
     dat$three_digit[which(dat$three_digit %nin% sc_lookup$sc_major)]
   if (length(mismatch_sub_chap) != 0L) browser()
@@ -96,8 +81,8 @@
       by.y = "sc_major",
       all.x = TRUE
     )[["sc_desc"]]
-  if (verbose) message("Generating chap lookup for year: ", year)
-  chap_lookup <- .icd10_generate_chap_lookup(year = year, verbose = verbose)
+  if (.verbose()) message("Generating chap lookup for year: ", year)
+  chap_lookup <- .icd10_generate_chap_lookup()
   dat[["chapter"]] <-
     merge(dat["three_digit"], chap_lookup,
       by.x = "three_digit", by.y = "chap_major",
@@ -107,6 +92,6 @@
   class(dat$code) <- c("icd10cm", "icd10", "character")
   row.names(dat) <- NULL
   .save_in_resource_dir(var_name = paste0("icd10cm", year), x = dat)
-  if (year == "2016") .save_in_data_dir("icd10cm2016")
+  if (save_pkg_data && year == "2016") .save_in_data_dir("icd10cm2016")
   invisible(dat)
 }

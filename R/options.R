@@ -60,12 +60,13 @@
   }
   if (!("icd.data.resource" %in% names(options()))) {
     for (trypath in c(
-      getOption("icd.data.resource", default = ""),
-      Sys.getenv("ICD_DATA_PATH"),
+      getOption("icd.data.resource", default = NA),
+      Sys.getenv("ICD_DATA_PATH", unset = NA),
       file.path(Sys.getenv("HOME"), ".icd.data"),
       path.expand(.icd_data_default)
     )) {
-      if (!is.null(trypath) && dir.exists(trypath)) {
+      if (!is.na(trypath) && dir.exists(trypath)) {
+        if (any(grepl("tmp", trypath))) warning("Using temporary directory.")
         options("icd.data.resource" = trypath)
       }
     }
@@ -112,17 +113,17 @@
 }
 
 # Simulate the empty world of CRAN and R CMD check
-.set_check_options <- function() {
-  .set_hard(
-    interact = FALSE,
-    absent_action = "silent",
-    verbose = FALSE
-  )
-  if (is.null(icd_data_dir())) {
-    .set(resource = td <- tempdir())
-    message("Created temporary resource directory: ", td)
-  }
-}
+# .set_check_options <- function() {
+#   .set_hard(
+#     interact = FALSE,
+#     absent_action = "silent",
+#     verbose = FALSE
+#   )
+#   if (is.null(icd_data_dir())) {
+#     .set(resource = td <- tempdir())
+#     message("Created temporary resource directory: ", td)
+#   }
+# }
 
 .set_dev_options <- function() {
   .set_default_options(hard = TRUE)
@@ -264,13 +265,8 @@ with_absent_action <- function(absent_action = c(
 #' setup_icd_data()
 #' setup_icd_data("/var/cache/icd.data")
 #' setup_icd_data(path = ".local/icd.data")
-#' }
-#' # or use an unexported function to set or reset:
-#' icd.data:::.set_data_dir(td <- tempdir())
-#' # what is the currently set directory?
 #' icd_data_dir()
-#' unlink(td)
-#' try(icd_data_dir())
+#' }
 #' @return The path to the resource directory, or \code{NULL} if it could not be
 #'   found.
 #' @return Invisibly returns the data path which was set, or NULL if not done.
@@ -283,19 +279,21 @@ setup_icd_data <- function(path = NULL) {
   }
   if (is.null(path)) {
     path <- getOption("icd.data.resource", default = NULL)
-    message("Using the icd data cache set by option(\"icd.data.resource\"): ", path) # nolint
+    message("Trying the icd data cache set by option(\"icd.data.resource\"): ", path) # nolint
   }
   if (is.null(path)) {
     path <- Sys.getenv("ICD_DATA_RESOURCE", unset = NULL)
-    message("Using the icd data cache set by the environment variable ICD_DATA_RESOURCE: ", path) # nolint
+    message("Trying the icd data cache set by the environment variable ICD_DATA_RESOURCE: ", path) # nolint
   }
   if (is.null(path)) {
     path <- .icd_data_default
-    message("Using the default icd data cache: ", path)
+    message("Trying the default icd data cache: ", path)
   }
-  if (is.null(path) || !dir.exists(path)) {
-    created <- dir.create(path)
+  if (!is.null(path) || !dir.exists(path)) {
+    created <- dir.create(path, showWarnings = TRUE)
     if (!created) stop("Unable to create directory at: ", path)
+  } else {
+    stop("Unable to find a path to use for icd data cache.")
   }
   options("icd.data.resource" = path)
   invisible(path)
@@ -316,9 +314,7 @@ setup_icd_data <- function(path = NULL) {
 #' }
 #' @export
 download_icd_data <- function() {
-  setup_icd_data(path = getOption("icd.data.resource",
-    default = .icd_data_default
-  ))
+  setup_icd_data()
   message("Downloading, caching and parsing all ICD data")
   message("This will take a few minutes.")
   options("icd.data.offline" = FALSE)

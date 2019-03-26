@@ -33,8 +33,12 @@
   paste0(".parse_", paste0("icd9cm", ver))
 }
 
-.get_parser_icd10cm_name <- function(ver, dx) {
-  paste0(".parse_", paste0("icd10cm", ver, ifelse(dx, "", "_pc")))
+.get_icd10cm_name <- function(year, dx) {
+  paste0("icd10cm", year, ifelse(dx, "", "_pc"))
+}
+
+.get_parser_icd10cm_name <- function(year, dx) {
+  paste0(".parse_", .get_icd10cm_name(year, dx))
 }
 
 #' Get name or function for fetching a specific ICD data set
@@ -69,8 +73,8 @@
 }
 
 .get_from_cache <- function(var_name,
-                            must_work = TRUE,
-                            verbose = .verbose()) {
+                            must_work = TRUE) {
+  verbose <- .verbose()
   if (verbose) {
     message(
       "Trying to get ", sQuote(var_name), " from cache env or dir"
@@ -150,8 +154,7 @@
     if (verbose) message("Starting getter for: ", var_name)
     stopifnot(is.character(var_name))
     dat <- .get_from_cache(var_name,
-      must_work = FALSE,
-      verbose = verbose
+      must_work = FALSE
     )
     if (!is.null(dat)) {
       if (verbose) message("Found in cache ", var_name, " in cache.")
@@ -189,8 +192,7 @@
     if (verbose) message("Starting fetcher for ", var_name)
     dat <- .get_from_cache(
       var_name = var_name,
-      must_work = FALSE,
-      verbose = verbose
+      must_work = FALSE
     )
     if (!is.null(dat)) {
       if (verbose) message("Found ", var_name, " in cache.")
@@ -230,10 +232,7 @@
       stop("No parse function: ", parse_fun_name)
     }
     # Parse function should have saved the data in env and file caches
-    dat <- .get_from_cache(var_name,
-      must_work = FALSE,
-      verbose = verbose
-    )
+    dat <- .get_from_cache(var_name, must_work = FALSE)
     if (!is.null(dat)) return(dat)
     if (must_work) {
       stop(
@@ -300,8 +299,7 @@
                    ...) {
   if (.exists_in_cache(var_name, verbose = verbose)) {
     .get_from_cache(var_name,
-      must_work = TRUE,
-      verbose = verbose
+      must_work = TRUE
     )
   } else {
     parser <- .get_parser_fun(var_name)
@@ -328,17 +326,24 @@
 
 .icd_data_default <- file.path("~", ".icd.data")
 
-.set_data_dir <- function(path = .icd_data_default) {
+.set_icd_data_dir <- function(path = .icd_data_default) {
   if (is.null(path) || !dir.exists(path)) {
     if (!dir.create(path)) stop("Could not create directory at: ", path)
   }
-  options("icd.data.resource" = path)
+  .set_hard(icd.data.resource = path)
   invisible(path)
 }
 
-#' @describeIn setup_icd_data Return the currently active data directory. If missing, it will return \code{NULL} and, depending on \code{getOption("icd.data.absent_action")}, will stop, give a message, or do nothing.
+#' @describeIn setup_icd_data Return the currently active data directory. If
+#'   missing, it will return \code{NULL} and, depending on
+#'   \code{getOption("icd.data.absent_action")}, will stop, give a message, or
+#'   do nothing.
 #' @export
-icd_data_dir <- function() {
+icd_data_dir <- function(path) {
+  if (!missing(path) && dir.exists(path)) {
+    options("icd.data.resource" = path)
+    return(invisible(path))
+  }
   o <- getOption("icd.data.resource", default = NULL)
   if (!is.null(o)) return(o)
   msg <- paste("The", sQuote("icd.data.resource"), "option is not set.")
@@ -347,11 +352,13 @@ icd_data_dir <- function() {
 }
 
 .confirm_download <- function(absent_action = .absent_action(),
-                              interact = .interact()) {
+                              interact = .interact(),
+                              msg = NULL) {
   if (!.offline()) return(TRUE)
   ok <- FALSE
   if (interact) {
     message("icd.data needs to download and/or parse data.")
+    if (!is.null(msg)) message(msg)
     ok <- isTRUE(
       askYesNo(
         "May I download and cache a few MB per ICD edition as needed?"

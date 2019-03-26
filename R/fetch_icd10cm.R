@@ -50,23 +50,22 @@
 #' @return file path and name, in list, or NULL if offline or failure
 #' @keywords internal
 #' @noRd
-.dl_icd10cm_ver <- function(ver,
+.dl_icd10cm_year <- function(year,
                             dx,
-                            verbose = .verbose(),
                             ...) {
-  stopifnot(is.numeric(ver) || is.character(ver), length(ver) == 1)
-  ver <- as.character(ver)
+  stopifnot(is.numeric(year) || is.character(year), length(year) == 1)
+  year <- as.character(year)
   stopifnot(is.logical(dx), length(dx) == 1)
-  stopifnot(is.logical(verbose), length(verbose) == 1)
-  stopifnot(as.character(ver) %in% names(.icd10cm_sources))
-  if (verbose) message(ifelse(dx, "dx", "pcs"))
-  s <- .icd10cm_sources[[ver]]
+  stopifnot(as.character(year) %in% names(.icd10cm_sources))
+  if (.verbose()) message("Downloading or finding ICD-10-CM ",
+                          ifelse(dx, "dx", "pcs"))
+  s <- .icd10cm_sources[[year]]
   url <- paste0(s$base_url, s$dx_zip)
   # fox dx codes, get either the hier or just leaf flat file here:
   file_name <- s$dx_hier
   if (!dx) {
     if ("pcs_zip" %nin% names(s) || is.na(s$pcs_zip)) {
-      if (verbose) message("No PCS flat file zip name.")
+      if (.verbose()) message("No PCS flat file zip name.")
       return()
     }
     url <- paste0(s$base_url, s$pcs_zip)
@@ -74,22 +73,21 @@
   }
   stopifnot(!is.null(file_name))
   if (is.na(file_name)) {
-    if (verbose) message("No PCS file name.")
+    if (.verbose()) message("No PCS file name.")
     return()
   }
-  save_name <- .get_versioned_raw_file_name(file_name, ver)
-  if (verbose) {
+  save_name <- .get_versioned_raw_file_name(file_name, year)
+  if (.verbose()) {
     message(
       "url = ", url,
       "\nfile_name = ", file_name,
       "\nsave_name = ", save_name
     )
   }
-  if (!.confirm_download()) return()
+  #if (!file.exists(save_name) && !.confirm_download()) return()
   fp <- .unzip_to_data_raw(
     url = url,
     file_name = file_name,
-    verbose = verbose,
     save_name = save_name,
     dl_msg = "Please wait a moment to download (or use cached) ~1-10MB of data...",
     ...
