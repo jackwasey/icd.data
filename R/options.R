@@ -198,6 +198,7 @@
     },
     "message" = message(msg)
   )
+  invisible()
 }
 
 .env_var_is_false <- function(x) {

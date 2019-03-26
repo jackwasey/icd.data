@@ -12,15 +12,14 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #' @param offline single logical value
 #' @keywords internal datagen
 #' @noRd
-.dl_icd9cm_rtf_year <- function(year, verbose = FALSE, ...) {
+.dl_icd9cm_rtf_year <- function(year, ...) {
   year <- as.character(year)
   rtf_dat <- .icd9cm_sources[.icd9cm_sources$f_year == year, ]
   fn <- rtf_dat$rtf_filename
   url <- rtf_dat$rtf_url
-  .unzip_to_data_raw(url,
+  .unzip_to_data_raw(url = url,
                      save_name = .get_versioned_raw_file_name(fn, ver = year),
                      file_name = fn,
-                     verbose = verbose,
                      ...)
 }
 

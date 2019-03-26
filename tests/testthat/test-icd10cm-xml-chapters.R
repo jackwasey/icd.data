@@ -1,5 +1,8 @@
 context("icd10 XML parse")
 
+# true for all these tests
+skip_icd10cm_xml_avail()
+
 test_that("icd10 sub-chapters are recreated exactly", {
   skip_icd10cm_xml_avail()
   expect_identical(
@@ -54,6 +57,7 @@ test_that("Y09 got picked up in sub-chapter parsing", {
 
 test_that("chapter parsing for ICD-10 went okay", {
   skip_if_not_installed("icd", "3.4")
+  skip_icd10cm_xml_avail()
   chap_lookup <- .icd10_generate_chap_lookup()
   expect_false(any(duplicated(chap_lookup$chap_major)), info = y)
 })

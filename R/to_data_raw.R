@@ -16,17 +16,24 @@
 #' @return path of unzipped file in the raw data directory
 #' @keywords internal
 #' @noRd
-.unzip_to_data_raw <- function(url,
+.unzip_to_data_raw <- function(..., # force explicit naming
+                               url,
                                file_name,
                                data_raw_path = icd_data_dir(),
                                save_name = file_name,
-                               dl_msg = NULL,
-                               ...) {
+                               dl_msg = NULL
+                               ) {
   stopifnot(is.character(url), length(url) == 1)
   stopifnot(is.character(file_name), length(file_name) == 1)
   if (.verbose()) message(url)
-  if (is.null(data_raw_path) || !dir.exists(data_raw_path)) {
-    .absent_action_switch("Data directory not defined", must_work = FALSE)
+  if (is.null(data_raw_path)) {
+    .absent_action_switch("Data directory not defined.", must_work = TRUE)
+    return()
+  }
+  if (!dir.exists(data_raw_path)) {
+    .absent_action_switch(
+      paste("Data directory", sQuote(data_raw_path), "doesn't exist"),
+      must_work = FALSE)
     return()
   }
   file_path <- file.path(data_raw_path, save_name)
@@ -78,9 +85,12 @@
       file_path = save_path,
       file_name = file_name
     )
-    if (!is.null(data_raw_path) &&
-        file.exists(save_path)) {
+    if (!is.null(data_raw_path)) {
+      if (file.exists(save_path)) {
       return(f_info)
+      } else {
+        stop("icd.data resource directory still doesn't exist!")
+      }
     }
     if (.offline()) return()
     if (!.confirm_download()) return()

@@ -6,11 +6,20 @@ rtf_year_ok <- function(year, ...) {
         offline = TRUE,
         with_interact(
           interact = FALSE,
-          .dl_icd9cm_rtf_year(year, offline = TRUE, ...)
+          .dl_icd9cm_rtf_year(year, ...)
         )
       )
     )
   )
+}
+
+have_icd_data_resource <- function() {
+  !is.null(getOption("icd.data.resource", default = NULL))
+}
+
+skip_no_icd_data_resource <- function() {
+  if (!have_icd_data_resource())
+    skip("Skipping - no icd.data.resource option defined.")
 }
 
 skip_slow <- function(msg = "Slow test") {
@@ -29,7 +38,7 @@ skip_if_offline <- function() {
 }
 
 skip_on_no_rtf <- function(test_year) {
-  if (!rtf_year_ok(test_year)) {
+  if (!have_icd_data_resource() || !rtf_year_ok(test_year)) {
     testthat::skip(paste(
       test_year,
       "ICD-9-CM codes unavailable offline for testsing"
@@ -38,6 +47,7 @@ skip_on_no_rtf <- function(test_year) {
 }
 
 skip_flat_icd9_avail <- function(ver, year) {
+  skip_no_icd_data_resource()
   if (missing(ver)) {
     if (missing(year)) stop("specify ver or year")
     ver <- .icd9cm_sources[.icd9cm_sources$year == year, "version"]
@@ -69,6 +79,7 @@ skip_icd10cm_flat_avail <- function(year, dx = TRUE) {
 }
 
 skip_icd10cm_xml_avail <- function() {
+  skip_no_icd_data_resource()
   msg <- "skipping test because XML file ICD-10-CM source not available"
   if (is.null(
     with_absent_action(

@@ -142,13 +142,14 @@ test_that("extraction from qualifier subset works", {
 
 # The following tests on the RTF parsing get the RTF source over internet, so
 # package doesn't have to include the big RTF source file
-context("RTF tests, sources optionally downloaded when required")
+context("RTF tests")
 
 test_year <- "2011"
 
 # if we are in offline mode, and the data is not available, we can't proceed.
 # test whether the RTF is available offline. N.b. we skip in a 'context' so all
 # subsequent tests are skipped.
+skip_no_icd_data_resource()
 if (rtf_year_ok(test_year)) {
   rtf_dat <- .icd9cm_sources[.icd9cm_sources$f_year == test_year, ]
   f_info_short <- .unzip_to_data_raw(rtf_dat$rtf_url,

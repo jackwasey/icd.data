@@ -57,6 +57,10 @@
   if (verbose > 1) {
     message("Seeing if ", sQuote(var_name), " exists in cache env or dir")
   }
+  if (is.null(getOption("icd.data.resource", default = NULL))) {
+    message("Don't even have the icd.data.resource option defined.")
+    return(FALSE)
+  }
   stopifnot(is.character(var_name))
   if (verbose > 1) message(".exists_in_cache trying icd_data_env environment")
   if (.exists(var_name)) {
@@ -100,6 +104,7 @@
 }
 
 .all_cached <- function() {
+  if (is.null(getOption("icd.data.resource", default = NULL))) return(FALSE)
   all(
     vapply(.data_names, .exists_in_cache, logical(1))
   )
@@ -345,10 +350,13 @@ icd_data_dir <- function(path) {
     return(invisible(path))
   }
   o <- getOption("icd.data.resource", default = NULL)
-  if (!is.null(o)) return(o)
-  msg <- paste("The", sQuote("icd.data.resource"), "option is not set.")
-  if (.verbose()) message(msg)
-  NULL
+  if (!is.null(o)) {
+    if (any(grepl("tmp", o))) warning("Using a temporary directory")
+    return(o)
+  }
+  stop(paste("The", sQuote("icd.data.resource"),
+          "option is not set. Use setup_icd_data() to get started."))
+  invisible()
 }
 
 .confirm_download <- function(absent_action = .absent_action(),

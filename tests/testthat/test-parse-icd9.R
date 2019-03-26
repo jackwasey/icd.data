@@ -156,7 +156,9 @@ test_that("ICD-9-CM billable codes package data is recreated", {
 }
 
 test_that("explain icd9GetChapters simple input", {
-  skip_if_not_installed("icd", "3.4")
+  skip_no_icd_data_resource()
+  skip_if_not_installed("icd", "4.0")
+  skip_on_no_rtf("2014")
   chaps1 <- .icd9_get_chapters(c("410", "411", "412"), short_code = TRUE)
   expect_equal(nrow(chaps1), 3)
   inf <- try(.icd9_get_chapters("418", short_code = TRUE))
