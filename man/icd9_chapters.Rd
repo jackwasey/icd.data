@@ -3,7 +3,6 @@
 \docType{data}
 \name{icd9_chapters}
 \alias{icd9_chapters}
-\alias{icd9_sub_chapters}
 \alias{icd9_majors}
 \title{ICD-9 chapters}
 \source{

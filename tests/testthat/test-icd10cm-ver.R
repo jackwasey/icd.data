@@ -14,8 +14,7 @@ test_that("all available data is reported", {
   for (pc in c(TRUE, FALSE)) {
     res <- get_icd10cm_available(pc)
     data_fun_name <- paste0("get_", res)
-    expect_true(.exists_in_ns(data_fun_name), info = paste(pc)
-    )
+    expect_true(.exists_in_ns(data_fun_name), info = paste(pc))
   }
 })
 

@@ -23,7 +23,7 @@
   t(
     vapply(
       str_match_all(as.character(x),
-                    pattern = "([VvEe]?)([[:digit:].]+)"
+        pattern = "([VvEe]?)([[:digit:].]+)"
       ),
       FUN = function(y) matrix(data = y[2:3], nrow = 1, ncol = 2),
       FUN.VALUE = c(NA_character_, NA_character_)
@@ -45,8 +45,9 @@
   stopifnot(toupper(c[, 1]) == toupper(d[, 1]))
   fmt <- if (substr(start, 1, 1) == "V") "%02d" else "%03d"
   majors <- paste(c[, 1],
-                  sprintf(fmt = fmt, c[, 2]:d[, 2]),
-                  sep = "")
+    sprintf(fmt = fmt, c[, 2]:d[, 2]),
+    sep = ""
+  )
   majors
 }
 
@@ -97,7 +98,7 @@ icd9_extract_alpha_numeric <- function(x) {
   t(
     vapply(
       str_match_all(.as_char_no_warn(x),
-                    pattern = "([VvEe]?)([[:digit:].]+)"
+        pattern = "([VvEe]?)([[:digit:].]+)"
       ),
       FUN = function(y) matrix(data = y[2:3], nrow = 1, ncol = 2),
       FUN.VALUE = c(NA_character_, NA_character_)

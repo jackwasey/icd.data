@@ -347,16 +347,17 @@
 icd_data_dir <- function(path) {
   if (!missing(path) && dir.exists(path)) {
     options("icd.data.resource" = path)
-    return(invisible(path))
+    return(path)
   }
   o <- getOption("icd.data.resource", default = NULL)
   if (!is.null(o)) {
     if (any(grepl("tmp", o))) warning("Using a temporary directory")
     return(o)
   }
-  stop(paste("The", sQuote("icd.data.resource"),
-          "option is not set. Use setup_icd_data() to get started."))
-  invisible()
+  stop(paste(
+    "The", sQuote("icd.data.resource"),
+    "option is not set. Use setup_icd_data() to get started."
+  ))
 }
 
 .confirm_download <- function(absent_action = .absent_action(),

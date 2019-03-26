@@ -51,14 +51,18 @@
 #' @keywords internal
 #' @noRd
 .dl_icd10cm_year <- function(year,
-                            dx,
-                            ...) {
+                             dx,
+                             ...) {
   stopifnot(is.numeric(year) || is.character(year), length(year) == 1)
   year <- as.character(year)
   stopifnot(is.logical(dx), length(dx) == 1)
   stopifnot(as.character(year) %in% names(.icd10cm_sources))
-  if (.verbose()) message("Downloading or finding ICD-10-CM ",
-                          ifelse(dx, "dx", "pcs"))
+  if (.verbose()) {
+    message(
+      "Downloading or finding ICD-10-CM ",
+      ifelse(dx, "dx", "pcs")
+    )
+  }
   s <- .icd10cm_sources[[year]]
   url <- paste0(s$base_url, s$dx_zip)
   # fox dx codes, get either the hier or just leaf flat file here:
@@ -84,7 +88,7 @@
       "\nsave_name = ", save_name
     )
   }
-  #if (!file.exists(save_name) && !.confirm_download()) return()
+  # if (!file.exists(save_name) && !.confirm_download()) return()
   fp <- .unzip_to_data_raw(
     url = url,
     file_name = file_name,

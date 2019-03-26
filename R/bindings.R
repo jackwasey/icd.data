@@ -2,7 +2,7 @@
 .icd_data_env <- new.env(parent = emptyenv())
 
 # This is an environment with active bindings to get ICD-9-CM leaves and descriptions. Previously, icd9cm_billable was a named list
-#TODO: ? icd9cm_billable <- new.env(parent = emptyenv())
+# TODO: ? icd9cm_billable <- new.env(parent = emptyenv())
 
 
 .data_names <- c(
@@ -62,4 +62,3 @@ get_cim10fr2019 <- function() {
   )
   cim10fr2019
 }
-

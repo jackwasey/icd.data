@@ -31,7 +31,12 @@
 #'   names, each with two element named character vector with start and end
 #'   codes.
 #' @name icd9_chapters
-#' @aliases icd9_sub_chapters icd9_majors
+#' @aliases icd9_majors
+NULL
+
+#' ICD-9 sub-chapters
+#' @name icd9_sub_chapters
+#' @seealso \code{\link{icd9_chapters}}
 NULL
 
 #' ICD-10 chapters

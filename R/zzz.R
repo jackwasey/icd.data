@@ -24,7 +24,7 @@ download_icd_data()
     packageStartupMessage(
       "Not all the available ICD-9-CM data has been downloaded. To complete the download and parsing process use:
 download_icd_data()"
-      )
+    )
   }
 }
 

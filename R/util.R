@@ -255,7 +255,8 @@ get_icd_data <- function(data_name, alt = NULL) {
 .ls_lazy <- function(all.names = TRUE, ...) {
   pkg_ns <- asNamespace("icd.data")
   ls(pkg_ns[[".__NAMESPACE__."]][["lazydata"]],
-     all.names = all.names)
+    all.names = all.names
+  )
 }
 
 .ls_in_ns <- function(all.names = TRUE, ...) {

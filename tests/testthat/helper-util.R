@@ -18,8 +18,9 @@ have_icd_data_resource <- function() {
 }
 
 skip_no_icd_data_resource <- function() {
-  if (!have_icd_data_resource())
+  if (!have_icd_data_resource()) {
     skip("Skipping - no icd.data.resource option defined.")
+  }
 }
 
 skip_slow <- function(msg = "Slow test") {

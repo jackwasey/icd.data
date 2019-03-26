@@ -283,18 +283,20 @@ setup_icd_data <- function(path = NULL) {
     message("Trying the icd data cache set by option(\"icd.data.resource\"): ", path) # nolint
   }
   if (is.null(path)) {
-    path <- Sys.getenv("ICD_DATA_RESOURCE", unset = NULL)
+    path <- Sys.getenv("ICD_DATA_RESOURCE", unset = NA)
     message("Trying the icd data cache set by the environment variable ICD_DATA_RESOURCE: ", path) # nolint
+    if (is.na(path)) path <- NULL
   }
   if (is.null(path)) {
     path <- .icd_data_default
     message("Trying the default icd data cache: ", path)
   }
-  if (!is.null(path) || !dir.exists(path)) {
+  if (is.null(path)) {
+    stop("Unable to find a path to use for icd data cache.")
+  }
+  if (!dir.exists(path)) {
     created <- dir.create(path, showWarnings = TRUE)
     if (!created) stop("Unable to create directory at: ", path)
-  } else {
-    stop("Unable to find a path to use for icd data cache.")
   }
   options("icd.data.resource" = path)
   invisible(path)

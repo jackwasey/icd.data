@@ -12,9 +12,10 @@
   )
 }
 
-.icd9_generate_chap_lookup <- function( chapters = icd.data::icd9_chapters,
-                                        prefix = "chap") {
-  stopifnot(is.list(chapters), is.character(prefix))
+.icd9_generate_chap_lookup <-
+  function(chapters = icd.data::icd9_chapters,
+           prefix = "chap") {
+    stopifnot(is.list(chapters), is.character(prefix))
   erm <- if (.have_memoise()) {
     memoise::memoise(
       .expand_range_major.icd9,
@@ -47,7 +48,8 @@
   chap_lookup
 }
 
-.icd10_generate_chap_lookup <- function(chapters = icd.data::icd10_chapters,
+.icd10_generate_chap_lookup <-
+  function(chapters = icd.data::icd10_chapters,
                                         prefix = "chap") {
   stopifnot(is.list(chapters), is.character(prefix))
   erm <- if (.have_memoise()) {

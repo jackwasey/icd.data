@@ -17,10 +17,12 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   rtf_dat <- .icd9cm_sources[.icd9cm_sources$f_year == year, ]
   fn <- rtf_dat$rtf_filename
   url <- rtf_dat$rtf_url
-  .unzip_to_data_raw(url = url,
-                     save_name = .get_versioned_raw_file_name(fn, ver = year),
-                     file_name = fn,
-                     ...)
+  .unzip_to_data_raw(
+    url = url,
+    save_name = .get_versioned_raw_file_name(fn, ver = year),
+    file_name = fn,
+    ...
+  )
 }
 
 #' parse RTF description of entire ICD-9-CM for a specific year
@@ -42,10 +44,10 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #' @keywords internal datagen
 #' @noRd
 .parse_icd9cm_rtf_year <- function(year = "2014",
-                            ...,
-                            save_pkg_data = FALSE,
-                            verbose = FALSE,
-                            offline = .offline()) {
+                                   ...,
+                                   save_pkg_data = FALSE,
+                                   verbose = FALSE,
+                                   offline = .offline()) {
   year <- as.character(year)
   stopifnot(is.logical(save_pkg_data), length(save_pkg_data) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
@@ -82,15 +84,19 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   dat$three_digit <- .get_major.icd9(dat$code)
   if (verbose) message("Generating sub-chapter lookup for year: ", year)
   sc_lookup <- .icd9_generate_subchap_lookup()
-  if (verbose) {
-    mismatch_sub_chap <-
-      dat$three_digit[which(dat$three_digit %nin% sc_lookup$sc_major)]
-    if (length(mismatch_sub_chap) != 0L)
-      stop("mismatch: ",
-           paste(mismatch_sub_chap, collapse = ", "))
+  # if (x[1, 1] == "418") print(sc_lookup[380:390,])
+  mismatch_sub_chap <-
+    dat$three_digit[which(dat$three_digit %nin% sc_lookup$sc_major)]
+  if (length(mismatch_sub_chap) != 0L) {
+    stop(
+      "mismatch: ",
+      paste(mismatch_sub_chap, collapse = ", ")
+    )
   }
-  mj_lookup <- data.frame(three_digit = unname(icd9_majors),
-                          mj_major = names(icd9_majors))
+  mj_lookup <- data.frame(
+    three_digit = unname(icd9_majors),
+    mj_major = names(icd9_majors)
+  )
   dat[["major"]] <-
     merge(
       x = dat["three_digit"],
@@ -111,14 +117,26 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   chap_lookup <- .icd9_generate_chap_lookup()
   dat[["chapter"]] <-
     merge(dat["three_digit"], chap_lookup,
-          by.x = "three_digit", by.y = "chap_major",
-          all.x = TRUE
+      by.x = "three_digit", by.y = "chap_major",
+      all.x = TRUE
     )[["chap_desc"]]
   # levels specified to keep ICD-9 ordering 0-9VE?
   dat[["three_digit"]] <- factor(dat[["three_digit"]],
-                                 levels = unique(dat[["three_digit"]]))
+    levels = unique(dat[["three_digit"]])
+  )
   class(dat[["three_digit"]]) <- c("icd9cm", "icd9", "factor")
   dat
+}
+
+# just wrap the new function in the old name
+.icd9_get_chapters <- function(x, short_code = TRUE) {
+  dframe <- data.frame(
+    code = x,
+    stringsAsFactors = FALSE
+  )
+  .lookup_icd9_hier(dframe,
+                    short_code = short_code
+  )[-1]
 }
 
 .rtf_pre_filter <- function(filtered, ...) {
@@ -152,7 +170,8 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #' @keywords internal datagen
 #' @noRd
 .rtf_parse_lines <- function(rtf_lines, verbose = FALSE,
-                             save_pkg_data = FALSE, ...) {
+                             save_pkg_data = FALSE,
+                             ...) {
   stopifnot(is.character(rtf_lines))
   stopifnot(is.logical(verbose), length(verbose) == 1)
   stopifnot(is.logical(save_pkg_data), length(save_pkg_data) == 1)
@@ -724,7 +743,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 }
 
 .make_icd9cm_rtf_parsers <- function(env = parent.frame(),
-                                      verbose = .verbose()) {
+                                     verbose = .verbose()) {
   for (y in .icd9cm_sources$f_year) {
     # TODO: special case for 2011 / v32?
     parse_fun_name <- .get_parser_icd9cm_rtf_name(y)

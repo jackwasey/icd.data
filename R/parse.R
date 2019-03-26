@@ -62,8 +62,8 @@
 }
 
 .dl_icd9cm_leaf_year <- function(year,
-                           verbose = .verbose(),
-                           ...) {
+                                 verbose = .verbose(),
+                                 ...) {
   year <- as.character(year)
   if (verbose) message("Downloading ICD-9-CM leaf/billable year: ", year)
   stopifnot(year %in% .icd9cm_sources$f_year)
@@ -72,11 +72,11 @@
   fn_long_orig <- dat$long_filename
   f_info_long <- NA
   f_info_short <- .unzip_to_data_raw(
-    dat$url,
+    url = dat$url,
     file_name = fn_short_orig,
     verbose = verbose,
     save_name = .get_versioned_raw_file_name(fn_short_orig,
-                                             ver = year
+      ver = year
     ),
     ...
   )
@@ -86,7 +86,7 @@
       file_name = fn_long_orig,
       verbose = verbose,
       save_name = .get_versioned_raw_file_name(fn_long_orig,
-                                               ver = year
+        ver = year
       ),
       ...
     )
@@ -115,8 +115,8 @@
 #' @keywords internal datagen
 #' @noRd
 .parse_icd9cm_leaf_year <- function(year,
-                              verbose = .verbose(),
-                              ...) {
+                                    verbose = .verbose(),
+                                    ...) {
   stopifnot(length(year) == 1L)
   year <- as.character(year)
   stopifnot(grepl("^[[:digit:]]{4}$", year))
@@ -219,7 +219,9 @@
   fn_orig <- v27_dat$other_filename
   url <- v27_dat$url
   message("original v27 file name = '", fn_orig, "'. URL = ", url)
-  f27_info <- .unzip_to_data_raw(url, fn_orig, ...)
+  f27_info <- .unzip_to_data_raw(url = url,
+                                 file_name = fn_orig,
+                                 ...)
   f <- file(f27_info$file_path, encoding = "latin1")
   icd9cm_billable27 <-
     utils::read.csv(f27_info$file_path,
@@ -297,9 +299,9 @@
     offline = offline
   )
   chaps <- .icd9_get_chapters(
-    x = icd9_rtf$code, short_code = TRUE,
-    verbose = verbose
-  )
+    x = icd9_rtf$code,
+    short_code = TRUE
+    )
   icd9_order <- order.icd9
   chaps <- chaps[icd9_order(.as_char_no_warn(chaps$three_digit)), ]
   icd9_rtf <- icd9_rtf[icd9_order(icd9_rtf$code), ]
@@ -350,85 +352,6 @@
   invisible(icd9cm_hierarchy)
 }
 
-#' Get ICD-9 Chapters for vector of ICD-9 codes
-#'
-#' This runs quite slowly. Used too rarely to be worth optimizing now. This is
-#' used to build a master list of ICD-9 codes with their respective chapters,
-#' sub-chapters, etc..
-#' @param x vector of ICD-9 codes
-#' @template short_code
-#' @template verbose
-#' @keywords internal datagen
-#' @noRd
-.icd9_get_chapters <- function(x, short_code, verbose = FALSE) {
-  stop("do this better - see .lookup_icd9_hier")
-  # set up comorbidity maps for chapters/sub/major group, then loop through each
-  # ICD-9 code, loop through each comorbidity and lookup code in the map for
-  # that field, then add the factor level for the match. There should be 100%
-  # matches.
-  stopifnot(is.factor(x) || is.character(x))
-  stopifnot(is.logical(short_code), length(short_code) == 1)
-  x <- .as_char_no_warn(x)
-  all_majors <- vapply(x,
-    .get_icd9_major,
-    FUN.VALUE = character(1)
-  )
-  majors <- unique(all_majors)
-  lenm <- length(majors)
-  out <- data.frame(
-    three_digit = factor(rep(NA, lenm), levels = c(icd9_majors, NA)),
-    major = factor(rep(NA, lenm), levels = c(names(icd9_majors), NA)),
-    sub_chapter =
-      factor(rep(NA, lenm), levels = c(names(icd9_sub_chapters), NA)),
-    chapter = factor(rep(NA, lenm), levels = c(names(icd9_chapters), NA))
-  )
-  chap_lookup <- lapply(icd9_chapters, function(y)
-    .vec_to_env_true(
-      .expand_range_major.icd9(y[["start"]],
-        y[["end"]],
-        defined = FALSE
-      )
-    ))
-  subchap_lookup <- lapply(icd9_sub_chapters, function(y)
-    .vec_to_env_true(
-      .expand_range_major.icd9(y[["start"]],
-        y[["end"]],
-        defined = FALSE
-      )
-    ))
-  for (i in seq_along(majors)) {
-    for (chap_num in seq_along(icd9_chapters)) {
-      if (majors[i] %ine% chap_lookup[[chap_num]]) {
-        out[i, "chapter"] <- names(icd9_chapters)[chap_num]
-        break
-      }
-    }
-    for (subchap_num in seq_along(icd9_sub_chapters)) {
-      if (majors[i] %ine% subchap_lookup[[subchap_num]]) {
-        out[i, "sub_chapter"] <- names(icd9_sub_chapters)[subchap_num]
-        break
-      }
-    }
-  }
-  whch <- match(majors, icd9_majors, nomatch = NA)
-  out$major[] <- names(icd9_majors)[whch]
-  out$three_digit[] <- icd::as.icd9cm(unlist(icd9_majors)[whch])
-  # out is based on unique majors of the input codes. Now merge with original
-  # inputs to give output
-  out <- merge(
-    y = data.frame(three_digit = all_majors, stringsAsFactors = TRUE),
-    x = out,
-    by = "three_digit",
-    sort = TRUE,
-    all.x = TRUE
-  )
-  class(out[["three_digit"]]) <- c("icd9cm", "factor")
-  # many possible three digit codes don't exist. We should return NA for the
-  # whole row. Chapter is coded as a range, so picks up these non-existent codes
-  out$chapter[is.na(out$major)] <- NA
-  out
-}
-
 .make_icd9cm_parse_leaf_fun <- function(year, verbose) {
   # Must force, so that the values to the arguments are not promises which are
   # later evaluated in a different environment.
@@ -452,4 +375,3 @@
     assign(parse_fun_name, parse_fun, envir = env)
   }
 }
-

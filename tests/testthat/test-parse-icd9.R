@@ -148,13 +148,6 @@ test_that("ICD-9-CM billable codes package data is recreated", {
   )
 })
 
-# just wrap the new function in the old name
-.icd9_get_chapters <- function(x, short_code = TRUE) {
-  .lookup_icd9_hier(data.frame(code = x,
-                               stringsAsFactors = FALSE),
-                    short_code = short_code)[-1]
-}
-
 test_that("explain icd9GetChapters simple input", {
   skip_no_icd_data_resource()
   skip_if_not_installed("icd", "4.0")
