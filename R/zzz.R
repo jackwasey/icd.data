@@ -32,7 +32,6 @@ release_questions <- function() {
   c(
     "codetools::checkUsagePackage('icd.data', all = TRUE, suppressLocal = TRUE)",
     "styler::style_pkg()",
-    "r-hub, travis, appveyor (all should pass tests without downloading data",
     "local install, all tests pass with data all downloaded and parsed"
   )
 }

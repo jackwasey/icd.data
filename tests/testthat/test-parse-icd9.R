@@ -9,12 +9,6 @@ test_that("some known sub vs chap confusion", {
   expect_icd9_only_chap(
     "Supplementary Classification Of Factors Influencing Health Status And Contact With Health Services"
   ) # nolint
-  # and scan all, noting each is tested twice and half the test is circular,
-  # since it looks up with the looped group.
-  for (i in names(icd9_chapters))
-    expect_icd9_only_chap(i)
-  for (i in names(icd9_sub_chapters))
-    expect_icd9_only_sub_chap(i, info = i)
 })
 
 test_that("sub_chapter parsing went okay, tricky cases", {
@@ -152,4 +146,42 @@ test_that("ICD-9-CM billable codes package data is recreated", {
     b32[b32$code == "V9199", "short_desc"],
     "Mult gest-plac/sac undet"
   )
+})
+
+.icd9_get_chapters <- function(x, short_code = TRUE) {
+  .lookup_icd9_hier(data.frame(code = x,
+                               stringsAsFactors = FALSE),
+                    short_code = short_code)[-1]
+}
+
+test_that("explain icd9GetChapters simple input", {
+  skip_if_not_installed("icd", "3.4")
+  chaps1 <- .icd9_get_chapters(c("410", "411", "412"), short_code = TRUE)
+  expect_equal(nrow(chaps1), 3)
+  expect_error(.icd9_get_chapters("418", short_code = TRUE)) # no such code 418
+  chaps3 <- .icd9_get_chapters("417", short_code = FALSE)
+  expect_equal(.as_char_no_warn(chaps3$three_digit), "417")
+  expect_equal(
+    .as_char_no_warn(chaps3$major),
+    "Other diseases of pulmonary circulation"
+  )
+  expect_equal(
+    .as_char_no_warn(chaps3$sub_chapter),
+    "Diseases Of Pulmonary Circulation"
+  )
+  expect_equal(
+    .as_char_no_warn(chaps3$chapter),
+    "Diseases Of The Circulatory System"
+  )
+
+  chaps4 <- .icd9_get_chapters("417", short_code = TRUE)
+  chaps5 <- .icd9_get_chapters("417.1", short_code = FALSE)
+  chaps6 <- .icd9_get_chapters("4171", short_code = TRUE)
+  chaps7 <- .icd9_get_chapters("417.1", short_code = FALSE)
+  chaps8 <- .icd9_get_chapters("4171", short_code = TRUE)
+  expect_equal(chaps3, chaps4)
+  expect_equal(chaps3, chaps5)
+  expect_equal(chaps3, chaps6)
+  expect_equal(chaps3, chaps7)
+  expect_equal(chaps3, chaps8)
 })

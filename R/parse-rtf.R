@@ -12,7 +12,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #' @param offline single logical value
 #' @keywords internal datagen
 #' @noRd
-.rtf_fetch_year <- function(year, verbose = FALSE, ...) {
+.dl_icd9cm_rtf_year <- function(year, verbose = FALSE, ...) {
   year <- as.character(year)
   rtf_dat <- .icd9cm_sources[.icd9cm_sources$f_year == year, ]
   fn <- rtf_dat$rtf_filename
@@ -42,17 +42,16 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #' 'Dtab12.zip' in the 2011 data. and similar files run from 1996 to 2011.
 #' @keywords internal datagen
 #' @noRd
-.rtf_parse_year <- function(
-                            year = "2011",
+.parse_icd9cm_rtf_year <- function(year = "2014",
                             ...,
-                            save_data = FALSE,
+                            save_pkg_data = FALSE,
                             verbose = FALSE,
                             offline = .offline()) {
   year <- as.character(year)
-  stopifnot(is.logical(save_data), length(save_data) == 1)
+  stopifnot(is.logical(save_pkg_data), length(save_pkg_data) == 1)
   stopifnot(is.logical(verbose), length(verbose) == 1)
   stopifnot(is.logical(offline), length(offline) == 1)
-  f_info_rtf <- .rtf_fetch_year(year, offline = offline)
+  f_info_rtf <- .dl_icd9cm_rtf_year(year, offline = offline)
   if (is.null(f_info_rtf)) {
     stop("RTF data for year ", year, " unavailable.")
   }
@@ -63,7 +62,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   out <- .rtf_parse_lines(rtf_lines,
     verbose = verbose,
     ...,
-    save_extras = save_data
+    save_pkg_data = save_pkg_data
   )
   out <- icd::as.icd9cm(.swap_names_vals(out))
   out_df <- data.frame(
@@ -71,8 +70,54 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
     desc = names(out),
     stringsAsFactors = FALSE
   )
-  out_df[order.icd9(out), ]
-  invisible(out_df)
+  out_df <- out_df[order.icd9(out), ]
+  invisible(.lookup_icd9_hier(out_df, short_code = TRUE))
+}
+
+.lookup_icd9_hier <- function(x,
+                              year = "2014",
+                              short_code = TRUE,
+                              verbose = .verbose()) {
+  dat <- x
+  if (!short_code) dat$code <- icd::decimal_to_short(dat$code)
+  dat$three_digit <- .get_major.icd9(dat$code)
+  if (verbose) message("Generating sub-chapter lookup for year: ", year)
+  sc_lookup <- .icd9_generate_subchap_lookup()
+  if (verbose) {
+    mismatch_sub_chap <-
+      dat$three_digit[which(dat$three_digit %nin% sc_lookup$sc_major)]
+    if (length(mismatch_sub_chap) != 0L) stop("mismatch! fix sub chapters?")
+  }
+  mj_lookup <- data.frame(three_digit = unname(icd9_majors),
+                          mj_major = names(icd9_majors))
+  dat[["major"]] <-
+    merge(
+      x = dat["three_digit"],
+      y = mj_lookup,
+      by.x = "three_digit",
+      by.y = "three_digit",
+      all.x = TRUE
+    )[["mj_major"]]
+  dat[["sub_chapter"]] <-
+    merge(
+      x = dat["three_digit"],
+      y = sc_lookup,
+      by.x = "three_digit",
+      by.y = "sc_major",
+      all.x = TRUE
+    )[["sc_desc"]]
+  if (verbose) message("Generating chap lookup for year: ", year)
+  chap_lookup <- .icd9_generate_chap_lookup(verbose = verbose)
+  dat[["chapter"]] <-
+    merge(dat["three_digit"], chap_lookup,
+          by.x = "three_digit", by.y = "chap_major",
+          all.x = TRUE
+    )[["chap_desc"]]
+  # levels specified to keep ICD-9 ordering 0-9VE?
+  dat[["three_digit"]] <- factor(dat[["three_digit"]],
+                                 levels = unique(dat[["three_digit"]]))
+  class(dat[["three_digit"]]) <- c("icd9cm", "icd9", "factor")
+  dat
 }
 
 .rtf_pre_filter <- function(filtered, ...) {
@@ -106,17 +151,13 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
 #' @keywords internal datagen
 #' @noRd
 .rtf_parse_lines <- function(rtf_lines, verbose = FALSE,
-                             save_extras = FALSE, ...) {
+                             save_pkg_data = FALSE, ...) {
   stopifnot(is.character(rtf_lines))
   stopifnot(is.logical(verbose), length(verbose) == 1)
-  stopifnot(is.logical(save_extras), length(save_extras) == 1)
+  stopifnot(is.logical(save_pkg_data), length(save_pkg_data) == 1)
   filtered <- .rtf_pre_filter(rtf_lines, ...)
-  majors <- .rtf_make_majors(filtered, save = save_extras, ...)
-  sub_chaps <- .rtf_make_sub_chapters(filtered, ..., save = save_extras)
-  if (verbose) {
-    message("Have ", length(majors), " majors.")
-    message("Have ", length(sub_chaps), " sub_chapters")
-  }
+  majors <- .rtf_make_majors(filtered, save_pkg_data = save_pkg_data, ...)
+  if (verbose) message("Have ", length(majors), " majors.")
   # this is so ghastly: find rows with sequare brackets containing definition of
   # subset of fourth or fifth digit codes. Need to pull code from previous row,
   # and create lookup, so we can exclude these when processing the fourth an
@@ -218,7 +259,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   .str_pair_match(filtered, re_code_desc, perl = FALSE, useBytes = FALSE)
 }
 
-.rtf_make_majors <- function(filtered, ..., save = FALSE) {
+.rtf_make_majors <- function(filtered, ..., save_pkg_data = FALSE) {
   use_bytes <- list(...)[["useBytes"]]
   major_lines <- grep(paste0("^(", re_icd9_major_strict_bare, ") "),
     filtered,
@@ -240,36 +281,9 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   # which are just listed twice in RTF. Also 199 (with punctuation difference),
   # 209 and 239.
   icd9_majors <- icd9_majors[!duplicated(icd9_majors)]
-  if (save) .save_in_data_dir(icd9_majors)
+  .save_in_resource_dir("icd9_majors", x = icd9_majors)
+  if (save_pkg_data) .save_in_data_dir("icd9_majors")
   invisible(icd9_majors)
-}
-
-.rtf_make_sub_chapters <- function(filtered, ..., save = FALSE) {
-  re_subchap_either <- paste0(
-    "^[-()A-Z,[:space:]]+", "(", "[[:space:]]+\\(", "|", "\\(", ")",
-    "(", re_icd9_major_strict_bare, ")",
-    "(-(", re_icd9_major_strict_bare, "))?",
-    "\\)"
-  )
-  .chapter_to_desc_range.icd9(
-    grep(re_subchap_either, filtered,
-      value = TRUE, ...
-    )
-  )
-  # The entire "E" block is incorrectly identified here, so make sure it is gone
-  pref <- "Supplementary Classification Of"
-  s <- paste(
-    pref,
-    "Factors Influencing Health Status And Contact With Health Services"
-  )
-  t <- paste(
-    pref,
-    "Supplementary Classification Of External Causes Of Injury And Poisoning"
-  )
-  icd9_sub_chapters[s] <- NULL
-  icd9_sub_chapters[t] <- NULL
-  if (save) .save_in_data_dir(icd9_sub_chapters)
-  invisible(icd9_sub_chapters)
 }
 
 .rtf_make_invalid_qual <- function(filtered, ...) {
@@ -701,7 +715,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
   force(year)
   parse_fun <- function() {
     if (.verbose()) message("Calling ICD-9-CM RTF parser for year:", year)
-    .rtf_parse_year(year = year)
+    .parse_icd9cm_rtf_year(year = year)
   }
   parse_fun_env <- environment(parse_fun)
   parse_fun_env$ver <- as.character(year)

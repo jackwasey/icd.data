@@ -19,6 +19,37 @@
   )]
 }
 
+.icd9_extract_alpha_numeric <- function(x) {
+  t(
+    vapply(
+      str_match_all(as.character(x),
+                    pattern = "([VvEe]?)([[:digit:].]+)"
+      ),
+      FUN = function(y) matrix(data = y[2:3], nrow = 1, ncol = 2),
+      FUN.VALUE = c(NA_character_, NA_character_)
+    )
+  )
+}
+
+.get_major.icd9 <- function(x) {
+  e <- startsWith(x, "E")
+  out <- character(length(x))
+  out[e] <- substring(x[e], 1, 4)
+  out[!e] <- substring(x[!e], 1, 3)
+  out
+}
+
+.expand_range_major.icd9 <- function(start, end) {
+  c <- .icd9_extract_alpha_numeric(start)
+  d <- .icd9_extract_alpha_numeric(end)
+  stopifnot(toupper(c[, 1]) == toupper(d[, 1]))
+  fmt <- if (substr(start, 1, 1) == "V") "%02d" else "%03d"
+  majors <- paste(c[, 1],
+                  sprintf(fmt = fmt, c[, 2]:d[, 2]),
+                  sep = "")
+  majors
+}
+
 .expand_range_major.icd10cm <- function(start, end, defined = TRUE) {
   # codes may have alphabetic characters in 3rd position, so can't just do
   # numeric. This may make ICD-10-CM different from ICD-10 WHO. It also makes
@@ -66,7 +97,7 @@ icd9_extract_alpha_numeric <- function(x) {
   t(
     vapply(
       str_match_all(.as_char_no_warn(x),
-        pattern = "([VvEe]?)([[:digit:].]+)"
+                    pattern = "([VvEe]?)([[:digit:].]+)"
       ),
       FUN = function(y) matrix(data = y[2:3], nrow = 1, ncol = 2),
       FUN.VALUE = c(NA_character_, NA_character_)

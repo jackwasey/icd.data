@@ -6,11 +6,17 @@ rtf_year_ok <- function(year, ...) {
         offline = TRUE,
         with_interact(
           interact = FALSE,
-          .rtf_fetch_year(year, offline = TRUE, ...)
+          .dl_icd9cm_rtf_year(year, offline = TRUE, ...)
         )
       )
     )
   )
+}
+
+skip_slow <- function(msg = "Slow test") {
+  if (getOption("icd.data.test_slow", default = FALSE)) {
+    skip(msg)
+  }
 }
 
 skip_if_offline <- function() {
@@ -35,21 +41,18 @@ skip_flat_icd9_avail <- function(ver, year) {
   if (missing(ver)) {
     if (missing(year)) stop("specify ver or year")
     ver <- .icd9cm_sources[.icd9cm_sources$year == year, "version"]
+  } else {
+    year <- .icd9cm_sources[.icd9cm_sources$version == ver, "f_year"]
   }
   msg <- paste(
     "skipping test because flat file ICD-9-CM",
-    "sources not available for version: ", ver
+    "sources not available for version: ", ver, ", year: ", year
   )
-  dat <- .icd9cm_sources[.icd9cm_sources$version == ver, ]
-  fn_orig <- dat$short_filename
-  if (is.na(fn_orig)) {
-    fn_orig <- dat$other_filename
-  }
-  f_info_short <- .unzip_to_data_raw(dat$url,
-    file_name = fn_orig,
-    offline = TRUE
-  )
-  if (is.null(f_info_short)) testthat::skip(msg)
+  with_absent_action(absent_action = "silent", {
+    dat <- .get_fetcher_fun(paste0("icd9cm", year, "_leaf"))()
+    if (is.null(dat)) testthat::skip(msg)
+  })
+  invisible()
 }
 
 skip_flat_icd9_all_avail <- function() {
@@ -63,6 +66,7 @@ skip_icd10cm_flat_avail <- function(year, dx = TRUE) {
   )) {
     testthat::skip(msg)
   }
+  invisible()
 }
 
 skip_icd10cm_xml_avail <- function() {
@@ -81,6 +85,7 @@ skip_icd10cm_xml_avail <- function() {
   )) {
     testthat::skip(msg)
   }
+  invisible()
 }
 
 skip_flat_icd9_avail_all <- function() {

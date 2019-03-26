@@ -28,8 +28,6 @@
     yrs,
     .parse_icd10cm_year,
     save_data = save_data,
-    offline = offline,
-    verbose = verbose,
     ...
   )
   names(out) <- yrs
@@ -108,9 +106,7 @@
   dat <- dat[order.icd10cm(dat$code), ]
   class(dat$code) <- c("icd10cm", "icd10", "character")
   row.names(dat) <- NULL
-  assign(paste0("icd10cm", year), value = dat)
-  # I don't know why parent.frame() doesn't work
-  .save_in_resource_dir(paste0("icd10cm", year))
+  .save_in_resource_dir(var_name = paste0("icd10cm", year), x = dat)
   if (year == "2016") .save_in_data_dir("icd10cm2016")
   invisible(dat)
 }

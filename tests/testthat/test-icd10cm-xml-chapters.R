@@ -34,7 +34,7 @@ test_that("icd10 sub_chapters were parsed correctly", {
 })
 
 test_that("ICD-10 chapters and sub-chapters are distinct", {
-  skip("This is a low yield and quite slow")
+  skip_slow("This is a low yield and quite slow")
   skip_on_cran()
   # and for good measure, make sure that sub-chapters and chapters are not
   # confused. This was really just a problem with RTF parsing for ICD-9, but
@@ -54,10 +54,8 @@ test_that("Y09 got picked up in sub-chapter parsing", {
 
 test_that("chapter parsing for ICD-10 went okay", {
   skip_if_not_installed("icd", "3.4")
-  for (y in 2014:2019) {
-    chap_lookup <- .icd10_generate_chap_lookup(year = y)
-    expect_false(any(duplicated(chap_lookup$chap_major)), info = y)
-  }
+  chap_lookup <- .icd10_generate_chap_lookup()
+  expect_false(any(duplicated(chap_lookup$chap_major)), info = y)
 })
 
 test_that("sub-chapter parsing for ICD-10 went okay", {

@@ -6,7 +6,7 @@ context("icd.data::icd9cm_hierarchy was parsed as expected")
 test_that("icd9cm_hierarchy as saved in data can be recreated as expected", {
   # avoid encoding problems by just doing this on Linux.
   skip_on_os(c("windows", "mac", "solaris"))
-  skip_flat_icd9_avail_all()
+  skip_flat_icd9_avail()
   skip_on_no_rtf("2011")
   cmh_headings <- c(
     "code",
@@ -17,7 +17,7 @@ test_that("icd9cm_hierarchy as saved in data can be recreated as expected", {
     "sub_chapter",
     "chapter"
   )
-  cmh <- icd9cm_gen_chap_hier(
+  cmh <- .icd9cm_gen_chap_hier(
     save_data = FALSE,
     verbose = FALSE
   )

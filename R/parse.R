@@ -239,6 +239,7 @@
 #' @keywords internal datagen
 #' @noRd
 .fix_sub_chap_na <- function(x, start, end) {
+  stop("no longer needed: icd9_sub_chapters.R in data is now correct")
   # 280, 740 (CONGENITAL ANOMALIES) are chapters with no sub-chapters defined.
   # For consistency, assign the same name to sub-chapters
   rng <- icd::expand_range(icd::as.icd9cm(start),
@@ -287,7 +288,7 @@
   stopifnot(is.logical(offline), length(offline) == 1)
   stopifnot(is.logical(perl), length(perl) == 1)
   stopifnot(is.logical(use_bytes), length(use_bytes) == 1)
-  icd9_rtf <- .rtf_parse_year(
+  icd9_rtf <- .parse_icd9cm_rtf_year(
     year = "2011",
     perl = perl,
     useBytes = use_bytes,
@@ -311,20 +312,12 @@
     # the following can and should be factors:
     chaps
   )
-  # fix congenital abnormalities not having sub-chapter defined: (this might be
-  # easier to do when parsing the chapters themselves...)
-  out <- .fix_sub_chap_na(out, "740", "759")
-  # and hematopoietic organs
-  out <- .fix_sub_chap_na(out, "280", "289")
   # insert the short descriptions from the billable codes text file. Where there
   # is no short description, e.g. for most Major codes, or intermediate codes,
   # just copy the long description over.
 
   # need ICD-9 codes to build this, right now just working off the final published edition.
-  bill32 <- .parse_icd9cm_leaf_year("2014",
-    verbose = verbose,
-    offline = offline
-  )
+  bill32 <- get_icd9cm2014_leaf()
   billable_codes <- bill32$code
   billable_rows <- which(out[["code"]] %in% billable_codes)
   title_rows <- which(out[["code"]] %nin% billable_codes)
@@ -368,6 +361,7 @@
 #' @keywords internal datagen
 #' @noRd
 .icd9_get_chapters <- function(x, short_code, verbose = FALSE) {
+  stop("do this better - see .lookup_icd9_hier")
   # set up comorbidity maps for chapters/sub/major group, then loop through each
   # ICD-9 code, loop through each comorbidity and lookup code in the map for
   # that field, then add the factor level for the match. There should be 100%

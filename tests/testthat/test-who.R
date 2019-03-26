@@ -10,7 +10,7 @@ test_that("No ranges or NA in code section of WHO data", {
     if (.offline() && !.exists_in_cache(nm)) {
       skip(paste(nm, "not available for testing."))
     }
-    i <- do.call(.get_fetcher_name(nm), args = list())
+    i <- .get_fetcher_fun(nm)
     # structure tests
     expect_true(is.data.frame(i), info = nm)
     expect_false(any(grepl("-", i$code)), info = nm)
