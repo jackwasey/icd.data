@@ -1,4 +1,4 @@
-.debug <- TRUE
+.debug <- FALSE
 .verbose(.debug || getOption("icd.data.verbose", default = FALSE))
 .make_icd9cm_leaf_parsers(verbose = .debug)
 .make_icd9cm_rtf_parsers(verbose = .debug)
