@@ -28,10 +28,11 @@ environment:
   # appveyor uses --as-cran by default
   _R_CHECK_EXIT_ON_FIRST_ERROR_: true
   USE_RTOOLS: true # Set to false if no GitHub packages are necessary
-  ICD_DATA_OFFLINE: true
-  ICD_DATA_INTERACT: false
-  ICD_DATA_VERBOSE: true
-  ICD_DATA_ABSENT_ACTION: 'message'
+# by default, don't set environment, to be more like CRAN
+#  ICD_DATA_OFFLINE: true
+#  ICD_DATA_INTERACT: false
+#  ICD_DATA_VERBOSE: true
+#  ICD_DATA_ABSENT_ACTION: 'message'
   matrix:
     - R_VERSION: release
     - R_VERSION: devel

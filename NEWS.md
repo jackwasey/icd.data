@@ -1,15 +1,14 @@
 # icd.data 1.1
 
-* Works best with 'icd' package >= 4.0, but not required.
+* WHO ICD-10 codes for 2016 in English, and 2008 in French, downloaded on demand. `get_icd10who2016()` and `get_icd10who2008fr()`
 * French ICD-10 (CIM-10) codes for 2019, with data available with English or French column names
-* Belgian ICD-10 codes, data has columns for French, Dutch and English translations.
-* Includes ICD-10-CM 2019 with more than 2000 new codes. The most recent available ICD-10-CM version is also made available using icd.data::icd10cm_latest when an specific annual version is not needed.
+* Belgian ICD-10 codes, data has columns for French, Dutch and English translations. e.g., `get_icd10be
+* Includes ICD-10-CM 2019 with more than 2000 new codes as package data named `icd10cm2019`, and on-demand access to ICD-10-CM from 2014 to 2019 with `get_icd10cm2014()` etc.. `icd10cm2016` remains but will be removed in a future version.
 * ICD-10-CM for all year fro 2014 to 2019, with functions to select which to use. Default is currently 2019.
-* icd10cm_latest and get_icd10cm_active() return the appropriate data. Note that currently `icd10cm_active` is not exported.
-* Added capability for each user to download the WHO ICD-10 data on first use.
+* `geticd10cm_latest()` and `get_icd10cm_active()` return the appropriate data, which can be set with a session-wide `option`
+* Add `get_icd9cm2014()` (and back through to `get_icd9cm2005()`), which will replace the deprecated and poorly named `icd9cm_hierarchy` package data.
 * Moved data creation code from 'icd' package to 'icd.data'
-* Expand Vermont data from 1,000 to about 50,000 rows
-* Add `get_icd9cm2011()`, which will replace the deprecated and poorly named `icd9cm_hierarchy` package data.
+* Works best with 'icd' package >= 4.0, but not required. This gives the ability to use these data to explain codes, e.g., `icd::explain_code(icd::as.icd10be("R21"), lang = "nl")` gives the Dutch explanation of that code.
 
 # icd.data 1.0
 
