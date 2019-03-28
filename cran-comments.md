@@ -1,4 +1,4 @@
-I am submitting icd 4.0, icd.data 1.1.1 and a new pacakge nhds 1.0.1 simultaneously, although they no longer have version inter-dependencies.
+I am submitting icd 4.0.2, icd.data 1.1.2 and a new pacakge nhds 1.0.2 simultaneously, although they no longer have version inter-dependencies, and will each pass check without the new versions of the other packages. The UTF-8 strings are due to accented characters in some disease names.
 
 ## Test environments
 * local OS X install, R 3.5.2

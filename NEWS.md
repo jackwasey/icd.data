@@ -1,4 +1,4 @@
-# icd.data 1.1
+# icd.data 1.1.2
 
 * WHO ICD-10 codes for 2016 in English, and 2008 in French, downloaded on demand. `get_icd10who2016()` and `get_icd10who2008fr()`
 * French ICD-10 (CIM-10) codes for 2019, with data available with English or French column names

@@ -152,7 +152,8 @@ test_year <- "2011"
 skip_no_icd_data_resource()
 if (rtf_year_ok(test_year)) {
   rtf_dat <- icd.data:::.icd9cm_sources[.icd9cm_sources$f_year == test_year, ]
-  f_info_short <- .unzip_to_data_raw(url = rtf_dat$rtf_url,
+  f_info_short <- .unzip_to_data_raw(
+    url = rtf_dat$rtf_url,
     file_name = rtf_dat$rtf_filename
   )
   rtf <- .rtf_parse_lines(readLines(f_info_short$file_path, warn = FALSE),

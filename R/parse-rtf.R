@@ -135,7 +135,7 @@ re_icd10_major_bare <- "[[:alpha:]][[:digit:]][[:alnum:]]"
     stringsAsFactors = FALSE
   )
   .lookup_icd9_hier(dframe,
-                    short_code = short_code
+    short_code = short_code
   )[-1]
 }
 

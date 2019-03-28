@@ -34,7 +34,7 @@ get_icd10cm_active_ver <- function() {
 
 #' Get the data for a given version (four-digit year) of ICD-10-CM
 #'
-#' When called without an argument, it returns the curerntly active version as
+#' When called without an argument, it returns the currently active version as
 #' set by \code{set_icd10cm_active_ver()}
 #' @template ver
 #' @template verbose

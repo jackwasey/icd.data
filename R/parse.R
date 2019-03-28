@@ -219,9 +219,11 @@
   fn_orig <- v27_dat$other_filename
   url <- v27_dat$url
   message("original v27 file name = '", fn_orig, "'. URL = ", url)
-  f27_info <- .unzip_to_data_raw(url = url,
-                                 file_name = fn_orig,
-                                 ...)
+  f27_info <- .unzip_to_data_raw(
+    url = url,
+    file_name = fn_orig,
+    ...
+  )
   f <- file(f27_info$file_path, encoding = "latin1")
   icd9cm_billable27 <-
     utils::read.csv(f27_info$file_path,
@@ -301,7 +303,7 @@
   chaps <- .icd9_get_chapters(
     x = icd9_rtf$code,
     short_code = TRUE
-    )
+  )
   icd9_order <- order.icd9
   chaps <- chaps[icd9_order(.as_char_no_warn(chaps$three_digit)), ]
   icd9_rtf <- icd9_rtf[icd9_order(icd9_rtf$code), ]

@@ -23,7 +23,7 @@ greater than one will give more verbosity. This is primarily for
 development.}
 }
 \description{
-When called without an argument, it returns the curerntly active version as
+When called without an argument, it returns the currently active version as
 set by \code{set_icd10cm_active_ver()}
 }
 \section{Functions}{
