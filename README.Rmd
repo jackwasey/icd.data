@@ -18,14 +18,13 @@ knitr::opts_chunk$set(
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/icd.data)](https://cran.r-project.org/package=icd.data)
 [![Travis-CI Build Status](https://travis-ci.org/jackwasey/icd.data.svg?branch=master)](https://travis-ci.org/jackwasey/icd.data)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/jackwasey/icd.data?branch=master&svg=true)](https://ci.appveyor.com/project/jackwasey/icd.data)
-[![CRAN status](https://www.r-pkg.org/badges/version/icd.data)](https://cran.r-project.org/package=icd.data)
 [![Dependencies](https://tinyverse.netlify.com/badge/icd.data)](https://cran.r-project.org/package=icd.data)
 <!-- badges: end -->
 
 # icd.data
 
 ```{r pkgdesc, results = 'asis', echo = FALSE}
-cat(packageDescription("icd.data")$Description)
+cat(gsub("'","`",packageDescription("icd.data")$Description))
 ```
 
 See documentation for the [R CRAN package: icd](https://jackwasey.github.io/icd/) for how to use this data.
