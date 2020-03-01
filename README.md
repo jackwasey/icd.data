@@ -9,25 +9,23 @@
 Status](https://travis-ci.org/jackwasey/icd.data.svg?branch=master)](https://travis-ci.org/jackwasey/icd.data)
 [![AppVeyor Build
 Status](https://ci.appveyor.com/api/projects/status/github/jackwasey/icd.data?branch=master&svg=true)](https://ci.appveyor.com/project/jackwasey/icd.data)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/icd.data)](https://cran.r-project.org/package=icd.data)
 [![Dependencies](https://tinyverse.netlify.com/badge/icd.data)](https://cran.r-project.org/package=icd.data)
 <!-- badges: end -->
 
 # icd.data
 
-ICD-9 and ICD-10 definitions from the United States Center for Medicare
-and Medicaid Services (CMS) are included in this package. A function is
-provided to extract the WHO ICD-10 definitions from the public
-interface, but the data themselves may not currently be redistributed.
-The function ‘fetch\_icd10who2016()’ and ‘fetch\_icd10who2008fr’ should
-be run once after installing this package. There are diagnostic and
+ICD-9 and ICD-10 definitions from the World Health Organization, the
+United States Center for Medicare and Medicaid Services (CMS), France,
+and Belgium are made available by this package. There are diagnostic and
 procedure codes, and lists of the chapter and sub-chapter headings and
 the ranges of ICD codes they encompass. There are also two sets of
 sample patient data with ICD-9 and ICD-10 codes representing real
-patients and spanning common structures of patient data. These data are
-used by the ‘icd’ package for finding comorbidities and working with ICD
-codes.
+patients. Much of the data is downloaded and parsed on demand. Use
+`setup_icd_data()` to initialize the cache, and optionally
+`download_icd_data()` to download all data in one go. This can all be
+done at once, or piecemeal as data is used. These data are used by the
+`icd` package, which finds comorbidities and has tools for working with
+ICD codes.
 
 See documentation for the [R CRAN package:
 icd](https://jackwasey.github.io/icd/) for how to use this data.
